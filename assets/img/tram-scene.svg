@@ -1,0 +1,194 @@
+<svg viewBox="0 120 1440 620" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="コスモスクエアの街並みとニュートラムのイラスト">
+  <defs>
+    <linearGradient id="t-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9ecdec"/><stop offset=".5" stop-color="#c9e5f4"/><stop offset="1" stop-color="#eef7fc"/>
+    </linearGradient>
+    <radialGradient id="t-sun" cx="82%" cy="16%" r="34%">
+      <stop offset="0" stop-color="#fff7e6" stop-opacity=".9"/><stop offset="1" stop-color="#fff7e6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="t-sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5aa0c9"/><stop offset="1" stop-color="#256a97"/>
+    </linearGradient>
+    <linearGradient id="t-towerL" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#e4eef5"/><stop offset="1" stop-color="#a9bfd2"/>
+    </linearGradient>
+    <linearGradient id="t-towerR" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9db6cd"/><stop offset="1" stop-color="#7c98b4"/>
+    </linearGradient>
+    <linearGradient id="t-dome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c7e6f0"/><stop offset="1" stop-color="#7ea9c8"/>
+    </linearGradient>
+    <linearGradient id="t-cone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2f8fc"/><stop offset=".5" stop-color="#bcd3e6"/><stop offset="1" stop-color="#93b3cd"/>
+    </linearGradient>
+    <linearGradient id="t-wtc" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#d4e8e1"/><stop offset="1" stop-color="#9cc0b8"/>
+    </linearGradient>
+    <linearGradient id="t-beam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f2f5f8"/><stop offset="1" stop-color="#c4cdd6"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1440" height="600" fill="url(#t-sky)"/>
+  <rect width="1440" height="380" fill="url(#t-sun)"/>
+
+  <!-- 遠景の山 -->
+  <path d="M0 300 L180 258 L360 292 L560 252 L760 290 L760 400 L0 400 Z" fill="#b7d0e4" opacity=".45"/>
+  <path d="M780 292 L980 250 L1180 288 L1380 250 L1440 272 L1440 400 L780 400 Z" fill="#b7d0e4" opacity=".4"/>
+
+  <!-- 雲 -->
+  <g fill="#ffffff">
+    <g class="cloud" opacity=".85"><ellipse cx="230" cy="180" rx="86" ry="24"/><ellipse cx="300" cy="170" rx="58" ry="20"/><ellipse cx="170" cy="188" rx="52" ry="17"/></g>
+    <g class="cloud c2" opacity=".7"><ellipse cx="760" cy="150" rx="70" ry="20"/><ellipse cx="818" cy="142" rx="46" ry="15"/></g>
+    <g class="cloud c3" opacity=".6"><ellipse cx="1190" cy="200" rx="90" ry="23"/><ellipse cx="1258" cy="192" rx="56" ry="17"/></g>
+  </g>
+
+  <!-- 港のガントリークレーン（赤・ブーム上げ） -->
+  <g stroke="#e0604a" stroke-width="4.5" fill="none" stroke-linecap="round">
+    <g transform="translate(60 0)">
+      <path d="M0 300 h60 M0 300 V430 M60 300 V430"/><path d="M8 332 h44"/>
+      <path d="M30 300 L22 232"/><path d="M30 300 L64 232"/><path d="M22 232 L64 232"/>
+      <path d="M43 252 L128 176" stroke-width="6"/><path d="M43 252 L-8 214"/>
+    </g>
+    <g transform="translate(240 8)">
+      <path d="M0 300 h60 M0 300 V424 M60 300 V424"/><path d="M8 332 h44"/>
+      <path d="M30 300 L22 232"/><path d="M30 300 L64 232"/><path d="M22 232 L64 232"/>
+      <path d="M43 252 L128 176" stroke-width="6"/><path d="M43 252 L-8 214"/>
+    </g>
+    <g transform="translate(1120 6)">
+      <path d="M0 300 h60 M0 300 V426 M60 300 V426"/><path d="M8 332 h44"/>
+      <path d="M30 300 L22 232"/><path d="M30 300 L64 232"/><path d="M22 232 L64 232"/>
+      <path d="M17 252 L-68 176" stroke-width="6"/><path d="M17 252 L68 214"/>
+    </g>
+  </g>
+
+  <!-- WTC / ベイタワー -->
+  <g>
+    <rect x="196" y="230" width="70" height="170" fill="url(#t-wtc)"/>
+    <rect x="196" y="230" width="26" height="170" fill="#bcdbd2" opacity=".7"/>
+    <rect x="214" y="216" width="34" height="14" fill="#8fb3ab"/>
+    <g stroke="#ffffff" stroke-width="1" opacity=".5">
+      <line x1="196" y1="264" x2="266" y2="264"/><line x1="196" y1="300" x2="266" y2="300"/>
+      <line x1="196" y1="336" x2="266" y2="336"/><line x1="196" y1="372" x2="266" y2="372"/></g>
+  </g>
+
+  <!-- ATC ウォーターフロント＋ガラスコーン -->
+  <g>
+    <rect x="300" y="300" width="470" height="100" fill="#f6fafc"/>
+    <rect x="300" y="300" width="470" height="12" fill="#e3ecf2"/>
+    <rect x="330" y="314" width="60" height="8" fill="#e2673f" opacity=".85"/>
+    <rect x="660" y="314" width="70" height="8" fill="#e2673f" opacity=".85"/>
+    <g fill="#cfe0ec"><rect x="318" y="336" width="18" height="50"/><rect x="346" y="336" width="18" height="50"/>
+      <rect x="700" y="336" width="18" height="50"/><rect x="728" y="336" width="18" height="50"/></g>
+    <path d="M556 300 C522 236 552 186 592 186 C632 186 662 236 628 300 Z" fill="url(#t-cone)"/>
+    <path d="M592 188 C556 188 526 234 556 300 L592 300 Z" fill="#ffffff" opacity=".4"/>
+    <g stroke="#8fb0cb" stroke-width="1" opacity=".7"><path d="M592 188 L592 300"/><path d="M570 206 L566 300"/><path d="M614 206 L618 300"/></g>
+    <ellipse class="glimmer" cx="584" cy="224" rx="9" ry="14" fill="#ffffff" opacity=".55"/>
+  </g>
+
+  <!-- 咲洲庁舎（先端が広がる展望台＋赤い鉄骨＋丸屋根） -->
+  <g>
+    <rect x="852" y="400" width="120" height="60" fill="#4f7ba6" opacity=".22"/>
+    <rect x="846" y="380" width="132" height="20" fill="#dceaf5"/>
+    <g fill="#c3d8ea"><rect x="852" y="380" width="10" height="20"/><rect x="874" y="380" width="10" height="20"/>
+      <rect x="900" y="380" width="10" height="20"/><rect x="928" y="380" width="10" height="20"/>
+      <rect x="952" y="380" width="10" height="20"/></g>
+    <rect x="858" y="168" width="60" height="212" fill="url(#t-towerL)"/>
+    <rect x="918" y="168" width="52" height="212" fill="url(#t-towerR)"/>
+    <g stroke="#ffffff" stroke-width="1.2" opacity=".5">
+      <line x1="874" y1="168" x2="874" y2="380"/><line x1="892" y1="168" x2="892" y2="380"/>
+      <line x1="912" y1="168" x2="912" y2="380"/><line x1="936" y1="168" x2="936" y2="380"/><line x1="954" y1="168" x2="954" y2="380"/></g>
+    <g stroke="#8296ac" stroke-width="1" opacity=".5">
+      <line x1="858" y1="214" x2="970" y2="214"/><line x1="858" y1="260" x2="970" y2="260"/>
+      <line x1="858" y1="306" x2="970" y2="306"/><line x1="858" y1="352" x2="970" y2="352"/></g>
+    <rect x="862" y="184" width="8" height="196" fill="#ffffff" opacity=".45"/>
+    <!-- 赤いトラス -->
+    <g stroke="#e0604a" stroke-width="3.6" fill="none" stroke-linecap="round">
+      <path d="M860 168 L836 130"/><path d="M916 168 L836 130"/>
+      <path d="M968 168 L992 130"/><path d="M912 168 L992 130"/>
+      <path d="M872 168 L900 130"/><path d="M956 168 L928 130"/></g>
+    <!-- 展望台 -->
+    <rect x="830" y="124" width="168" height="18" rx="3" fill="#e6f0f9"/>
+    <rect x="830" y="124" width="168" height="4" fill="#e0604a"/><rect x="830" y="138" width="168" height="4" fill="#e0604a"/>
+    <!-- 丸屋根＋ヘリポート -->
+    <path d="M852 124 Q852 98 914 98 Q976 98 976 124 Z" fill="url(#t-dome)"/>
+    <ellipse cx="914" cy="98" rx="20" ry="5" fill="#cfe3ef"/>
+    <rect x="911" y="82" width="6" height="16" fill="#7ba0c4"/>
+    <circle class="glimmer" cx="914" cy="80" r="3.4" fill="#e0604a"/>
+  </g>
+
+  <!-- 中層ビル -->
+  <g fill="#c6d6e4">
+    <rect x="1010" y="300" width="46" height="100"/><rect x="1064" y="328" width="40" height="72"/>
+    <rect x="760" y="330" width="40" height="70" fill="#cfdde8"/></g>
+
+  <!-- 海 -->
+  <rect x="0" y="400" width="1440" height="120" fill="url(#t-sea)"/>
+  <g stroke="#ffffff" opacity=".4" stroke-width="2" fill="none" stroke-linecap="round">
+    <path class="glimmer" d="M120 436 q20 -6 40 0 t40 0 t40 0"/>
+    <path d="M760 452 q24 -6 48 0 t48 0"/>
+    <path class="glimmer" d="M1080 428 q20 -6 40 0 t40 0"/></g>
+
+  <!-- フェリー -->
+  <g transform="translate(1120 442)">
+    <path d="M0 20 L96 20 L84 40 L14 40 Z" fill="#f6fafc"/>
+    <rect x="26" y="4" width="46" height="18" rx="3" fill="#e2673f"/>
+    <rect x="30" y="8" width="12" height="10" fill="#cfe0ec"/><rect x="48" y="8" width="12" height="10" fill="#cfe0ec"/></g>
+
+  <!-- ニュートラム 高架 -->
+  <g>
+    <g fill="#d9e1e7"><rect x="90" y="502" width="26" height="72"/><rect x="330" y="502" width="26" height="72"/>
+      <rect x="570" y="502" width="26" height="72"/><rect x="810" y="502" width="26" height="72"/>
+      <rect x="1050" y="502" width="26" height="72"/><rect x="1290" y="502" width="26" height="72"/></g>
+    <rect x="40" y="486" width="1360" height="26" fill="url(#t-beam)"/>
+    <rect x="40" y="486" width="1360" height="5" fill="#ffffff" opacity=".7"/>
+    <rect x="40" y="508" width="1360" height="4" fill="#aab6c2"/>
+  </g>
+
+  <!-- 新型ニュートラム（水色×白） -->
+  <g class="tram">
+    <g transform="translate(0 444)">
+      <rect x="0"   y="2" width="78" height="42" rx="13" fill="#f4f8fb"/>
+      <rect x="86"  y="2" width="76" height="42" rx="8"  fill="#f4f8fb"/>
+      <rect x="170" y="2" width="76" height="42" rx="8"  fill="#f4f8fb"/>
+      <rect x="254" y="2" width="84" height="42" rx="15" fill="#f4f8fb"/>
+      <path d="M0 28 h78 v6 q0 10 -13 10 h-52 q-13 0 -13 -10 Z" fill="#5bbdd8"/>
+      <rect x="86" y="28" width="76" height="16" rx="4" fill="#5bbdd8"/>
+      <rect x="170" y="28" width="76" height="16" rx="4" fill="#5bbdd8"/>
+      <path d="M254 28 h84 v6 q0 10 -13 10 h-58 q-13 0 -13 -10 Z" fill="#5bbdd8"/>
+      <path d="M0 16 q0 -14 15 -14 h22 v26 h-37 Z" fill="#5bbdd8"/>
+      <path d="M338 16 q0 -14 -15 -14 h-22 v26 h37 Z" fill="#5bbdd8"/>
+      <g fill="#2f4a63" opacity=".9"><rect x="13" y="13" width="48" height="12" rx="2"/>
+        <rect x="94" y="13" width="60" height="12" rx="2"/><rect x="178" y="13" width="60" height="12" rx="2"/>
+        <rect x="262" y="13" width="62" height="12" rx="2"/></g>
+      <rect x="0" y="26" width="338" height="2.6" fill="#3fa7c4"/>
+    </g>
+  </g>
+
+  <!-- 遊歩道・手すり -->
+  <rect x="0" y="574" width="1440" height="166" fill="#eae1d2"/>
+  <rect x="0" y="574" width="1440" height="14" fill="#dbd0bc"/>
+  <g stroke="#b7ac95" stroke-width="4" stroke-linecap="round"><line x1="0" y1="596" x2="1440" y2="596"/></g>
+  <g fill="#c3b89f"><rect x="60" y="596" width="6" height="36"/><rect x="260" y="596" width="6" height="36"/>
+    <rect x="460" y="596" width="6" height="36"/><rect x="980" y="596" width="6" height="36"/>
+    <rect x="1180" y="596" width="6" height="36"/><rect x="1380" y="596" width="6" height="36"/></g>
+
+  <!-- ヤシの木 -->
+  <g transform="translate(150 470)">
+    <path d="M40 250 C30 178 22 120 16 74 C14 60 20 56 30 58 C24 108 34 182 52 250 Z" fill="#5a6b4c"/>
+    <g fill="#4f6a3d" stroke="#3f5730" stroke-width="1">
+      <path d="M22 72 C-26 56 -66 68 -92 96 C-50 80 -10 76 24 86 Z"/>
+      <path d="M24 68 C10 12 34 -24 78 -42 C46 -8 34 30 34 76 Z"/>
+      <path d="M28 72 C74 38 122 42 156 72 C112 60 66 66 34 88 Z"/>
+      <path d="M20 76 C-14 104 -22 148 -8 186 C-4 142 12 108 34 90 Z"/>
+      <path d="M30 74 C64 104 74 148 62 188 C58 142 44 108 30 90 Z"/></g>
+  </g>
+  <g transform="translate(1210 500)">
+    <path d="M20 220 C30 150 40 96 48 52 C50 38 44 34 34 38 C42 92 34 160 8 220 Z" fill="#54654a"/>
+    <g fill="#4a6339" stroke="#3a5230" stroke-width="1">
+      <path d="M44 50 C92 34 130 46 156 76 C114 58 78 56 44 68 Z"/>
+      <path d="M42 46 C58 -8 34 -42 -6 -58 C24 -24 32 12 32 58 Z"/>
+      <path d="M40 50 C-2 18 -46 24 -76 54 C-34 40 8 46 34 68 Z"/>
+      <path d="M48 54 C82 84 92 128 80 168 C76 124 62 90 40 72 Z"/></g>
+  </g>
+</svg>

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>管理画面｜中村歯科医院</title>
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1f3f74;--navy-deep:#16294a;--sky:#7cb8e3;--coral:#e2673f;--green:#2f9e6f;--amber:#d79a2b;
+  --bg:#eef2f7;--panel:#fff;--line:#e5e9f0;--ink:#23303f;--soft:#66748a;--faint:#9aa6b6;
+  --f:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN",sans-serif;--fl:"Jost",sans-serif;
+  --shadow:0 10px 40px rgba(22,41,74,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--f);background:var(--bg);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:inherit}button{font-family:inherit;cursor:pointer;border:0;background:none}
+input,select{font-family:inherit}
+
+/* login */
+.login{position:fixed;inset:0;display:grid;place-content:center;padding:24px;background:radial-gradient(120% 90% at 80% 0,#2b4d86,#16294a);z-index:50}
+.login.hide{display:none}
+.login-card{background:#fff;border-radius:20px;padding:44px 40px;width:min(400px,92vw);box-shadow:var(--shadow);text-align:center}
+.login-card .mark{width:54px;height:54px;margin:0 auto 14px}
+.login-card h1{font-size:1.15rem;margin:0 0 2px;color:var(--navy-deep)}
+.login-card p{margin:0 0 24px;color:var(--faint);font-size:.82rem}
+.login-card input{width:100%;padding:.85em 1em;border:1px solid var(--line);border-radius:10px;font-size:1rem;text-align:center;letter-spacing:.2em}
+.login-card input:focus{outline:2px solid var(--sky);border-color:transparent}
+.login-card button{width:100%;margin-top:14px;padding:.9em;background:var(--navy);color:#fff;border-radius:10px;font-weight:500;letter-spacing:.08em;transition:.3s}
+.login-card button:hover{background:var(--navy-deep)}
+.login-card .hint{margin-top:16px;font-size:.72rem;color:var(--faint)}
+.login-card .err{color:var(--coral);font-size:.8rem;height:1.2em;margin-top:6px}
+
+/* shell */
+.shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+.side{background:var(--navy-deep);color:#fff;padding:26px 20px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.side .brand{display:flex;align-items:center;gap:10px;margin-bottom:30px}
+.side .brand .mark{width:38px;height:38px}
+.side .brand b{font-family:var(--fl);font-weight:600;font-size:.98rem;letter-spacing:.03em}
+.side .brand span{display:block;font-size:.58rem;letter-spacing:.2em;color:rgba(255,255,255,.5)}
+.side nav a{display:flex;align-items:center;gap:10px;padding:.7em .9em;border-radius:10px;font-size:.9rem;color:rgba(255,255,255,.8);margin-bottom:4px;transition:.25s;cursor:pointer}
+.side nav a.active,.side nav a:hover{background:rgba(255,255,255,.1);color:#fff}
+.side nav a svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+.side nav .sep{height:1px;background:rgba(255,255,255,.12);margin:12px 4px}
+.side .foot{margin-top:auto;font-size:.7rem;color:rgba(255,255,255,.4)}
+.side .logout{margin-top:14px;width:100%;padding:.7em;background:rgba(255,255,255,.08);color:#fff;border-radius:9px;font-size:.82rem}
+.side .logout:hover{background:rgba(226,103,63,.9)}
+
+.main{padding:34px clamp(20px,4vw,48px)}
+.view{display:none}.view.on{display:block}
+.topbar{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:26px}
+.topbar h2{margin:0;font-size:1.4rem;color:var(--navy-deep)}
+.topbar .sub{color:var(--faint);font-size:.82rem}
+.topbar .actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{padding:.7em 1.3em;border-radius:10px;font-size:.86rem;font-weight:500;letter-spacing:.04em;transition:.28s;display:inline-flex;align-items:center;gap:.5em}
+.btn.primary{background:var(--navy);color:#fff}.btn.primary:hover{background:var(--navy-deep)}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--navy-deep)}.btn.ghost:hover{border-color:var(--sky)}
+.btn.mini{padding:.45em .9em;font-size:.78rem}
+.btn.danger{color:var(--coral)}.btn.danger:hover{background:#fdeee9}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:26px}
+.stat{background:var(--panel);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow)}
+.stat .k{font-family:var(--fl);font-size:1.9rem;font-weight:600;color:var(--navy)}
+.stat .l{font-size:.78rem;color:var(--soft)}
+.stat .bar{height:7px;border-radius:99px;background:var(--line);margin-top:10px;overflow:hidden}
+.stat .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--sky),var(--navy));transition:width .6s}
+
+.panel{background:var(--panel);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:22px}
+.panel .ph{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--line)}
+.panel .ph h3{margin:0;font-size:1rem;color:var(--navy-deep)}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:14px 22px;font-size:.9rem;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.72rem;letter-spacing:.1em;color:var(--faint);text-transform:uppercase;font-weight:600}
+tr:last-child td{border-bottom:0}
+td .date{font-family:var(--fl);color:var(--soft)}
+.tag{font-size:.7rem;padding:.28em .9em;border-radius:999px;color:#fff;background:var(--navy);white-space:nowrap}
+.tag.info{background:var(--sky)}.tag.holiday{background:var(--coral)}
+td .row-act{display:flex;gap:6px;justify-content:flex-end}
+.empty{padding:40px;text-align:center;color:var(--faint)}
+
+/* steps (SEO/MEO) */
+.progress-head{background:var(--panel);border-radius:16px;box-shadow:var(--shadow);padding:22px 24px;margin-bottom:20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.ring{--p:0;width:96px;height:96px;border-radius:50%;flex:none;
+  background:conic-gradient(var(--navy) calc(var(--p)*1%),var(--line) 0);display:grid;place-content:center}
+.ring b{width:74px;height:74px;border-radius:50%;background:#fff;display:grid;place-content:center;font-family:var(--fl);font-size:1.3rem;font-weight:600;color:var(--navy)}
+.progress-head .txt h3{margin:0 0 4px;color:var(--navy-deep)}
+.progress-head .txt p{margin:0;color:var(--soft);font-size:.85rem}
+.progress-head .legend{margin-left:auto;display:flex;gap:14px;font-size:.76rem;color:var(--soft)}
+.progress-head .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
+.steps{display:grid;gap:12px}
+.step{background:var(--panel);border-radius:14px;box-shadow:var(--shadow);padding:18px 20px;display:grid;grid-template-columns:34px 1fr auto;gap:14px;align-items:start;border-left:4px solid var(--line);transition:.3s}
+.step[data-s="done"]{border-left-color:var(--green)}
+.step[data-s="doing"]{border-left-color:var(--amber)}
+.step[data-s="todo"]{border-left-color:var(--line)}
+.step .no{font-family:var(--fl);font-weight:600;color:var(--faint);font-size:1rem;text-align:center}
+.step h4{margin:0 0 4px;font-size:.98rem;color:var(--navy-deep)}
+.step .why{font-size:.84rem;color:var(--soft);margin:0 0 .4em}
+.step .how{font-size:.8rem;color:var(--faint)}
+.step .how a{color:var(--sky);text-decoration:underline}
+.step select{padding:.5em .7em;border:1px solid var(--line);border-radius:8px;font-size:.82rem;font-weight:500;color:var(--navy-deep)}
+.step select:focus{outline:2px solid var(--sky);border-color:transparent}
+
+.modal{position:fixed;inset:0;background:rgba(22,41,74,.5);display:none;place-content:center;padding:24px;z-index:40}
+.modal.show{display:grid}
+.modal-card{background:#fff;border-radius:16px;width:min(520px,94vw);box-shadow:var(--shadow);overflow:hidden}
+.modal-card .mh{padding:20px 26px;border-bottom:1px solid var(--line);font-weight:500;color:var(--navy-deep)}
+.modal-card .mb{padding:24px 26px;display:grid;gap:16px}
+.field label{display:block;font-size:.76rem;color:var(--soft);letter-spacing:.06em;margin-bottom:6px}
+.field input,.field select{width:100%;padding:.7em .9em;border:1px solid var(--line);border-radius:10px;font-size:.95rem}
+.field input:focus,.field select:focus{outline:2px solid var(--sky);border-color:transparent}
+.modal-card .mf{padding:18px 26px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,120%);background:var(--navy-deep);color:#fff;padding:.9em 1.6em;border-radius:999px;font-size:.86rem;box-shadow:var(--shadow);transition:.4s cubic-bezier(.22,.61,.36,1);z-index:60}
+.toast.show{transform:translate(-50%,0)}
+.note{background:#fff;border:1px dashed var(--line);border-radius:12px;padding:16px 20px;margin-top:8px;font-size:.82rem;color:var(--soft)}
+.note b{color:var(--navy-deep)}
+.info-tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:22px}
+.tile{background:var(--panel);border-radius:14px;box-shadow:var(--shadow);padding:18px 20px}
+.tile h4{margin:0 0 6px;font-size:.9rem;color:var(--navy-deep)}
+.tile p{margin:0;font-size:.82rem;color:var(--soft)}
+.tile .go{margin-top:10px;display:inline-block;font-size:.8rem;color:var(--sky);cursor:pointer}
+
+@media(max-width:760px){
+  .shell{grid-template-columns:1fr}
+  .side{position:static;height:auto;flex-direction:row;align-items:center;flex-wrap:wrap;gap:8px}
+  .side .brand{margin:0 auto 0 0}.side nav{display:flex;gap:6px;flex-wrap:wrap}.side nav .sep{display:none}.side .foot,.side .logout{display:none}
+  .stats,.info-tiles{grid-template-columns:1fr}
+  .step{grid-template-columns:1fr;gap:8px}.step .no{text-align:left}
+  td .hide-sp,th.hide-sp{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login" id="login">
+  <div class="login-card">
+    <svg class="mark" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1f3f74"/><ellipse cx="32" cy="32" rx="24" ry="11" fill="none" stroke="#fff" stroke-width="5" transform="rotate(-28 32 32)"/><circle cx="32" cy="32" r="7.5" fill="#fff"/></svg>
+    <h1>中村歯科医院 管理画面</h1>
+    <p>Nakamura Dental Office — Admin</p>
+    <input id="pw" type="password" placeholder="パスワード" autocomplete="off" inputmode="text">
+    <div class="err" id="loginErr"></div>
+    <button id="loginBtn">ログイン</button>
+    <p class="hint">初期パスワード：<b>nakamura</b>（納品後に変更してください）</p>
+  </div>
+</div>
+
+<!-- SHELL -->
+<div class="shell" id="shell" style="display:none">
+  <aside class="side">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#284d86"/><ellipse cx="32" cy="32" rx="24" ry="11" fill="none" stroke="#fff" stroke-width="5" transform="rotate(-28 32 32)"/><circle cx="32" cy="32" r="7.5" fill="#fff"/></svg>
+      <div><b>Nakamura</b><span>ADMIN PANEL</span></div>
+    </div>
+    <nav id="nav">
+      <a data-v="dash" class="active"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>ダッシュボード</a>
+      <a data-v="news"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM4 9h16M8 13h8M8 16h5"/></svg>お知らせ管理</a>
+      <div class="sep"></div>
+      <a data-v="seo"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg>SEO対策</a>
+      <a data-v="meo"><svg viewBox="0 0 24 24"><path d="M12 22s7-6.7 7-12a7 7 0 1 0-14 0c0 5.3 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>MEO対策</a>
+      <div class="sep"></div>
+      <a href="../index.html" target="_blank"><svg viewBox="0 0 24 24"><path d="M14 3h7v7M21 3l-9 9M10 5H4v15h15v-6"/></svg>サイトを見る</a>
+    </nav>
+    <div class="foot">
+      Nakamura Dental Office<br>© <span id="yr"></span> All rights reserved.
+      <button class="logout" id="logoutBtn">ログアウト</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- DASHBOARD -->
+    <section class="view on" id="v-dash">
+      <div class="topbar"><div><h2>ダッシュボード</h2><span class="sub">サイトの更新状況とSEO/MEO対策の進捗をまとめて確認できます。</span></div></div>
+      <div class="stats">
+        <div class="stat"><div class="k" id="dNews">0</div><div class="l">掲載中のお知らせ</div></div>
+        <div class="stat"><div class="k" id="dSeo">0%</div><div class="l">SEO対策の進捗</div><div class="bar"><i id="dSeoBar"></i></div></div>
+        <div class="stat"><div class="k" id="dMeo">0%</div><div class="l">MEO対策の進捗</div><div class="bar"><i id="dMeoBar"></i></div></div>
+      </div>
+      <div class="info-tiles">
+        <div class="tile"><h4>お知らせを更新する</h4><p>診療時間の変更・休診・キャンペーンなどを発信しましょう。定期的な更新はSEOにも有効です。</p><span class="go" data-go="news">お知らせ管理へ →</span></div>
+        <div class="tile"><h4>検索対策（SEO）を進める</h4><p>Google検索で「南港 歯科」「コスモスクエア 歯医者」等で見つけてもらうための施策です。</p><span class="go" data-go="seo">SEO対策へ →</span></div>
+        <div class="tile"><h4>地図対策（MEO）を進める</h4><p>Googleマップ・ビジネスプロフィールの最適化で、地域の新患増加につなげます。</p><span class="go" data-go="meo">MEO対策へ →</span></div>
+        <div class="tile"><h4>公開ドメイン</h4><p>nakamura-dental.com<br>公開後、Search Consoleにsitemap.xmlを送信してください。</p></div>
+      </div>
+      <div class="note">この管理画面はブラウザ内に自動保存されます（サーバー不要）。SEO/MEOのステップは進捗チェックリストとして活用でき、担当者が変わっても対応状況を引き継げます。</div>
+    </section>
+
+    <!-- NEWS -->
+    <section class="view" id="v-news">
+      <div class="topbar">
+        <div><h2>お知らせ管理</h2><span class="sub">トップページの「お知らせ／News」に表示される内容を編集できます。</span></div>
+        <div class="actions">
+          <button class="btn ghost" id="importBtn">読み込み</button>
+          <button class="btn ghost" id="exportBtn">JSON書き出し</button>
+          <button class="btn primary" id="addBtn">＋ 新規追加</button>
+          <input type="file" id="file" accept="application/json" hidden>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h3>お知らせ一覧</h3><span class="sub" style="font-size:.78rem;color:var(--faint)">最新順に自動で並び替わります</span></div>
+        <table><thead><tr><th style="width:130px">日付</th><th style="width:120px">カテゴリ</th><th>タイトル</th><th style="width:150px"></th></tr></thead><tbody id="rows"></tbody></table>
+        <div class="empty" id="empty" style="display:none">まだお知らせがありません。「＋ 新規追加」から作成してください。</div>
+      </div>
+      <div class="note"><b>公開時の反映：</b>「JSON書き出し」で <b>news.json</b> をダウンロードし、<b>/data/news.json</b> に上書きしてください。</div>
+    </section>
+
+    <!-- SEO -->
+    <section class="view" id="v-seo">
+      <div class="topbar"><div><h2>SEO対策</h2><span class="sub">検索エンジンで見つけてもらうための施策を、ステップで管理します。</span></div></div>
+      <div class="progress-head">
+        <div class="ring" id="seoRing"><b id="seoPct">0%</b></div>
+        <div class="txt"><h3>検索エンジン最適化（SEO）</h3><p>各ステップの状態を「完了／対応中／未対応」で管理できます。</p></div>
+        <div class="legend"><span><i style="background:var(--green)"></i>完了</span><span><i style="background:var(--amber)"></i>対応中</span><span><i style="background:var(--line)"></i>未対応</span></div>
+      </div>
+      <div class="steps" id="seoSteps"></div>
+      <div class="note">※本チェックリストは地域歯科サイトの一般的なSEO実務に基づく構成です。特定サイトの内部仕様を再現したものではありません。項目の追加・変更が必要な場合はお知らせください。</div>
+    </section>
+
+    <!-- MEO -->
+    <section class="view" id="v-meo">
+      <div class="topbar"><div><h2>MEO対策（Googleビジネスプロフィール）</h2><span class="sub">Googleマップ・地図検索で上位表示させ、地域の新患を増やす施策です。</span></div></div>
+      <div class="progress-head">
+        <div class="ring" id="meoRing"><b id="meoPct">0%</b></div>
+        <div class="txt"><h3>マップエンジン最適化（MEO）</h3><p>Googleビジネスプロフィールの整備状況を管理します。</p></div>
+        <div class="legend"><span><i style="background:var(--green)"></i>完了</span><span><i style="background:var(--amber)"></i>対応中</span><span><i style="background:var(--line)"></i>未対応</span></div>
+      </div>
+      <div class="steps" id="meoSteps"></div>
+    </section>
+  </main>
+</div>
+
+<!-- MODAL (news) -->
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <div class="mh" id="modalTitle">お知らせを追加</div>
+    <div class="mb">
+      <div class="field"><label>日付</label><input type="date" id="fDate"></div>
+      <div class="field"><label>カテゴリ</label><select id="fCat"><option>お知らせ</option><option>診療案内</option><option>重要</option><option>休診</option></select></div>
+      <div class="field"><label>タイトル</label><input type="text" id="fTitle" placeholder="例）夏季休診のお知らせ（8月13日〜16日）" maxlength="120"></div>
+    </div>
+    <div class="mf"><button class="btn ghost" id="cancelBtn">キャンセル</button><button class="btn primary" id="saveBtn">保存する</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  var PW="nakamura", KEY="ndo_news", SESS="ndo_admin", SEOK="ndo_seo", MEOK="ndo_meo";
+  var d=document, login=d.getElementById("login"), shell=d.getElementById("shell");
+  d.getElementById("yr").textContent=new Date().getFullYear();
+
+  /* ---- auth ---- */
+  function unlock(){login.classList.add("hide");shell.style.display="grid";boot();}
+  if(sessionStorage.getItem(SESS)==="1") unlock();
+  d.getElementById("loginBtn").addEventListener("click",tryLogin);
+  d.getElementById("pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryLogin();});
+  function tryLogin(){var v=d.getElementById("pw").value;if(v===PW){sessionStorage.setItem(SESS,"1");unlock();}else d.getElementById("loginErr").textContent="パスワードが違います。";}
+  d.getElementById("logoutBtn").addEventListener("click",function(){sessionStorage.removeItem(SESS);location.reload();});
+
+  /* ---- view switching ---- */
+  function show(v){
+    d.querySelectorAll(".view").forEach(function(s){s.classList.toggle("on",s.id==="v-"+v);});
+    d.querySelectorAll("#nav a[data-v]").forEach(function(a){a.classList.toggle("active",a.getAttribute("data-v")===v);});
+  }
+  d.querySelectorAll("#nav a[data-v]").forEach(function(a){a.addEventListener("click",function(){show(a.getAttribute("data-v"));});});
+  d.querySelectorAll("[data-go]").forEach(function(g){g.addEventListener("click",function(){show(g.getAttribute("data-go"));});});
+
+  /* ================= NEWS ================= */
+  var DEFAULT=[
+    {date:"2026-07-15",category:"お知らせ",title:"夏季休診のお知らせ（8月13日〜8月16日）"},
+    {date:"2026-06-01",category:"診療案内",title:"小児歯科のフッ素塗布・定期検診の予約受付を開始しました"},
+    {date:"2026-04-20",category:"お知らせ",title:"インプラント・審美歯科の無料相談を実施しています"},
+    {date:"2026-03-10",category:"重要",title:"院内感染対策を強化しました（歯科外来診療感染対策加算1）"}
+  ];
+  var data=loadNews();
+  function loadNews(){try{var s=JSON.parse(localStorage.getItem(KEY)||"null");return(s&&s.length)?s:DEFAULT.slice();}catch(e){return DEFAULT.slice();}}
+  function saveNews(){localStorage.setItem(KEY,JSON.stringify(data));}
+  var CAT={"お知らせ":"","診療案内":"info","重要":"holiday","休診":"holiday"};
+  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  function fmt(iso){var x=new Date(iso+"T00:00:00");if(isNaN(x))return iso;return x.getFullYear()+"."+("0"+(x.getMonth()+1)).slice(-2)+"."+("0"+x.getDate()).slice(-2);}
+  var rows=d.getElementById("rows"), empty=d.getElementById("empty");
+  function renderNews(){
+    data.sort(function(a,b){return a.date<b.date?1:-1;});saveNews();
+    if(!data.length){rows.innerHTML="";empty.style.display="block";}else{
+      empty.style.display="none";
+      rows.innerHTML=data.map(function(n,i){return "<tr><td class='hide-sp'><span class='date'>"+fmt(n.date)+"</span></td><td><span class='tag "+(CAT[n.category]||"")+"'>"+esc(n.category)+"</span></td><td>"+esc(n.title)+"</td><td><div class='row-act'><button class='btn ghost mini' data-edit='"+i+"'>編集</button><button class='btn ghost mini danger' data-del='"+i+"'>削除</button></div></td></tr>";}).join("");
+    }
+    d.getElementById("dNews").textContent=data.length;
+  }
+  var modal=d.getElementById("modal"), editing=-1;
+  function openModal(i){editing=(typeof i==="number")?i:-1;d.getElementById("modalTitle").textContent=editing<0?"お知らせを追加":"お知らせを編集";var n=editing<0?{date:new Date().toISOString().slice(0,10),category:"お知らせ",title:""}:data[editing];d.getElementById("fDate").value=n.date;d.getElementById("fCat").value=n.category;d.getElementById("fTitle").value=n.title;modal.classList.add("show");setTimeout(function(){d.getElementById("fTitle").focus();},50);}
+  function closeModal(){modal.classList.remove("show");}
+  d.getElementById("addBtn").addEventListener("click",function(){openModal();});
+  d.getElementById("cancelBtn").addEventListener("click",closeModal);
+  modal.addEventListener("click",function(e){if(e.target===modal)closeModal();});
+  d.getElementById("saveBtn").addEventListener("click",function(){var dt=d.getElementById("fDate").value,c=d.getElementById("fCat").value,t=d.getElementById("fTitle").value.trim();if(!dt||!t){toast("日付とタイトルを入力してください");return;}var o={date:dt,category:c,title:t};if(editing<0)data.push(o);else data[editing]=o;renderNews();closeModal();toast(editing<0?"追加しました":"更新しました");});
+  rows.addEventListener("click",function(e){var ed=e.target.getAttribute("data-edit"),dl=e.target.getAttribute("data-del");if(ed!==null)openModal(+ed);if(dl!==null){if(confirm("このお知らせを削除しますか？")){data.splice(+dl,1);renderNews();toast("削除しました");}}});
+  d.getElementById("exportBtn").addEventListener("click",function(){var b=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});var a=d.createElement("a");a.href=URL.createObjectURL(b);a.download="news.json";a.click();URL.revokeObjectURL(a.href);toast("news.json を書き出しました");});
+  d.getElementById("importBtn").addEventListener("click",function(){d.getElementById("file").click();});
+  d.getElementById("file").addEventListener("change",function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var j=JSON.parse(r.result);if(Array.isArray(j)){data=j;renderNews();toast("読み込みました");}else toast("形式が正しくありません");}catch(err){toast("読み込みに失敗しました");}};r.readAsText(f);e.target.value="";});
+
+  /* ================= SEO / MEO STEPS ================= */
+  var SEO=[
+    ["title・meta descriptionの最適化","各ページに「南港/コスモスクエア＋診療科目」等のキーワードを含め、検索意図に合った説明文を設定する。","全ページ設定済み。診療科目・地域名を反映しています。","done"],
+    ["構造化データ（Dentist / JSON-LD）","医院名・住所・診療時間・電話をGoogleに正しく伝え、リッチな検索結果につなげる。","トップページに実装済み（openingHours・geo・住所を含む）。","done"],
+    ["サイトマップの送信","sitemap.xml をGoogle Search Consoleから送信し、全ページを確実にインデックスさせる。","公開後、Search Consoleで <b>sitemap.xml</b> を送信してください。","todo"],
+    ["Google Search Console登録","インデックス状況・検索キーワード・クリック数を把握し、改善に活かす。","ドメイン所有権の確認 → 登録を行ってください。","todo"],
+    ["表示速度の最適化","画像圧縮・遅延読み込み（lazy）で表示を高速化。速度は検索順位の要因。","画像最適化・lazyload 実装済み。","done"],
+    ["モバイル対応（レスポンシブ）","スマートフォンで見やすい表示。モバイル利用が主流のため必須。","レスポンシブ実装済み。","done"],
+    ["OGP / SNSシェア最適化","SNSでシェアされた際に画像・タイトルが正しく表示されるように設定。","OGP・Twitterカード設定済み。","done"],
+    ["内部リンク設計","診療案内・アクセス・料金への導線を整え、回遊性と評価を高める。","主要導線を設置済み。継続的に見直しましょう。","doing"],
+    ["定期的なコンテンツ更新","お知らせを定期発信し、サイトの鮮度を保つ。更新頻度は評価に影響。","管理画面から継続的に更新してください。","doing"],
+    ["ポータル掲載・サイテーション","歯科ポータルや地域情報サイトへ正確な医院情報を掲載し、認知と評価を高める。","EPARK・歯科タウン等への掲載を検討してください。","todo"]
+  ];
+  var MEO=[
+    ["ビジネスプロフィール登録・オーナー確認","Googleビジネスプロフィールに登録し、はがき等でオーナー確認を完了する。","未登録の場合はまず登録・確認から。","todo"],
+    ["NAP（名称・住所・電話）の統一","サイト・各種掲載先で表記を完全一致させる。表記ゆれは評価低下の原因。","サイト表記：中村歯科医院／南港北1-14-16 咲洲庁舎3F／06-6615-6180。","doing"],
+    ["診療時間・休診日の設定","正確な診療時間（土曜午後15:00-17:00・日祝休診）を登録する。","サイトと同一内容で登録してください。","todo"],
+    ["カテゴリ設定","「歯科医院」を主カテゴリに、小児歯科医・審美歯科等を副カテゴリに設定。","主・副カテゴリを設定してください。","todo"],
+    ["写真の追加","外観・院内・受付・スタッフ・診療風景の写真を掲載し、来院前の安心感を高める。","サイト掲載写真を活用して定期的に追加を。","todo"],
+    ["口コミの獲得と返信","来院患者に口コミを依頼し、いただいた口コミには丁寧に返信する。","返信率・件数は上位表示の重要要因です。","todo"],
+    ["Google投稿の定期更新","お知らせ・キャンペーンをGoogle投稿として発信する。","サイトのお知らせと連動させると効率的。","todo"],
+    ["予約・電話・経路のアクション設定","電話・経路案内・予約リンクを設定し、来院導線を最短化する。","電話番号・地図を設定してください。","doing"],
+    ["属性の設定（バリアフリー等）","車椅子対応・バリアフリー等の属性を設定し、来院ハードルを下げる。","当院はバリアフリー対応（サイト記載済み）。","todo"],
+    ["Q&A・よくある質問の整備","よくある質問を事前に掲載し、問い合わせ・不安を軽減する。","診療ページのFAQと揃えると効果的。","todo"]
+  ];
+  var seoState=load(SEOK,SEO), meoState=load(MEOK,MEO);
+  function load(k,def){try{var s=JSON.parse(localStorage.getItem(k)||"null");if(s&&s.length===def.length)return s;}catch(e){}return def.map(function(x){return x[3];});}
+  function save(k,st){localStorage.setItem(k,JSON.stringify(st));}
+  var LABEL={done:"完了",doing:"対応中",todo:"未対応"};
+  function renderSteps(list,state,mount){
+    d.getElementById(mount).innerHTML=list.map(function(x,i){
+      var st=state[i];
+      var opt=["done","doing","todo"].map(function(v){return "<option value='"+v+"'"+(v===st?" selected":"")+">"+LABEL[v]+"</option>";}).join("");
+      return "<div class='step' data-s='"+st+"'><div class='no'>"+("0"+(i+1)).slice(-2)+"</div>"+
+        "<div><h4>"+esc(x[0])+"</h4><p class='why'>"+esc(x[1])+"</p><p class='how'>"+x[2]+"</p></div>"+
+        "<select data-i='"+i+"'>"+opt+"</select></div>";
+    }).join("");
+  }
+  function pct(state){var dn=state.filter(function(s){return s==="done";}).length;var dg=state.filter(function(s){return s==="doing";}).length;return Math.round((dn+dg*0.5)/state.length*100);}
+  function refresh(which){
+    if(which!=="meo"){renderSteps(SEO,seoState,"seoSteps");var p=pct(seoState);d.getElementById("seoPct").textContent=p+"%";d.getElementById("seoRing").style.setProperty("--p",p);d.getElementById("dSeo").textContent=p+"%";d.getElementById("dSeoBar").style.width=p+"%";}
+    if(which!=="seo"){renderSteps(MEO,meoState,"meoSteps");var m=pct(meoState);d.getElementById("meoPct").textContent=m+"%";d.getElementById("meoRing").style.setProperty("--p",m);d.getElementById("dMeo").textContent=m+"%";d.getElementById("dMeoBar").style.width=m+"%";}
+  }
+  d.getElementById("seoSteps").addEventListener("change",function(e){var i=e.target.getAttribute("data-i");if(i!==null){seoState[+i]=e.target.value;save(SEOK,seoState);refresh("seo");toast("状態を更新しました");}});
+  d.getElementById("meoSteps").addEventListener("change",function(e){var i=e.target.getAttribute("data-i");if(i!==null){meoState[+i]=e.target.value;save(MEOK,meoState);refresh("meo");toast("状態を更新しました");}});
+
+  /* ---- toast ---- */
+  var tEl=d.getElementById("toast"),tT;
+  function toast(m){tEl.textContent=m;tEl.classList.add("show");clearTimeout(tT);tT=setTimeout(function(){tEl.classList.remove("show");},2200);}
+
+  function boot(){renderNews();refresh();}
+})();
+</script>
+</body>
+</html>

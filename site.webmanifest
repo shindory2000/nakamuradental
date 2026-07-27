@@ -1,0 +1,13 @@
+{
+  "name": "中村歯科医院｜コスモスクエア",
+  "short_name": "中村歯科",
+  "description": "大阪 南港コスモスクエア・咲洲庁舎3Fの歯科医院",
+  "lang": "ja",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#eaf6fb",
+  "theme_color": "#1f3f74",
+  "icons": [
+    { "src": "assets/img/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
