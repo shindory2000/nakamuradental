@@ -481,9 +481,6 @@ cards = "".join(f"""<article class="member reveal" data-d="{i%3}">
 </article>""" for i, (img, name, ja, en, cm) in enumerate(STAFF))
 s += f"""<section class="section staff">
   <div class="wrap">
-    <div class="staff-hero-photo wipe"><img src="assets/img/staff-group.jpg" alt="中村歯科医院のスタッフ集合写真" loading="lazy"></div>
-    <div class="sec-head center reveal"><span class="eyebrow">Our team</span>
-      <h2 class="ja">患者さま一人ひとりに寄り添って<span class="en">/ Staff</span></h2></div>
     <div class="member-grid">{cards}</div>
   </div>
 </section>
@@ -590,22 +587,6 @@ s += f"""<section class="section access">
         </dl>
         <a class="btn btn-ghost" style="margin-top:1.6rem;border-color:rgba(255,255,255,.3);color:#fff" href="https://maps.google.com/?q=大阪府咲洲庁舎" target="_blank" rel="noopener">Googleマップで見る<span class="arw">›</span></a>
       </div>
-    </div>
-  </div>
-</section>
-<section class="section">
-  <div class="wrap">
-    <div class="sec-head center reveal"><span class="eyebrow">Route</span><h2 class="ja">駅からの道のり<span class="en">/ Route</span></h2></div>
-    <div class="svc-grid">
-      <div class="svc-card reveal"><div class="svc-thumb"><img src="assets/img/new-tram.jpg" alt="ニュートラム（南港ポートタウン線）" loading="lazy"></div>
-        <div class="svc-body"><span class="en">Step 01</span><h4>トレードセンター前駅</h4>
-        <p>ニュートラム（南港ポートタウン線）「トレードセンター前駅」で下車。ATC方面の連絡デッキへお進みください。徒歩約5分です。</p></div></div>
-      <div class="svc-card reveal" data-d="1"><div class="svc-thumb"><img src="assets/img/cosmo-tower-real.jpg" alt="咲洲庁舎（コスモタワー）" loading="lazy"></div>
-        <div class="svc-body"><span class="en">Step 02</span><h4>咲洲庁舎（コスモタワー）へ</h4>
-        <p>ひときわ高いコスモタワーが目印です。Osaka Metro中央線「コスモスクエア駅」からは徒歩約8分でお越しいただけます。</p></div></div>
-      <div class="svc-card reveal" data-d="2"><div class="svc-thumb"><img src="assets/img/hero-entrance.jpg" alt="中村歯科医院 入口" loading="lazy"></div>
-        <div class="svc-body"><span class="en">Step 03</span><h4>3階・当院入口</h4>
-        <p>エレベーターで3階へ。「Nakamura Dental Office」のサインが目印です。お気をつけてお越しください。</p></div></div>
     </div>
   </div>
 </section>
