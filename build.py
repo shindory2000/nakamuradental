@@ -181,6 +181,7 @@ def footer():
       </div>
       <div class="foot-col"><h5>MENU</h5>{menu}</div>
       <div class="foot-col"><h5>SERVICE</h5>{svc}</div>
+      <div class="foot-col"><h5>ADMIN</h5><a href="admin/">管理画面</a></div>
     </div>
     <div class="foot-bottom">
       <span>© <span id="yr"></span> Nakamura Dental Office. All rights reserved.</span>
