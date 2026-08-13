@@ -461,8 +461,8 @@ STAFF = [
      "患者様の心配と不安が少しでも軽くなるようなお話ができればうれしいです。"),
 ]
 s = head("スタッフ紹介｜中村歯科医院（大阪 南港コスモスクエア）",
-         "中村歯科医院のスタッフ紹介。院長・歯科医師・歯科衛生士・受付が連携し、患者さま一人ひとりに寄り添った診療を行っています。",
-         "staff.html", "assets/img/staff-group-wide.jpg")
+         "スタッフ紹介。医師、歯科衛生士、受付スタッフが連携して診療を行っています。",
+         "staff.html", "assets/img/logo-mark.png")
 s += header("staff.html")
 s += """<section class="page-hero page-hero--plain">
   <span class="ph-deco" aria-hidden="true"></span>
