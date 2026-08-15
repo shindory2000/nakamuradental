@@ -650,8 +650,7 @@ s += """<section class="hero" id="top">
   <div class="hero-dots">%s</div>
   <div class="hero-copy">
     <h1 class="hero-vert">歯を守る治療に誠実であり続ける。</h1>
-    <p class="hero-vert">３０年の信頼と実績を</p>
-    <p class="hero-vert">あなたの笑顔のために。</p>
+    <p class="hero-vert">30年の信頼と実績をもとに、、、</p>
   </div>
   <a href="#news" class="scroll-cue">SCROLL</a>
 </section>
