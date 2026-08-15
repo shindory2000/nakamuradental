@@ -649,8 +649,8 @@ s += """<section class="hero" id="top">
   <div class="hero-skyline" data-tram="assets/img/skyline-silhouette.svg?v=%s" aria-hidden="true"></div>
   <div class="hero-dots">%s</div>
   <div class="hero-copy">
-    <h1 class="hero-vert">歯を守る治療に誠実であり続ける。</h1>
-    <p class="hero-vert">３０年の信頼と実績をもとに、、、</p>
+    <h1 class="hero-vert">歯を守る治療に真摯であり続ける</h1>
+    <p class="hero-vert">３０年の信頼と実績をもとに、</p>
   </div>
   <a href="#news" class="scroll-cue">SCROLL</a>
 </section>
