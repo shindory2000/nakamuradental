@@ -404,9 +404,14 @@ PAGES["service-aesthetic.html"] = svc_page(
 
         svc_block("whitening", "ic-aesthetic", "ホワイトニング", "", [
             "デュアルホワイトニングとは歯科医院で行うオフィスホワイトニングと、自宅で行うホームホワイトニングを併用するホワイトニング方法です。オフィスホワイトニングの即効性と、ホームホワイトニングの持続性を組み合わせることで、より効果的に歯を白くし、その白さを長く保つことができます。当院では4〜5回のオフィスホワイトニングと1ヶ月のホームホワイトニングを推奨しております。<b>55,000円（消費税込み）</b>",
-        ], None, "", ba("ba-whitening.jpg", "ホワイトニング症例（治療前→治療後）")
+            "通院が難しい患者様にホームホワイトニング <b>33,000円（消費税込み）</b>での対応もさせていただきます。",
+        ], "whitening.jpg", "ホワイトニングの施術風景", ba("ba-whitening.jpg", "ホワイトニング症例（治療前→治療後）")
+           + '<div class="tinfo-row">'
            + tinfo("デュアルホワイトニング", "数週間〜1ヶ月", "55,000円（税込）",
-                   "知覚過敏や色戻りが生じる可能性があります。") + NOTES_CASE),
+                   "知覚過敏や色戻りが生じる可能性があります。")
+           + tinfo("ホームホワイトニング", "1〜2ヶ月", "33,000円（税込）",
+                   "知覚過敏や色戻りが生じる可能性があります。")
+           + '</div>' + NOTES_CASE),
 
         svc_block("ceramic", "ic-aesthetic", "オールセラミッククラウン＋ラミネートベニア", "", [
             "オールセラミッククラウンは歯の全周をセラミックで覆うもの <b>110,000円（消費税込み）</b>",
@@ -615,10 +620,10 @@ JSONLD = """<script type="application/ld+json">
 
 # 実サイト同様、院内カットに咲洲庁舎の外観・診療風景を織り交ぜてフェード
 HERO_SLIDES = [
-    ("hero-shelf.jpg", "中村歯科医院の院内（待合スペース）"),
-    ("hero-front.jpg", "中村歯科医院の入口"),
-    ("cosmo-tower-real.jpg", "医院が入る大阪府咲洲庁舎（コスモタワー）"),
-    ("hero-waiting.jpg", "中村歯科医院の待合室"),
+    ("treatment-01.jpg", "中村歯科医院の診療風景"),
+    ("instruments.jpg", "器具のメンテナンスを行うスタッフ"),
+    ("hero-front.jpg", "中村歯科医院の受付"),
+    ("hero-shelf.jpg", "中村歯科医院の入口（大阪府咲洲庁舎3F）"),
 ]
 slides = "".join(
     '<div class="slide%s"><img src="assets/img/%s" alt="%s"%s></div>'
@@ -649,8 +654,8 @@ s += """<section class="hero" id="top">
   <div class="hero-skyline" data-tram="assets/img/skyline-silhouette.svg?v=%s" aria-hidden="true"></div>
   <div class="hero-dots">%s</div>
   <div class="hero-copy">
-    <h1 class="hero-vert">歯を守る治療に真摯であり続ける</h1>
-    <p class="hero-vert">３０年の信頼と実績をもとに、</p>
+    <h1 class="hero-vert">あなたの笑顔のために</h1>
+    <p class="hero-vert">信頼と実績を</p>
   </div>
   <a href="#news" class="scroll-cue">SCROLL</a>
 </section>
@@ -711,7 +716,7 @@ s += """<section class="section news" id="news">
       </div>
       <div class="reveal" data-d="1">
         <h3 class="blk-ttl">診療時間</h3>
-        <p class="blk-note">予約制　新患随時</p>
+        <p class="blk-note">予約制　新患　急患随時</p>
         %s
         <h3 class="blk-ttl" style="margin-top:2.4rem">所在地</h3>
         <p class="blk-body">大阪市住之江区南港北１丁目１４－１６ 大阪府咲洲庁舎 ３Ｆ<br>

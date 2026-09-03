@@ -2,6 +2,18 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "file-swipe",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["/Users/horikawashinnosuke/bin/file-swipe.py"],
+      "port": 7777
+    },
+    {
+      "name": "photo-swipe",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["/Users/horikawashinnosuke/bin/photo-swipe.py"],
+      "port": 7778
+    },
+    {
       "name": "static-site",
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "8765"],
