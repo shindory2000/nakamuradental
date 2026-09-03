@@ -122,7 +122,7 @@ def header(current=""):
     return f"""<header class="site-header" id="header">
   <div class="wrap">
     <a href="index.html" class="brand" aria-label="中村歯科医院 ホーム">{LOGO_SVG}
-      <span class="name"><b>Nakamura Dental</b><span>OFFICE ｜ COSMOSQUARE</span></span></a>
+      <span class="name"><b>Nakamura Dental Office</b><span>COSMOSQUARE</span></span></a>
     <nav class="nav" aria-label="グローバルナビ">{nav}</nav>
     <a class="header-tel" href="tel:{TELR}">{TEL_ICON}{TEL}</a>
     <button class="burger" id="burger" aria-label="メニューを開く" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -177,7 +177,7 @@ def footer():
     <div class="foot-grid">
       <div class="foot-brand">
         <a href="index.html" class="brand">{LOGO_SVG}
-          <span class="name"><b>Nakamura Dental</b><span>OFFICE ｜ COSMOSQUARE</span></span></a>
+          <span class="name"><b>Nakamura Dental Office</b><span>COSMOSQUARE</span></span></a>
         <p>{ADDR1}<br>{ADDR2}<br>TEL {TEL}</p>
       </div>
       <div class="foot-col"><h5>MENU</h5>{menu}</div>
