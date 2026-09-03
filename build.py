@@ -620,10 +620,10 @@ JSONLD = """<script type="application/ld+json">
 
 # 実サイト同様、院内カットに咲洲庁舎の外観・診療風景を織り交ぜてフェード
 HERO_SLIDES = [
-    ("treatment-01.jpg", "中村歯科医院の診療風景"),
-    ("instruments.jpg", "器具のメンテナンスを行うスタッフ"),
-    ("hero-front.jpg", "中村歯科医院の受付"),
     ("hero-shelf.jpg", "中村歯科医院の入口（大阪府咲洲庁舎3F）"),
+    ("treatment-02.jpg", "中村歯科医院の診療風景"),
+    ("reception-clock.jpg", "中村歯科医院の受付"),
+    ("instruments.jpg", "器具のメンテナンスを行うスタッフ"),
 ]
 slides = "".join(
     '<div class="slide%s"><img src="assets/img/%s" alt="%s"%s></div>'
