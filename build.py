@@ -289,7 +289,7 @@ def svc_block(anchor, icon_key, title, sub, paras, img=None, img_alt="", extra="
 </section>"""
 
 
-def svc_page(fname, h1, sub, hero_img, blocks, faqs, crumb_mid=True):
+def svc_page(fname, h1, sub, hero_img, blocks, faqs, crumb_mid=True, after_blocks=""):
     t = f"{h1}｜中村歯科医院（大阪 南港コスモスクエア・咲洲庁舎3F）"
     label = h1.replace("診療のご案内｜", "")
     d = f"中村歯科医院の{label}についてのご案内です。大阪 南港コスモスクエア・咲洲庁舎3F。"
@@ -309,7 +309,7 @@ def svc_page(fname, h1, sub, hero_img, blocks, faqs, crumb_mid=True):
 <section class="section svc-page">
   <div class="wrap">{''.join(blocks)}</div>
 </section>
-"""
+{after_blocks}"""
     if faqs:
         s += faq(faqs)
     s += tramband()
@@ -317,6 +317,14 @@ def svc_page(fname, h1, sub, hero_img, blocks, faqs, crumb_mid=True):
     s += footer()
     return s
 
+
+# service.html 内から他ページ（矯正・インプラント・義歯・審美）へ飛べるようにする案内カード
+other_svc_cards = "".join("""<a class="svc-card reveal" data-d="%d" href="%s">
+  <span class="svc-ic">%s</span>
+  <h4>%s</h4><span class="en">%s</span><p>%s</p>
+  <span class="more">詳しくはこちら<span class="arw">›</span></span>
+</a>""" % (i % 4, href, icon(ic), ja, en, desc)
+    for i, (href, ja, en, ic, desc, hero) in enumerate(SERVICES) if not href.startswith("service.html#"))
 
 # ---------- 診療のご案内（4項目まとめ） ----------
 PAGES["service.html"] = svc_page(
@@ -354,7 +362,13 @@ PAGES["service.html"] = svc_page(
      ("3Mix-MP法とはどんな治療ですか？", "3種類の抗菌薬を用いた治療法で、歯を削る量を最小限に抑えながら虫歯や根尖病変の治療が可能です。"),
      ("何歳から受診できますか？", "歯が生え始めた頃（1歳前後）からご相談いただけます。まずは慣れることから始めます。"),
      ("定期検診はどれくらいの間隔ですか？", "通常３ヶ月〜６ヶ月で行いますが、その方の症状によって１ヶ月〜２ヶ月で行う場合もあります。")],
-    crumb_mid=False
+    crumb_mid=False,
+    after_blocks=f"""<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="eyebrow">More</span><h2 class="ja">その他の診療<span class="en">/ Service</span></h2></div>
+    <div class="svc-grid">{other_svc_cards}</div>
+  </div>
+</section>"""
 )
 
 # ---------- インプラント ----------
@@ -621,8 +635,8 @@ JSONLD = """<script type="application/ld+json">
 # 実サイト同様、院内カットに咲洲庁舎の外観・診療風景を織り交ぜてフェード
 HERO_SLIDES = [
     ("hero-shelf.jpg", "中村歯科医院の入口（大阪府咲洲庁舎3F）"),
-    ("treatment-02.jpg", "中村歯科医院の診療風景"),
     ("reception-clock.jpg", "中村歯科医院の受付"),
+    ("treatment-02.jpg", "中村歯科医院の診療風景"),
     ("instruments.jpg", "器具のメンテナンスを行うスタッフ"),
 ]
 slides = "".join(

@@ -100,7 +100,10 @@ h1,h2,h3,h4,h5,p{margin:0}
 .brand .name{line-height:1.15}
 .brand .name b{display:block;font-family:var(--f-latin);font-weight:600;font-size:1.02rem;letter-spacing:.04em;color:var(--navy);white-space:nowrap}
 .brand .name span{display:block;font-size:.64rem;letter-spacing:.24em;color:var(--ink-faint)}
-/* ブランド名は写真上でも青文字のまま（クライアント要望） */
+.on-photo .brand .name b{color:#fff}
+.on-photo .brand .name span{color:rgba(255,255,255,.75)}
+.on-photo .brand .logo-mark .ring{stroke:#fff}
+.on-photo .brand .logo-mark .dot{fill:#fff}
 .nav{display:flex;align-items:center;gap:2rem}
 .nav a{font-size:.9rem;font-weight:500;letter-spacing:.06em;position:relative;padding:.4em 0;transition:color .3s}
 .nav a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1.5px;background:var(--sky);transition:width .4s var(--ease)}
@@ -497,6 +500,7 @@ table.price tbody tr:hover{background:var(--sand)}
 /* 実ロゴ画像（ダーク背景では白に反転） */
 .brand .logo-mark{width:auto;height:38px;flex:none}
 .site-header.solid .brand .logo-mark{filter:none}
+.on-photo .brand .logo-mark{filter:brightness(0) invert(1)}
 .foot-brand .brand .logo-mark{filter:brightness(0) invert(1)}
 
 /* 写真なしのページヒーロー */
