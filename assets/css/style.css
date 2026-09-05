@@ -152,8 +152,9 @@ body.menu-open .drawer a:nth-child(6){transition-delay:.33s}
 /* portrait sources — tune focal point for the wide desktop crop */
 .hero-slides .slide:nth-child(1) img{object-position:center 46%}
 .hero-slides .slide:nth-child(2) img{object-position:center 54%}
-.hero-slides .slide:nth-child(3) img{object-position:center 34%}
-@media(max-aspect-ratio:1/1){.hero-slides img{object-position:center center!important}}
+.hero-slides .slide:nth-child(3) img{object-position:38% 82%}
+@media(max-aspect-ratio:1/1){.hero-slides img{object-position:center center!important}
+.hero-slides .slide:nth-child(3) img{object-position:38% 82%!important}}
 .hero::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;
   background:linear-gradient(180deg,rgba(12,28,52,.34) 0%,rgba(12,28,52,.06) 30%,rgba(12,28,52,.30) 100%)}
 
