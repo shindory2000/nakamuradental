@@ -633,16 +633,20 @@ JSONLD = """<script type="application/ld+json">
 """ % (SITE, SITE)
 
 # 実サイト同様、院内カットに咲洲庁舎の外観・診療風景を織り交ぜてフェード
+# (ファイル名, alt文, 通常時のobject-position, 縦長画面でのobject-position)
 HERO_SLIDES = [
-    ("hero-shelf.jpg", "中村歯科医院の入口（大阪府咲洲庁舎3F）"),
-    ("reception-clock.jpg", "中村歯科医院の受付"),
-    ("treatment-01.jpg", "中村歯科医院の診療風景"),
-    ("instruments.jpg", "器具のメンテナンスを行うスタッフ"),
+    ("instruments.jpg", "器具のメンテナンスを行うスタッフ", "center center", "center center"),
+    ("reception-clock.jpg", "中村歯科医院の受付", "center 54%", "18% 42%"),
+    ("hero-shelf.jpg", "中村歯科医院の入口（大阪府咲洲庁舎3F）", "center 46%", "center center"),
+    ("treatment-01.jpg", "中村歯科医院の診療風景", "38% 82%", "38% 82%"),
 ]
 slides = "".join(
-    '<div class="slide%s"><img src="assets/img/%s" alt="%s"%s></div>'
-    % (" on" if i == 0 else "", img, alt, "" if i == 0 else ' loading="lazy"')
-    for i, (img, alt) in enumerate(HERO_SLIDES))
+    '<div class="slide%s"><img src="assets/img/%s" alt="%s" style="object-position:%s"%s></div>'
+    % (" on" if i == 0 else "", img, alt, pos, "" if i == 0 else ' loading="lazy"')
+    for i, (img, alt, pos, pos_portrait) in enumerate(HERO_SLIDES))
+slide_portrait_css = "\n".join(
+    '.hero-slides .slide:nth-child(%d) img{object-position:%s!important}' % (i + 1, pos_portrait)
+    for i, (img, alt, pos, pos_portrait) in enumerate(HERO_SLIDES))
 dots = "".join('<button aria-label="スライド%d"%s></button>' % (i + 1, " class=\"on\"" if i == 0 else "")
                for i in range(len(HERO_SLIDES)))
 
@@ -658,9 +662,10 @@ staff_cards = "".join("""<article class="member reveal" data-d="%d">
   <p class="member-name">%s</p><p class="member-role">%s</p></article>""" % (i % 4, img, name, name, ja)
     for i, (img, name, ja, en, cm) in enumerate(STAFF[:4]))
 
+HERO_PORTRAIT_STYLE = "<style>@media(max-aspect-ratio:1/1){\n%s\n}</style>\n" % slide_portrait_css
 s = head("中村歯科医院｜大阪 南港コスモスクエア・咲洲庁舎3Fの歯科",
          "大阪市住之江区南港・コスモスクエア（大阪府咲洲庁舎3F）の中村歯科医院。30年の信頼と実績で、一般歯科・小児歯科・インプラント・審美歯科・入れ歯まで対応。コスモスクエア駅・トレードセンター前駅すぐ。",
-         "", "assets/img/hero-reception.jpg", JSONLD)
+         "", "assets/img/hero-reception.jpg", JSONLD + HERO_PORTRAIT_STYLE)
 s += header("index.html")
 s += """<section class="hero" id="top">
   <div class="hero-slides">%s</div>
