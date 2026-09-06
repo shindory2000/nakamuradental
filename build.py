@@ -636,8 +636,8 @@ JSONLD = """<script type="application/ld+json">
 # (ファイル名, alt文, 通常時のobject-position, 縦長画面でのobject-position)
 HERO_SLIDES = [
     ("hero-shelf.jpg", "中村歯科医院の入口（大阪府咲洲庁舎3F）", "center 46%", "center center"),
-    ("treatment-01.jpg", "中村歯科医院の診療風景", "38% 82%", "38% 82%"),
-    ("reception-clock.jpg", "中村歯科医院の受付", "center 54%", "18% 42%"),
+    ("treatment-03.jpg", "中村歯科医院の診療風景", "center center", "center center"),
+    ("reception-wide.jpg", "中村歯科医院の受付", "center center", "center center"),
     ("instruments.jpg", "器具のメンテナンスを行うスタッフ", "center center", "center center"),
 ]
 slides = "".join(
