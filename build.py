@@ -351,7 +351,7 @@ PAGES["service.html"] = svc_page(
         svc_block("pmtc", "ic-3mix", "予防歯科", "PMTC", [
             "PMTC（専門家による機械的歯面清掃）を中心に、虫歯・歯周病を未然に防ぐための予防ケアを提供しています。",
             "歯科衛生士による丁寧なクリーニング、フッ素塗布、歯茎マッサージにより、清潔で健康な口腔環境を保ちます。定期検診を通じて、長期的なお口の健康維持をサポートします。",
-        ], None, "", checks([
+        ], "pmtc-hygienist.jpg", "歯科衛生士によるPMTC（機械的歯面清掃）", checks([
             ("歯周病の予防", "歯の付け根のプラークを除去し、歯肉炎の症状が改善される。"),
             ("虫歯の予防", "バイオフィルムが破壊され、プラークの再付着を防ぐ。"),
             ("歯がきれいに", "歯についたステイン(着色物)を除去し、光沢のある歯になる。"),
@@ -637,7 +637,7 @@ JSONLD = """<script type="application/ld+json">
 # モード "cover"(既定): フルブリードでクロップ。"contain-blur": 画像全体を必ず見せ、
 # 余白にはぼかした同じ写真を敷いて自然に馴染ませる（合成2段画像など縦横比が特殊なもの向け）
 HERO_SLIDES = [
-    ("hero-shelf.jpg", "中村歯科医院の入口（大阪府咲洲庁舎3F）", "center 46%", "center center", "cover"),
+    ("hero-entrance-new.jpg", "中村歯科医院の入口（大阪府咲洲庁舎3F）", "center center", "center center", "cover"),
     ("treatment-03.jpg", "中村歯科医院の診療風景", "center center", "center center", "cover"),
     ("reception-wide.jpg", "中村歯科医院の受付", "center center", "center center", "contain-blur"),
     ("instruments.jpg", "器具のメンテナンスを行うスタッフ", "center center", "center center", "cover"),
