@@ -633,20 +633,27 @@ JSONLD = """<script type="application/ld+json">
 """ % (SITE, SITE)
 
 # 実サイト同様、院内カットに咲洲庁舎の外観・診療風景を織り交ぜてフェード
-# (ファイル名, alt文, 通常時のobject-position, 縦長画面でのobject-position)
+# (ファイル名, alt文, 通常時のobject-position, 縦長画面でのobject-position, モード)
+# モード "cover"(既定): フルブリードでクロップ。"contain-blur": 画像全体を必ず見せ、
+# 余白にはぼかした同じ写真を敷いて自然に馴染ませる（合成2段画像など縦横比が特殊なもの向け）
 HERO_SLIDES = [
-    ("hero-shelf.jpg", "中村歯科医院の入口（大阪府咲洲庁舎3F）", "center 46%", "center center"),
-    ("treatment-03.jpg", "中村歯科医院の診療風景", "center center", "center center"),
-    ("reception-wide.jpg", "中村歯科医院の受付", "center center", "center center"),
-    ("instruments.jpg", "器具のメンテナンスを行うスタッフ", "center center", "center center"),
+    ("hero-shelf.jpg", "中村歯科医院の入口（大阪府咲洲庁舎3F）", "center 46%", "center center", "cover"),
+    ("treatment-03.jpg", "中村歯科医院の診療風景", "center center", "center center", "cover"),
+    ("reception-wide.jpg", "中村歯科医院の受付", "center center", "center center", "contain-blur"),
+    ("instruments.jpg", "器具のメンテナンスを行うスタッフ", "center center", "center center", "cover"),
 ]
-slides = "".join(
-    '<div class="slide%s"><img src="assets/img/%s" alt="%s" style="object-position:%s"%s></div>'
-    % (" on" if i == 0 else "", img, alt, pos, "" if i == 0 else ' loading="lazy"')
-    for i, (img, alt, pos, pos_portrait) in enumerate(HERO_SLIDES))
+def _slide_html(i, img, alt, pos, pos_portrait, mode):
+    on = " on" if i == 0 else ""
+    lazy = "" if i == 0 else ' loading="lazy"'
+    if mode == "contain-blur":
+        return ('<div class="slide contain-mode%s" style="background-image:url(assets/img/%s)">'
+                '<img src="assets/img/%s" alt="%s"%s></div>') % (on, img, img, alt, lazy)
+    return '<div class="slide%s"><img src="assets/img/%s" alt="%s" style="object-position:%s"%s></div>' \
+        % (on, img, alt, pos, lazy)
+slides = "".join(_slide_html(i, *s) for i, s in enumerate(HERO_SLIDES))
 slide_portrait_css = "\n".join(
     '.hero-slides .slide:nth-child(%d) img{object-position:%s!important}' % (i + 1, pos_portrait)
-    for i, (img, alt, pos, pos_portrait) in enumerate(HERO_SLIDES))
+    for i, (img, alt, pos, pos_portrait, mode) in enumerate(HERO_SLIDES) if mode == "cover")
 dots = "".join('<button aria-label="スライド%d"%s></button>' % (i + 1, " class=\"on\"" if i == 0 else "")
                for i in range(len(HERO_SLIDES)))
 

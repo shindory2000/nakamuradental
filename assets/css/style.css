@@ -150,6 +150,14 @@ body.menu-open .drawer a:nth-child(6){transition-delay:.33s}
   transition:transform 9s linear}
 .hero-slides .slide.on img{transform:scale(1.16)}
 /* per-slide object-position は index.html 側でインライン style + <style id="hero-portrait"> により指定 */
+/* contain-blur モード：画像全体を必ず見せ、余白には同じ写真のぼかしを敷いて馴染ませる */
+.hero-slides .slide.contain-mode{background-size:cover;background-position:center}
+.hero-slides .slide.contain-mode::before{content:"";position:absolute;inset:-40px;
+  background-image:inherit;background-size:cover;background-position:center;
+  filter:blur(46px) brightness(.5) saturate(1.15);transform:scale(1.1);z-index:0}
+.hero-slides .slide.contain-mode img{position:relative;width:100%;height:100%;
+  object-fit:contain;object-position:center;transform:none!important;z-index:1;
+  filter:drop-shadow(0 24px 60px rgba(0,0,0,.45))}
 .hero::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;
   background:linear-gradient(180deg,rgba(12,28,52,.34) 0%,rgba(12,28,52,.06) 30%,rgba(12,28,52,.30) 100%)}
 
