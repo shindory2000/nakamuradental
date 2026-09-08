@@ -633,27 +633,32 @@ JSONLD = """<script type="application/ld+json">
 """ % (SITE, SITE)
 
 # 実サイト同様、院内カットに咲洲庁舎の外観・診療風景を織り交ぜてフェード
-# (ファイル名, alt文, 通常時のobject-position, 縦長画面でのobject-position, モード)
+# (ファイル名, alt文, 通常時のobject-position, 縦長画面でのobject-position, モード, PC用の横長版)
 # モード "cover"(既定): フルブリードでクロップ。"contain-blur": 画像全体を必ず見せ、
 # 余白にはぼかした同じ写真を敷いて自然に馴染ませる（合成2段画像など縦横比が特殊なもの向け）
+# PC用の横長版を指定すると、幅900px以上では縦長の原版ではなくそちらを配信する
+# （縦長写真を横長画面に cover すると2倍以上ズームされ「写真が大きすぎる」ため）
 HERO_SLIDES = [
-    ("hero-entrance-new.jpg", "中村歯科医院の入口（大阪府咲洲庁舎3F）", "center center", "center center", "cover"),
-    ("treatment-03.jpg", "中村歯科医院の診療風景", "center center", "center center", "cover"),
-    ("reception-wide.jpg", "中村歯科医院の受付", "center center", "center center", "contain-blur"),
-    ("instruments.jpg", "器具のメンテナンスを行うスタッフ", "center center", "center center", "cover"),
+    ("hero-entrance-new.jpg", "中村歯科医院の入口（大阪府咲洲庁舎3F）", "center center", "center center", "cover", "hero-entrance-new-wide.jpg"),
+    ("treatment-03.jpg", "中村歯科医院の診療風景", "center center", "center center", "cover", "treatment-03-wide.jpg"),
+    ("reception-wide.jpg", "中村歯科医院の受付", "center center", "center center", "contain-blur", None),
+    ("instruments.jpg", "器具のメンテナンスを行うスタッフ", "center center", "center center", "cover", None),
 ]
-def _slide_html(i, img, alt, pos, pos_portrait, mode):
+def _slide_html(i, img, alt, pos, pos_portrait, mode, wide):
     on = " on" if i == 0 else ""
     lazy = "" if i == 0 else ' loading="lazy"'
     if mode == "contain-blur":
         return ('<div class="slide contain-mode%s" style="background-image:url(assets/img/%s)">'
                 '<img src="assets/img/%s" alt="%s"%s></div>') % (on, img, img, alt, lazy)
-    return '<div class="slide%s"><img src="assets/img/%s" alt="%s" style="object-position:%s"%s></div>' \
-        % (on, img, alt, pos, lazy)
+    img_tag = '<img src="assets/img/%s" alt="%s" style="object-position:%s"%s>' % (img, alt, pos, lazy)
+    if wide:
+        return ('<div class="slide%s"><picture>'
+                '<source media="(min-width:900px)" srcset="assets/img/%s">%s</picture></div>') % (on, wide, img_tag)
+    return '<div class="slide%s">%s</div>' % (on, img_tag)
 slides = "".join(_slide_html(i, *s) for i, s in enumerate(HERO_SLIDES))
 slide_portrait_css = "\n".join(
     '.hero-slides .slide:nth-child(%d) img{object-position:%s!important}' % (i + 1, pos_portrait)
-    for i, (img, alt, pos, pos_portrait, mode) in enumerate(HERO_SLIDES) if mode == "cover")
+    for i, (img, alt, pos, pos_portrait, mode, wide) in enumerate(HERO_SLIDES) if mode == "cover")
 dots = "".join('<button aria-label="スライド%d"%s></button>' % (i + 1, " class=\"on\"" if i == 0 else "")
                for i in range(len(HERO_SLIDES)))
 
