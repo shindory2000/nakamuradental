@@ -9,7 +9,7 @@ import os, time
 VER = str(int(time.time()))  # cache buster
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-SITE = "https://nakamura-dental.com"
+SITE = "https://nakamuradental.jp"
 TEL, TELR = "06-6615-6180", "0666156180"
 ADDR1 = "大阪市住之江区南港北1丁目14-16"
 ADDR2 = "大阪府咲洲庁舎（コスモタワー）3F"

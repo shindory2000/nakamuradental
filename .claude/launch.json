@@ -4,20 +4,51 @@
     {
       "name": "file-swipe",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["/Users/horikawashinnosuke/bin/file-swipe.py"],
+      "runtimeArgs": [
+        "/Users/horikawashinnosuke/bin/file-swipe.py"
+      ],
       "port": 7777
     },
     {
       "name": "photo-swipe",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["/Users/horikawashinnosuke/bin/photo-swipe.py"],
+      "runtimeArgs": [
+        "/Users/horikawashinnosuke/bin/photo-swipe.py"
+      ],
       "port": 7778
     },
     {
       "name": "static-site",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8765"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8765"
+      ],
       "port": 8765
+    },
+    {
+      "name": "pol-studio-reserve",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/horikawashinnosuke/pol-studio-reserve",
+        "run",
+        "start"
+      ],
+      "port": 4000
+    },
+    {
+      "name": "share-tunnel",
+      "runtimeExecutable": "cloudflared",
+      "runtimeArgs": [
+        "tunnel",
+        "--url",
+        "http://localhost:4000",
+        "--metrics",
+        "localhost:20243"
+      ],
+      "port": 20243
     }
   ]
 }
