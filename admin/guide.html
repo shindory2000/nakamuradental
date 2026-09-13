@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>管理画面ガイド｜中村歯科医院</title>
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --ink:#16212e;
+    --ink-2:#3f5061;
+    --ink-3:#6b7c8e;
+    --navy:#1f3f74;
+    --sky:#4a80bd;
+    --sky-soft:#e8f0f9;
+    --paper:#ffffff;
+    --surface:#f3f6fa;
+    --surface-2:#e9eef5;
+    --line:#d7e0ea;
+    --line-soft:#e6ecf3;
+    --amber:#9a5b06;
+    --amber-bg:#fdf4e3;
+    --amber-line:#e8c88a;
+    --red:#a32020;
+    --red-bg:#fcf0ef;
+    --red-line:#e5b3ae;
+    --green:#1d6b4f;
+    --green-bg:#e9f5ef;
+    --f-ja:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Hiragino Sans",Meiryo,sans-serif;
+    --f-en:"Jost","Zen Kaku Gothic New",sans-serif;
+    --wrap:820px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#e6ecf3;
+      --ink-2:#b3c1d0;
+      --ink-3:#8496a8;
+      --navy:#9dc0ea;
+      --sky:#7fb0e0;
+      --sky-soft:#1b2a3d;
+      --paper:#121924;
+      --surface:#182232;
+      --surface-2:#1f2b3d;
+      --line:#2c3a4d;
+      --line-soft:#243040;
+      --amber:#e0b264;
+      --amber-bg:#2a2113;
+      --amber-line:#5c4620;
+      --red:#e8938c;
+      --red-bg:#2c1817;
+      --red-line:#5e2f2b;
+      --green:#7fc9a6;
+      --green-bg:#152a22;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#e6ecf3;
+    --ink-2:#b3c1d0;
+    --ink-3:#8496a8;
+    --navy:#9dc0ea;
+    --sky:#7fb0e0;
+    --sky-soft:#1b2a3d;
+    --paper:#121924;
+    --surface:#182232;
+    --surface-2:#1f2b3d;
+    --line:#2c3a4d;
+    --line-soft:#243040;
+    --amber:#e0b264;
+    --amber-bg:#2a2113;
+    --amber-line:#5c4620;
+    --red:#e8938c;
+    --red-bg:#2c1817;
+    --red-line:#5e2f2b;
+    --green:#7fc9a6;
+    --green-bg:#152a22;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--surface);
+    color:var(--ink);
+    font-family:var(--f-ja);
+    line-height:1.85;
+    letter-spacing:.01em;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sheet{
+    max-width:var(--wrap);
+    margin:0 auto;
+    background:var(--paper);
+    border-left:1px solid var(--line-soft);
+    border-right:1px solid var(--line-soft);
+    padding:0 clamp(20px,5vw,56px) 80px;
+  }
+
+  /* ---- header ---- */
+  header.top{
+    padding:clamp(36px,6vw,56px) 0 28px;
+    border-bottom:2px solid var(--navy);
+    margin-bottom:40px;
+  }
+  .eyebrow{
+    font-family:var(--f-en);
+    font-size:.72rem;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    color:var(--sky);
+    margin:0 0 10px;
+  }
+  h1{
+    font-size:clamp(1.6rem,4.2vw,2.2rem);
+    line-height:1.35;
+    margin:0 0 14px;
+    text-wrap:balance;
+    letter-spacing:.02em;
+  }
+  .lead{
+    margin:0;
+    color:var(--ink-2);
+    font-size:1rem;
+    max-width:58ch;
+  }
+
+  /* ---- sections ---- */
+  section{margin:0 0 52px}
+  h2{
+    font-size:1.18rem;
+    margin:0 0 6px;
+    display:flex;
+    align-items:baseline;
+    gap:.6em;
+    text-wrap:balance;
+  }
+  h2 .num{
+    font-family:var(--f-en);
+    font-size:.82rem;
+    color:var(--paper);
+    background:var(--navy);
+    width:1.9em;height:1.9em;
+    display:inline-flex;align-items:center;justify-content:center;
+    border-radius:50%;
+    flex:none;
+    letter-spacing:0;
+  }
+  .sec-note{
+    margin:0 0 20px 2.5em;
+    color:var(--ink-3);
+    font-size:.9rem;
+  }
+  h3{
+    font-size:1rem;
+    margin:28px 0 10px;
+    color:var(--navy);
+  }
+  p{margin:0 0 14px;max-width:64ch}
+
+  /* ---- access box ---- */
+  .access{
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:2px 0;
+    background:var(--line-soft);
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    margin:0 0 8px;
+  }
+  .access dt{
+    background:var(--surface-2);
+    padding:12px 18px;
+    font-size:.85rem;
+    color:var(--ink-2);
+    white-space:nowrap;
+  }
+  .access dd{
+    background:var(--paper);
+    padding:12px 18px;
+    margin:0;
+    font-family:var(--f-en);
+    font-size:.98rem;
+    word-break:break-all;
+  }
+
+  /* ---- steps ---- */
+  ol.steps{
+    list-style:none;
+    counter-reset:s;
+    padding:0;margin:0;
+    display:flex;flex-direction:column;
+    gap:2px;
+  }
+  ol.steps > li{
+    counter-increment:s;
+    position:relative;
+    padding:16px 18px 16px 58px;
+    background:var(--surface);
+    border-left:3px solid var(--line);
+  }
+  ol.steps > li::before{
+    content:counter(s);
+    position:absolute;
+    left:18px;top:16px;
+    font-family:var(--f-en);
+    font-size:.9rem;
+    color:var(--sky);
+    border:1px solid var(--sky);
+    width:1.9em;height:1.9em;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:50%;
+  }
+  ol.steps > li b{display:block;margin-bottom:2px}
+  ol.steps > li span{color:var(--ink-2);font-size:.9rem}
+  ol.steps > li.key{
+    background:var(--sky-soft);
+    border-left-color:var(--sky);
+  }
+
+  /* ---- callouts ---- */
+  .callout{
+    border:1px solid var(--line);
+    border-left:4px solid var(--sky);
+    background:var(--surface);
+    padding:16px 20px;
+    border-radius:0 6px 6px 0;
+    margin:0 0 16px;
+  }
+  .callout.warn{border-color:var(--amber-line);border-left-color:var(--amber);background:var(--amber-bg)}
+  .callout.stop{border-color:var(--red-line);border-left-color:var(--red);background:var(--red-bg)}
+  .callout .ttl{
+    font-weight:700;
+    display:flex;align-items:center;gap:.5em;
+    margin-bottom:6px;
+  }
+  .callout.warn .ttl{color:var(--amber)}
+  .callout.stop .ttl{color:var(--red)}
+  .callout p:last-child{margin-bottom:0}
+  .callout p{max-width:none}
+
+  /* ---- table ---- */
+  .t-wrap{overflow-x:auto;margin:0 0 16px;border:1px solid var(--line);border-radius:6px}
+  table{border-collapse:collapse;width:100%;min-width:520px;font-size:.9rem}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  thead th{
+    background:var(--surface-2);
+    font-size:.78rem;
+    letter-spacing:.06em;
+    color:var(--ink-2);
+    font-weight:500;
+    white-space:nowrap;
+  }
+  tbody tr:last-child td{border-bottom:0}
+  td.when{white-space:nowrap;color:var(--navy);font-weight:500}
+  .tag{
+    display:inline-block;
+    font-size:.75rem;
+    padding:2px 9px;
+    border-radius:3px;
+    background:var(--surface-2);
+    color:var(--ink-2);
+    font-family:var(--f-en);
+    letter-spacing:.04em;
+  }
+
+  /* ---- screen cards ---- */
+  .screens{display:flex;flex-direction:column;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .screen{background:var(--paper);padding:18px 20px;display:grid;grid-template-columns:auto 1fr;gap:0 16px;align-items:start}
+  .screen .mark{
+    font-family:var(--f-en);
+    font-size:.7rem;
+    letter-spacing:.1em;
+    color:var(--sky);
+    border:1px solid var(--line);
+    padding:3px 8px;
+    border-radius:3px;
+    white-space:nowrap;
+  }
+  .screen h4{margin:0 0 4px;font-size:.98rem}
+  .screen p{margin:0;font-size:.9rem;color:var(--ink-2);max-width:none}
+  .screen .body{grid-column:2}
+
+  code{
+    font-family:var(--f-en);
+    background:var(--surface-2);
+    padding:2px 7px;
+    border-radius:3px;
+    font-size:.92em;
+  }
+  .callout.stop code,.callout.warn code{background:rgba(128,128,128,.16)}
+
+  strong.hl{
+    background:linear-gradient(transparent 62%,var(--sky-soft) 62%);
+    font-weight:700;
+  }
+
+  footer{
+    margin-top:64px;
+    padding-top:22px;
+    border-top:1px solid var(--line);
+    color:var(--ink-3);
+    font-size:.84rem;
+  }
+  footer p{max-width:none;margin:0 0 6px}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header class="top">
+  <p class="eyebrow">Nakamura Dental Office</p>
+  <h1>管理画面の使い方と、運用でやること</h1>
+  <p class="lead">お知らせの更新と、SEO／MEO対策の進捗管理ができます。このページは操作手順と、公開までの流れをまとめたものです。</p>
+</header>
+
+<section>
+  <h2><span class="num">1</span>入り方</h2>
+  <p class="sec-note">サイト内にリンクはありません。URLを直接入力して開きます。</p>
+
+  <dl class="access">
+    <dt>URL</dt>
+    <dd>https://nakamuradental.jp/admin/</dd>
+    <dt>パスワード</dt>
+    <dd>nakamura</dd>
+  </dl>
+
+  <div class="callout warn">
+    <p class="ttl">パスワードは変更してください</p>
+    <p>初期値のままです。変更はサイト制作側での作業になりますので、ご希望のパスワードをお知らせください。なお、この画面でできるのは「お知らせの下書き」までで、ここから直接サイトが書き換わることはありません。</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">2</span>3つの画面</h2>
+  <p class="sec-note">左メニューから切り替えます。</p>
+
+  <div class="screens">
+    <div class="screen">
+      <span class="mark">HOME</span>
+      <div class="body">
+        <h4>ダッシュボード</h4>
+        <p>掲載中のお知らせ件数と、SEO／MEO対策の進捗率が一覧で見られます。</p>
+      </div>
+    </div>
+    <div class="screen">
+      <span class="mark">NEWS</span>
+      <div class="body">
+        <h4>お知らせ管理</h4>
+        <p>トップページの「NEWS／お知らせ」に出る内容を追加・編集・削除します。日常的に使うのはここです。</p>
+      </div>
+    </div>
+    <div class="screen">
+      <span class="mark">SEO</span>
+      <div class="body">
+        <h4>SEO対策</h4>
+        <p>「南港 歯科」などで検索されたときに見つけてもらうための項目を、完了／対応中／未対応で管理します。</p>
+      </div>
+    </div>
+    <div class="screen">
+      <span class="mark">MEO</span>
+      <div class="body">
+        <h4>MEO対策</h4>
+        <p>Googleマップ（ビジネスプロフィール）向けの項目。地域からの新患増加に直結します。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">3</span>お知らせを更新する</h2>
+  <p class="sec-note">休診・キャンペーン・診療時間の変更などを掲載するときの手順です。</p>
+
+  <ol class="steps">
+    <li>
+      <b>「お知らせ管理」を開く</b>
+      <span>左メニューから移動します。</span>
+    </li>
+    <li>
+      <b>「＋ 新規追加」を押す</b>
+      <span>既存の内容を直すときは、一覧の「編集」を押します。</span>
+    </li>
+    <li>
+      <b>日付・カテゴリ・タイトルを入力</b>
+      <span>カテゴリは「お知らせ／診療案内／重要／休診」から選びます。一覧は日付の新しい順に自動で並びます。</span>
+    </li>
+    <li>
+      <b>「保存する」を押す</b>
+      <span>この時点ではまだ、お使いのパソコンの中にだけ保存された状態です。</span>
+    </li>
+    <li class="key">
+      <b>「JSON書き出し」を押す</b>
+      <span>news.json というファイルがダウンロードされます。この操作を忘れると公開できません。</span>
+    </li>
+    <li class="key">
+      <b>news.json を制作側へ送る</b>
+      <span>メールやLINEで送っていただければ、サイトに反映します。反映後、実際のページでご確認ください。</span>
+    </li>
+  </ol>
+
+  <div class="callout stop">
+    <p class="ttl">保存＝公開ではありません</p>
+    <p>この管理画面は、入力内容を<strong class="hl">お使いのブラウザの中だけ</strong>に保存する仕組みです。サイトに反映するには、上の手順5・6（書き出して送る）が必要です。</p>
+    <p>あわせて、次の点にご注意ください。</p>
+    <p>・編集した内容は、<strong class="hl">作業したパソコン・そのブラウザでしか見えません</strong>（別の端末やスマホで開いても表示されません）<br>
+    ・ブラウザの履歴やサイトデータを消去すると、書き出し前の内容は消えます<br>
+    ・入力が終わったら、その場で「JSON書き出し」まで済ませてください</p>
+  </div>
+
+  <h3>読み込みボタンについて</h3>
+  <p>「読み込み」は、以前書き出した <code>news.json</code> を選んで、編集の続きを始めるためのものです。別のパソコンで作業するときや、ブラウザのデータを消したあとに使います。</p>
+</section>
+
+<section>
+  <h2><span class="num">4</span>定期的にやること</h2>
+  <p class="sec-note">お知らせが更新されているサイトは、検索でも評価されます。</p>
+
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr><th>時期</th><th>やること</th><th>カテゴリ</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="when">月1回めやす</td>
+          <td>季節の話題、予防・定期検診の案内など。内容がなければ無理に更新しなくて構いません。</td>
+          <td><span class="tag">お知らせ</span></td>
+        </tr>
+        <tr>
+          <td class="when">決まり次第すぐ</td>
+          <td>臨時休診、学会等での休診。<strong>患者さまの来院に直結するため最優先です。</strong></td>
+          <td><span class="tag">休診</span></td>
+        </tr>
+        <tr>
+          <td class="when">11月〜12月</td>
+          <td>年末年始の休診日程。</td>
+          <td><span class="tag">休診</span></td>
+        </tr>
+        <tr>
+          <td class="when">7月</td>
+          <td>夏季休診の日程。</td>
+          <td><span class="tag">休診</span></td>
+        </tr>
+        <tr>
+          <td class="when">変更があれば</td>
+          <td>診療時間・担当医・設備の変更、新しい治療メニューの追加。</td>
+          <td><span class="tag">診療案内</span></td>
+        </tr>
+        <tr>
+          <td class="when">随時</td>
+          <td>院内感染対策、システム導入など、医院の姿勢を伝える内容。</td>
+          <td><span class="tag">重要</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <p class="ttl">古いお知らせの扱い</p>
+    <p>終わった休診案内などは、削除せずそのまま残しても問題ありません。件数が増えて見づらくなってきたら、古いものから削除してください。</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">5</span>SEO・MEOのチェックリスト</h2>
+  <p class="sec-note">「何をどこまでやったか」を記録しておくための画面です。</p>
+
+  <p>各項目を <strong>完了／対応中／未対応</strong> から選ぶと、ダッシュボードの進捗率に反映されます。担当の方が変わっても、対応状況を引き継げます。</p>
+
+  <h3>優先度が高いのはMEO（Googleマップ）です</h3>
+  <p>歯科医院を探す方の多くが、地図から医院を選びます。特に次の3つは効果が出やすい項目です。</p>
+
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr><th>項目</th><th>内容</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="when">写真の追加</td>
+          <td>院内・外観・設備の写真を、Googleビジネスプロフィールに定期的に追加します。写真が多い医院ほど閲覧されやすくなります。</td>
+        </tr>
+        <tr>
+          <td class="when">口コミへの返信</td>
+          <td>いただいた口コミには、できるだけ返信します。内容への丁寧な対応そのものが、他の患者さまへの案内になります。</td>
+        </tr>
+        <tr>
+          <td class="when">情報の最新化</td>
+          <td>診療時間・休診日・電話番号が、サイトとマップで食い違っていないか確認します。特に年末年始やお盆の特別営業時間。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <p class="ttl">チェックリストの保存について</p>
+    <p>SEO／MEOの進捗も、お知らせと同じく<strong class="hl">そのパソコンの中だけ</strong>に保存されます。医院で使うパソコンを1台決めて、そこで管理されることをおすすめします。</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">6</span>困ったときは</h2>
+  <p class="sec-note">ご自身で直そうとせず、ご連絡ください。</p>
+
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr><th>こんなとき</th><th>対応</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="when">入力した内容が消えた</td>
+          <td>書き出し済みの <code>news.json</code> があれば「読み込み」で戻せます。なければ制作側にご連絡ください。</td>
+        </tr>
+        <tr>
+          <td class="when">サイトに反映されない</td>
+          <td>「JSON書き出し」をして、ファイルを送っていただく必要があります（手順5・6）。</td>
+        </tr>
+        <tr>
+          <td class="when">パスワードが通らない</td>
+          <td>半角で <code>nakamura</code> と入力されているかご確認ください。</td>
+        </tr>
+        <tr>
+          <td class="when">サイトの写真や文章を変えたい</td>
+          <td>管理画面では変更できません。ご希望の内容をお知らせいただければ対応します。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <p>この管理画面で編集できるのは「お知らせ」のみです。診療内容・料金・写真・スタッフ紹介などの変更は、制作側での対応となります。</p>
+  <p>中村歯科医院（大阪府咲洲庁舎3F）／ https://nakamuradental.jp/</p>
+</footer>
+
+</div>
+</body>
+</html>

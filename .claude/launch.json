@@ -49,6 +49,15 @@
         "localhost:20243"
       ],
       "port": 20243
+    },
+    {
+      "name": "edit-studio",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/horikawashinnosuke/Downloads/paypay-dome-edit && pkill -f 'python app.py' ; exec .venv/bin/python app.py"
+      ],
+      "port": 4190
     }
   ]
 }
