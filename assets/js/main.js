@@ -136,9 +136,9 @@
       }).join("");
     }
 
-    var saved = null;
-    try { saved = JSON.parse(localStorage.getItem("ndo_news") || "null"); } catch (e) {}
-    if (saved && saved.length) render(saved);
-    else fetch(base).then(function (r) { return r.json(); }).then(render).catch(function () { render([]); });
+    // 公開ページは必ず data/news.json を表示する。
+    // 管理画面の下書き(localStorage)を混ぜると、編集した本人の端末でだけ
+    // 未公開の内容が反映済みに見えてしまい、公開されたものと区別がつかなくなる。
+    fetch(base).then(function (r) { return r.json(); }).then(render).catch(function () { render([]); });
   }
 })();

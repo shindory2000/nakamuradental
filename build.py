@@ -695,7 +695,7 @@ s += """<section class="hero" id="top">
 s += """<section class="section news" id="news">
   <div class="wrap">
     <div class="sec-head reveal"><span class="eyebrow">News</span><h2 class="ja">お知らせ<span class="en">/ News</span></h2></div>
-    <div class="news-grid reveal" id="newsList" data-src="data/news.json" data-d="1"></div>
+    <div class="news-grid reveal" id="newsList" data-src="data/news.json?v=%s" data-d="1"></div>
   </div>
 </section>
 
@@ -760,7 +760,7 @@ s += """<section class="section news" id="news">
     </div>
   </div>
 </section>
-""" % (svc_cards, HOURS_TABLE)
+""" % (VER, svc_cards, HOURS_TABLE)
 s += cta()
 s += footer()
 PAGES["index.html"] = s
