@@ -60,6 +60,9 @@ input,select{font-family:inherit}
 .btn.primary{background:var(--navy);color:#fff}.btn.primary:hover{background:var(--navy-deep)}
 .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--navy-deep)}.btn.ghost:hover{border-color:var(--sky)}
 .btn.mini{padding:.45em .9em;font-size:.78rem}
+/* 反映依頼：ここを押さないと公開されないので、他より目を引く色にする */
+.btn.send{background:#fff;border:1.5px solid var(--sky);color:var(--navy-deep);font-weight:600}
+.btn.send:hover{background:var(--sky);color:#fff}
 .btn.danger{color:var(--coral)}.btn.danger:hover{background:#fdeee9}
 
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:26px}
@@ -129,7 +132,29 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
   .side .brand{margin:0 auto 0 0}.side nav{display:flex;gap:6px;flex-wrap:wrap}.side nav .sep{display:none}.side .foot,.side .logout{display:none}
   .stats,.info-tiles{grid-template-columns:1fr}
   .step{grid-template-columns:1fr;gap:8px}.step .no{text-align:left}
-  td .hide-sp,th.hide-sp{display:none}
+
+  /* スマホ：一覧をテーブルからカードへ。固定列幅のままだと画面からはみ出す */
+  .panel table,.panel thead,.panel tbody,.panel tr,.panel th,.panel td{display:block;width:auto}
+  .panel thead{display:none}
+  #rows tr{
+    border:1px solid var(--line);border-radius:14px;
+    padding:14px 16px;margin:0 0 10px;background:#fff;
+  }
+  #rows td{border:0;padding:0;font-size:.95rem}
+  #rows td .hide-sp,#rows td.hide-sp{display:block}
+  #rows td .date{font-size:.82rem}
+  #rows td:nth-child(2){margin:6px 0}
+  #rows td:nth-child(3){line-height:1.7;margin-bottom:12px}
+  #rows td .row-act{justify-content:stretch;gap:8px}
+  #rows td .row-act .btn{flex:1;min-height:44px}
+
+  /* 指で押しやすいサイズに */
+  .topbar .actions{display:flex;flex-wrap:wrap;gap:8px;width:100%}
+  .topbar .actions .btn{flex:1 1 auto;min-height:46px;justify-content:center}
+  .btn{min-height:44px}
+  /* iOSは16px未満の入力欄でフォーカスすると勝手に拡大するため16pxを下限にする */
+  .modal-card input,.modal-card select{min-height:46px;font-size:16px}
+  .modal-card .mf .btn{flex:1;min-height:46px;justify-content:center}
 }
 </style>
 </head>
@@ -195,7 +220,7 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
         <div><h2>お知らせ管理</h2><span class="sub">トップページの「お知らせ／News」に表示される内容を編集できます。</span></div>
         <div class="actions">
           <button class="btn ghost" id="importBtn">読み込み</button>
-          <button class="btn ghost" id="exportBtn">JSON書き出し</button>
+          <button class="btn send" id="exportBtn">サイトに反映を依頼</button>
           <button class="btn primary" id="addBtn">＋ 新規追加</button>
           <input type="file" id="file" accept="application/json" hidden>
         </div>
@@ -205,7 +230,7 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
         <table><thead><tr><th style="width:130px">日付</th><th style="width:120px">カテゴリ</th><th>タイトル</th><th style="width:150px"></th></tr></thead><tbody id="rows"></tbody></table>
         <div class="empty" id="empty" style="display:none">まだお知らせがありません。「＋ 新規追加」から作成してください。</div>
       </div>
-      <div class="note"><b>公開時の反映：</b>「JSON書き出し」で <b>news.json</b> をダウンロードし、<b>/data/news.json</b> に上書きしてください。</div>
+      <div class="note"><b>公開するには：</b>編集が終わったら <b>「サイトに反映を依頼」</b> を押してください。スマホなら共有メニューからLINEで、パソコンならファイルが保存されるのでメール等で送ってください。<a href="guide.html" target="_blank" style="color:var(--sky)">使い方ガイド</a></div>
     </section>
 
     <!-- SEO -->
@@ -256,7 +281,8 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
 
   /* ---- auth ---- */
   function unlock(){login.classList.add("hide");shell.style.display="grid";boot();}
-  if(sessionStorage.getItem(SESS)==="1") unlock();
+  // セッション復帰の unlock() は、お知らせデータ(data)の初期化より後に呼ぶ必要がある。
+  // ここで呼ぶと data が未初期化のまま renderNews() が走り、一覧が出なくなる。
   d.getElementById("loginBtn").addEventListener("click",tryLogin);
   d.getElementById("pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryLogin();});
   function tryLogin(){var v=d.getElementById("pw").value;if(v===PW){sessionStorage.setItem(SESS,"1");unlock();}else d.getElementById("loginErr").textContent="パスワードが違います。";}
@@ -300,7 +326,30 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
   modal.addEventListener("click",function(e){if(e.target===modal)closeModal();});
   d.getElementById("saveBtn").addEventListener("click",function(){var dt=d.getElementById("fDate").value,c=d.getElementById("fCat").value,t=d.getElementById("fTitle").value.trim();if(!dt||!t){toast("日付とタイトルを入力してください");return;}var o={date:dt,category:c,title:t};if(editing<0)data.push(o);else data[editing]=o;renderNews();closeModal();toast(editing<0?"追加しました":"更新しました");});
   rows.addEventListener("click",function(e){var ed=e.target.getAttribute("data-edit"),dl=e.target.getAttribute("data-del");if(ed!==null)openModal(+ed);if(dl!==null){if(confirm("このお知らせを削除しますか？")){data.splice(+dl,1);renderNews();toast("削除しました");}}});
-  d.getElementById("exportBtn").addEventListener("click",function(){var b=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});var a=d.createElement("a");a.href=URL.createObjectURL(b);a.download="news.json";a.click();URL.revokeObjectURL(a.href);toast("news.json を書き出しました");});
+  // 反映依頼：スマホは共有シート（LINE等へ直接）、PCはファイル保存。
+  // どちらも使えない環境ではクリップボードへコピーして貼り付けてもらう。
+  function downloadJson(txt){
+    var b=new Blob([txt],{type:"application/json"});
+    var a=d.createElement("a");a.href=URL.createObjectURL(b);a.download="news.json";a.click();
+    URL.revokeObjectURL(a.href);
+    toast("news.json を保存しました。メール等で送ってください");
+  }
+  d.getElementById("exportBtn").addEventListener("click",function(){
+    var txt=JSON.stringify(data,null,2);
+    var file=null;
+    try{ file=new File([txt],"news.json",{type:"application/json"}); }catch(e){}
+    if(file&&navigator.canShare&&navigator.canShare({files:[file]})&&navigator.share){
+      navigator.share({files:[file],title:"お知らせの更新"})
+        .then(function(){toast("送信しました。反映までお待ちください");})
+        .catch(function(err){ if(err&&err.name!=="AbortError") downloadJson(txt); });
+      return;
+    }
+    if(navigator.clipboard&&navigator.clipboard.writeText&&!("download" in d.createElement("a"))){
+      navigator.clipboard.writeText(txt).then(function(){toast("内容をコピーしました。貼り付けて送ってください");});
+      return;
+    }
+    downloadJson(txt);
+  });
   d.getElementById("importBtn").addEventListener("click",function(){d.getElementById("file").click();});
   d.getElementById("file").addEventListener("change",function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var j=JSON.parse(r.result);if(Array.isArray(j)){data=j;renderNews();toast("読み込みました");}else toast("形式が正しくありません");}catch(err){toast("読み込みに失敗しました");}};r.readAsText(f);e.target.value="";});
 
@@ -355,6 +404,9 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
   function toast(m){tEl.textContent=m;tEl.classList.add("show");clearTimeout(tT);tT=setTimeout(function(){tEl.classList.remove("show");},2200);}
 
   function boot(){renderNews();refresh();}
+
+  // ログイン済みならそのまま復帰（data 初期化後にここで実行）
+  if(sessionStorage.getItem(SESS)==="1") unlock();
 })();
 </script>
 </body>
