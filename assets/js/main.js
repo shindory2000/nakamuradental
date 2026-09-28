@@ -139,6 +139,7 @@
     // 公開ページは必ず data/news.json を表示する。
     // 管理画面の下書き(localStorage)を混ぜると、編集した本人の端末でだけ
     // 未公開の内容が反映済みに見えてしまい、公開されたものと区別がつかなくなる。
-    fetch(base).then(function (r) { return r.json(); }).then(render).catch(function () { render([]); });
+    // 管理画面から直接公開すると ?v= は変わらないので、毎回サーバーに更新の有無を確認させる。
+    fetch(base, { cache: "no-cache" }).then(function (r) { return r.json(); }).then(render).catch(function () { render([]); });
   }
 })();
