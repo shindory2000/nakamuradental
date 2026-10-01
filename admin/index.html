@@ -231,7 +231,7 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
         <table><thead><tr><th style="width:130px">日付</th><th style="width:120px">カテゴリ</th><th>タイトル</th><th style="width:150px"></th></tr></thead><tbody id="rows"></tbody></table>
         <div class="empty" id="empty" style="display:none">まだお知らせがありません。「＋ 新規追加」から作成してください。</div>
       </div>
-      <div class="note" id="publishNote"><b>公開するには：</b>編集が終わったら <b>「サイトに反映を依頼」</b> を押してください。スマホなら共有メニューからLINEで、パソコンならファイルが保存されるのでメール等で送ってください。<a href="guide.html" target="_blank" style="color:var(--sky)">使い方ガイド</a></div>
+      <div class="note" id="publishNote"><b>公開するには：</b>編集が終わったら <b>「サイトに反映を依頼」</b> を押してください。送り先と内容が入ったメールが開くので、そのまま <b>「送信」</b> を押せば完了です。<a href="guide.html" target="_blank" style="color:var(--sky)">使い方ガイド</a><br><span style="font-size:.85em">メールが開かないときは <a href="#" id="fileSend" style="color:var(--sky)">ファイルで送る</a></span></div>
     </section>
 
     <!-- SEO -->
@@ -327,10 +327,18 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
   // 未公開の変更があるか。直接公開モードでは、変更がなければ毎回公開中の内容から始める。
   function isDirty(){return localStorage.getItem(DIRTY)==="1";}
   function setDirty(on){if(on)localStorage.setItem(DIRTY,"1");else localStorage.removeItem(DIRTY);updateDirty();}
-  function updateDirty(){var b=d.getElementById("dirtyBadge");if(b)b.style.display=(DIRECT&&isDirty())?"inline-flex":"none";}
+  function updateDirty(){var b=d.getElementById("dirtyBadge");if(b)b.style.display=isDirty()?"inline-flex":"none";}
+  function key(list){return JSON.stringify(list.map(function(n){return [n.date,n.category,n.title];}).sort().reverse());}
+  // 公開中の news.json を読む。下書きがなければそれを編集の出発点にし、
+  // 下書きが公開中と同じになっていれば（反映が済んだ）未公開の印を外す。
+  // こうしないと、新しい端末では古い初期データから始まり、送るとサイトが巻き戻る。
   function loadPublished(){
     return fetch("../data/news.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw 0;return r.json();})
-      .then(function(j){if(Array.isArray(j)){data=j;renderNews();}});
+      .then(function(j){
+        if(!Array.isArray(j))return;
+        if(!isDirty()){data=j;renderNews();}
+        else if(key(j)===key(data))setDirty(false);
+      });
   }
   var CAT={"お知らせ":"","診療案内":"info","重要":"holiday","休診":"holiday"};
   function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
@@ -368,8 +376,27 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
       .catch(function(e){toast(e.message);if(/パスワード/.test(e.message)){sessionStorage.removeItem(SESS);setTimeout(function(){location.reload();},1500);}})
       .then(function(){btn.disabled=false;btn.textContent="公開する";});
   }
+  // 反映依頼の届け先。収集ボットに拾われにくいよう分けて持つ。
+  var MAIL_TO=["shindory2000","icloud.com"].join("@");
+  // 反映依頼：送り先と内容が入った状態でメールを開く。院長は「送信」を押すだけ。
+  // 本文の最後の1行が反映用のデータ（JSON）。上の一覧は人が読んで確認するためのもの。
+  function mailRequest(){
+    var lines=data.map(function(n){return fmt(n.date)+"［"+n.category+"］"+n.title;});
+    var body="中村歯科医院のお知らせを、次の内容でホームページに反映してください。\n\n"+
+      "■ 公開する内容（新しい順）\n"+lines.join("\n")+"\n\n"+
+      "――――――――――\n反映用のデータです。消さずにそのまま送ってください。\n"+JSON.stringify(data);
+    var url="mailto:"+MAIL_TO+"?subject="+encodeURIComponent("【中村歯科】お知らせ反映のお願い")+"&body="+encodeURIComponent(body);
+    if(url.length>16000){shareFile();return;}
+    location.href=url;
+    toast("メールが開きます。そのまま「送信」を押してください");
+  }
   d.getElementById("exportBtn").addEventListener("click",function(){
     if(DIRECT){publishNow();return;}
+    mailRequest();
+  });
+  d.getElementById("fileSend").addEventListener("click",function(e){e.preventDefault();shareFile();});
+  // 予備：メールが開かない端末向けに、従来どおり news.json をファイルで渡す。
+  function shareFile(){
     var txt=JSON.stringify(data,null,2);
     var file=null;
     try{ file=new File([txt],"news.json",{type:"application/json"}); }catch(e){}
@@ -384,7 +411,7 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
       return;
     }
     downloadJson(txt);
-  });
+  }
   d.getElementById("importBtn").addEventListener("click",function(){d.getElementById("file").click();});
   d.getElementById("file").addEventListener("change",function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var j=JSON.parse(r.result);if(Array.isArray(j)){data=j;setDirty(true);renderNews();toast("読み込みました");}else toast("形式が正しくありません");}catch(err){toast("読み込みに失敗しました");}};r.readAsText(f);e.target.value="";});
 
@@ -442,9 +469,9 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
     if(DIRECT){
       d.getElementById("exportBtn").textContent="公開する";
       d.getElementById("publishNote").innerHTML="<b>公開するには：</b>編集が終わったら <b>「公開する」</b> を押してください。1〜2分でホームページに出ます。「保存する」だけではまだ公開されません。<a href=\"guide.html\" target=\"_blank\" style=\"color:var(--sky)\">使い方ガイド</a>";
-      updateDirty();
-      if(!isDirty())loadPublished().catch(function(){toast("公開中のお知らせを読み込めませんでした");});
     }
+    updateDirty();
+    loadPublished().catch(function(){toast("公開中のお知らせを読み込めませんでした");});
     renderNews();refresh();
   }
 
