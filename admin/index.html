@@ -220,6 +220,7 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
         <div><h2>お知らせ管理</h2><span class="sub">トップページの「お知らせ／News」に表示される内容を編集できます。</span></div>
         <div class="actions">
           <button class="btn ghost" id="importBtn">読み込み</button>
+          <span class="tag holiday" id="dirtyBadge" style="display:none;align-self:center">未公開の変更あり</span>
           <button class="btn send" id="exportBtn">サイトに反映を依頼</button>
           <button class="btn primary" id="addBtn">＋ 新規追加</button>
           <input type="file" id="file" accept="application/json" hidden>
@@ -230,7 +231,7 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
         <table><thead><tr><th style="width:130px">日付</th><th style="width:120px">カテゴリ</th><th>タイトル</th><th style="width:150px"></th></tr></thead><tbody id="rows"></tbody></table>
         <div class="empty" id="empty" style="display:none">まだお知らせがありません。「＋ 新規追加」から作成してください。</div>
       </div>
-      <div class="note"><b>公開するには：</b>編集が終わったら <b>「サイトに反映を依頼」</b> を押してください。スマホなら共有メニューからLINEで、パソコンならファイルが保存されるのでメール等で送ってください。<a href="guide.html" target="_blank" style="color:var(--sky)">使い方ガイド</a></div>
+      <div class="note" id="publishNote"><b>公開するには：</b>編集が終わったら <b>「サイトに反映を依頼」</b> を押してください。スマホなら共有メニューからLINEで、パソコンならファイルが保存されるのでメール等で送ってください。<a href="guide.html" target="_blank" style="color:var(--sky)">使い方ガイド</a></div>
     </section>
 
     <!-- SEO -->
@@ -275,7 +276,11 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
 <script>
 (function(){
   "use strict";
-  var PW="nakamura", KEY="ndo_news", SESS="ndo_admin", SEOK="ndo_seo", MEOK="ndo_meo";
+  var PW="nakamura", KEY="ndo_news", SESS="ndo_admin", SEOK="ndo_seo", MEOK="ndo_meo", DIRTY="ndo_news_dirty";
+  // 直接公開の窓口（api/publish.js を置いた Vercel の URL）。
+  // 空のあいだは従来どおり「書き出して送る」方式で動く。
+  var PUBLISH_URL="";
+  var DIRECT=!!PUBLISH_URL;
   var d=document, login=d.getElementById("login"), shell=d.getElementById("shell");
   d.getElementById("yr").textContent=new Date().getFullYear();
 
@@ -285,7 +290,20 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
   // ここで呼ぶと data が未初期化のまま renderNews() が走り、一覧が出なくなる。
   d.getElementById("loginBtn").addEventListener("click",tryLogin);
   d.getElementById("pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryLogin();});
-  function tryLogin(){var v=d.getElementById("pw").value;if(v===PW){sessionStorage.setItem(SESS,"1");unlock();}else d.getElementById("loginErr").textContent="パスワードが違います。";}
+  // 直接公開モードでは、パスワードはサーバー側だけが知っている。
+  // 入力値はこのタブの間だけ覚えておき、公開のたびにサーバーへ添えて送る。
+  function tryLogin(){
+    var v=d.getElementById("pw").value, err=d.getElementById("loginErr");
+    if(!DIRECT){if(v===PW){sessionStorage.setItem(SESS,"1");unlock();}else err.textContent="パスワードが違います。";return;}
+    err.textContent="確認しています…";
+    api({action:"login",password:v}).then(function(){sessionStorage.setItem(SESS,v);err.textContent="";unlock();})
+      .catch(function(e){err.textContent=e.message;});
+  }
+  function api(body){
+    return fetch(PUBLISH_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
+      .catch(function(){throw new Error("通信できませんでした。電波の良いところでもう一度お試しください");})
+      .then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(!r.ok)throw new Error(j.error||"エラーが発生しました");return j;});});
+  }
   d.getElementById("logoutBtn").addEventListener("click",function(){sessionStorage.removeItem(SESS);location.reload();});
 
   /* ---- view switching ---- */
@@ -306,6 +324,14 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
   var data=loadNews();
   function loadNews(){try{var s=JSON.parse(localStorage.getItem(KEY)||"null");return(s&&s.length)?s:DEFAULT.slice();}catch(e){return DEFAULT.slice();}}
   function saveNews(){localStorage.setItem(KEY,JSON.stringify(data));}
+  // 未公開の変更があるか。直接公開モードでは、変更がなければ毎回公開中の内容から始める。
+  function isDirty(){return localStorage.getItem(DIRTY)==="1";}
+  function setDirty(on){if(on)localStorage.setItem(DIRTY,"1");else localStorage.removeItem(DIRTY);updateDirty();}
+  function updateDirty(){var b=d.getElementById("dirtyBadge");if(b)b.style.display=(DIRECT&&isDirty())?"inline-flex":"none";}
+  function loadPublished(){
+    return fetch("../data/news.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw 0;return r.json();})
+      .then(function(j){if(Array.isArray(j)){data=j;renderNews();}});
+  }
   var CAT={"お知らせ":"","診療案内":"info","重要":"holiday","休診":"holiday"};
   function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
   function fmt(iso){var x=new Date(iso+"T00:00:00");if(isNaN(x))return iso;return x.getFullYear()+"."+("0"+(x.getMonth()+1)).slice(-2)+"."+("0"+x.getDate()).slice(-2);}
@@ -324,8 +350,8 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
   d.getElementById("addBtn").addEventListener("click",function(){openModal();});
   d.getElementById("cancelBtn").addEventListener("click",closeModal);
   modal.addEventListener("click",function(e){if(e.target===modal)closeModal();});
-  d.getElementById("saveBtn").addEventListener("click",function(){var dt=d.getElementById("fDate").value,c=d.getElementById("fCat").value,t=d.getElementById("fTitle").value.trim();if(!dt||!t){toast("日付とタイトルを入力してください");return;}var o={date:dt,category:c,title:t};if(editing<0)data.push(o);else data[editing]=o;renderNews();closeModal();toast(editing<0?"追加しました":"更新しました");});
-  rows.addEventListener("click",function(e){var ed=e.target.getAttribute("data-edit"),dl=e.target.getAttribute("data-del");if(ed!==null)openModal(+ed);if(dl!==null){if(confirm("このお知らせを削除しますか？")){data.splice(+dl,1);renderNews();toast("削除しました");}}});
+  d.getElementById("saveBtn").addEventListener("click",function(){var dt=d.getElementById("fDate").value,c=d.getElementById("fCat").value,t=d.getElementById("fTitle").value.trim();if(!dt||!t){toast("日付とタイトルを入力してください");return;}var o={date:dt,category:c,title:t};if(editing<0)data.push(o);else data[editing]=o;setDirty(true);renderNews();closeModal();toast(editing<0?"追加しました":"更新しました");});
+  rows.addEventListener("click",function(e){var ed=e.target.getAttribute("data-edit"),dl=e.target.getAttribute("data-del");if(ed!==null)openModal(+ed);if(dl!==null){if(confirm("このお知らせを削除しますか？")){data.splice(+dl,1);setDirty(true);renderNews();toast("削除しました");}}});
   // 反映依頼：スマホは共有シート（LINE等へ直接）、PCはファイル保存。
   // どちらも使えない環境ではクリップボードへコピーして貼り付けてもらう。
   function downloadJson(txt){
@@ -334,7 +360,16 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
     URL.revokeObjectURL(a.href);
     toast("news.json を保存しました。メール等で送ってください");
   }
+  function publishNow(){
+    if(!confirm("いまの一覧をホームページに公開します。よろしいですか？"))return;
+    var btn=d.getElementById("exportBtn");btn.disabled=true;btn.textContent="公開しています…";
+    api({action:"publish",password:sessionStorage.getItem(SESS)||"",news:data})
+      .then(function(j){data=j.news;setDirty(false);renderNews();toast(j.result==="unchanged"?"変更はありませんでした":"公開しました。1〜2分でホームページに出ます");})
+      .catch(function(e){toast(e.message);if(/パスワード/.test(e.message)){sessionStorage.removeItem(SESS);setTimeout(function(){location.reload();},1500);}})
+      .then(function(){btn.disabled=false;btn.textContent="公開する";});
+  }
   d.getElementById("exportBtn").addEventListener("click",function(){
+    if(DIRECT){publishNow();return;}
     var txt=JSON.stringify(data,null,2);
     var file=null;
     try{ file=new File([txt],"news.json",{type:"application/json"}); }catch(e){}
@@ -351,7 +386,7 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
     downloadJson(txt);
   });
   d.getElementById("importBtn").addEventListener("click",function(){d.getElementById("file").click();});
-  d.getElementById("file").addEventListener("change",function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var j=JSON.parse(r.result);if(Array.isArray(j)){data=j;renderNews();toast("読み込みました");}else toast("形式が正しくありません");}catch(err){toast("読み込みに失敗しました");}};r.readAsText(f);e.target.value="";});
+  d.getElementById("file").addEventListener("change",function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var j=JSON.parse(r.result);if(Array.isArray(j)){data=j;setDirty(true);renderNews();toast("読み込みました");}else toast("形式が正しくありません");}catch(err){toast("読み込みに失敗しました");}};r.readAsText(f);e.target.value="";});
 
   /* ================= SEO / MEO STEPS ================= */
   var SEO=[
@@ -403,10 +438,18 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
   var tEl=d.getElementById("toast"),tT;
   function toast(m){tEl.textContent=m;tEl.classList.add("show");clearTimeout(tT);tT=setTimeout(function(){tEl.classList.remove("show");},2200);}
 
-  function boot(){renderNews();refresh();}
+  function boot(){
+    if(DIRECT){
+      d.getElementById("exportBtn").textContent="公開する";
+      d.getElementById("publishNote").innerHTML="<b>公開するには：</b>編集が終わったら <b>「公開する」</b> を押してください。1〜2分でホームページに出ます。「保存する」だけではまだ公開されません。<a href=\"guide.html\" target=\"_blank\" style=\"color:var(--sky)\">使い方ガイド</a>";
+      updateDirty();
+      if(!isDirty())loadPublished().catch(function(){toast("公開中のお知らせを読み込めませんでした");});
+    }
+    renderNews();refresh();
+  }
 
   // ログイン済みならそのまま復帰（data 初期化後にここで実行）
-  if(sessionStorage.getItem(SESS)==="1") unlock();
+  if(DIRECT?sessionStorage.getItem(SESS):sessionStorage.getItem(SESS)==="1") unlock();
 })();
 </script>
 </body>
