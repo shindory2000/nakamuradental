@@ -277,7 +277,7 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
 (function(){
   "use strict";
   var PW="nakamura", KEY="ndo_news", SESS="ndo_admin", SEOK="ndo_seo", MEOK="ndo_meo", DIRTY="ndo_news_dirty";
-  // 直接公開の窓口（api/publish.js を置いた Vercel の URL）。
+  // 直接公開の窓口（cloudflare/publish-worker.js を置いた Cloudflare Workers の URL）。
   // 空のあいだは従来どおり「書き出して送る」方式で動く。
   var PUBLISH_URL="";
   var DIRECT=!!PUBLISH_URL;
