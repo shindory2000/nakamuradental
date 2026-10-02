@@ -10,6 +10,8 @@ VER = str(int(time.time()))  # cache buster
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://nakamuradental.jp"
+# Google ビジネスプロフィール（医院の店舗ページ）。地図ボタン・口コミ依頼・構造化データで共用。
+GMAP_URL = "https://share.google/6fNv94of4EXdPigKL"
 TEL, TELR = "06-6615-6180", "0666156180"
 ADDR1 = "大阪市住之江区南港北1丁目14-16"
 ADDR2 = "大阪府咲洲庁舎（コスモタワー）3F"
@@ -607,7 +609,7 @@ s += f"""<section class="section access">
           <div class="info-row"><dt>TEL</dt><dd><span class="big">{TEL}</span></dd></div>
           <div class="info-row"><dt>HOURS</dt><dd>9:30〜13:00 ／ 15:00〜19:00<span class="sub">土曜午後は15:00〜17:00　休診日：日曜日・祝日</span></dd></div>
         </dl>
-        <a class="btn btn-ghost" style="margin-top:1.6rem;border-color:rgba(255,255,255,.3);color:#fff" href="https://maps.google.com/?q=大阪府咲洲庁舎" target="_blank" rel="noopener">Googleマップで見る<span class="arw">›</span></a>
+        <a class="btn btn-ghost" style="margin-top:1.6rem;border-color:rgba(255,255,255,.3);color:#fff" href="{GMAP_URL}" target="_blank" rel="noopener">Googleマップで見る<span class="arw">›</span></a>
       </div>
     </div>
   </div>
@@ -617,6 +619,37 @@ s += tramband("ニュートラムに乗って、海辺の歯科医院へ。", "�
 s += cta()
 s += footer()
 PAGES["access.html"] = s
+
+# ---------------------- 口コミ依頼（受付の QR コードから開く） ----------------------
+# QR には このページの URL を入れる。行き先（GMAP_URL）を変えても印刷物は刷り直さなくてよい。
+# 検索結果に出す必要はないので noindex・サイトマップ対象外。
+s = head("口コミのお願い｜中村歯科医院", "中村歯科医院へのご来院ありがとうございます。Googleへの口コミ投稿のご案内です。",
+         "review.html", extra='<meta name="robots" content="noindex">\n')
+s += header()
+s += f"""<section class="page-hero page-hero--plain">
+  <span class="ph-deco" aria-hidden="true"></span>
+  <div class="wrap">
+    <span class="eyebrow">Review</span>
+    <h1>口コミのお願い</h1>
+    <p class="sub">本日はご来院いただき、ありがとうございました。</p>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap" style="max-width:640px">
+    <p>当院の印象やご感想を、Googleの口コミでお聞かせいただけませんか。いただいたお声は、診療の改善に役立てるとともに、歯科医院を探している地域の方の参考になります。</p>
+    <ol style="margin:1.4em 0 1.8em;padding-left:1.4em;line-height:2">
+      <li>下のボタンを押すと、Googleの中村歯科医院のページが開きます。</li>
+      <li>「クチコミ」を選び、「クチコミを書く」を押します。</li>
+      <li>星の数を選び、よろしければひとことご感想をお書きください。</li>
+    </ol>
+    <p style="text-align:center"><a class="btn btn-primary" href="{GMAP_URL}" target="_blank" rel="noopener">Googleで口コミを書く<span class="arw">›</span></a></p>
+    <p style="font-size:.85rem;color:var(--ink-soft);margin-top:2em">※ 投稿にはGoogleアカウントが必要です。口コミは任意です。投稿の有無で診療内容が変わることはありません。</p>
+  </div>
+</section>
+"""
+s += footer()
+REVIEW_PAGE = s
+
 
 # ---------------------- NEWS ----------------------
 # お知らせは JS だけで描くと検索エンジンに読まれにくいので、ビルド時に HTML へ焼き込む。
@@ -656,9 +689,9 @@ JSONLD = """<script type="application/ld+json">
 {"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"15:00","closes":"19:00"},
 {"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:30","closes":"13:00"},
 {"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"15:00","closes":"17:00"}],
-"areaServed":["南港","コスモスクエア","住之江区","大阪市"]}
+"areaServed":["南港","コスモスクエア","住之江区","大阪市"],"hasMap":"%s"}
 </script>
-""" % (SITE, SITE)
+""" % (SITE, SITE, GMAP_URL)
 
 # 実サイト同様、院内カットに咲洲庁舎の外観・診療風景を織り交ぜてフェード
 # (ファイル名, alt文, 通常時のobject-position, 縦長画面でのobject-position, モード, PC用の横長版)
@@ -839,6 +872,10 @@ for name, content in PAGES.items():
     with open(os.path.join(ROOT, name), "w", encoding="utf-8") as f:
         f.write(content)
     print("built", name)
+
+with open(os.path.join(ROOT, "review.html"), "w", encoding="utf-8") as f:
+    f.write(REVIEW_PAGE)
+print("built review.html (noindex, not in sitemap)")
 
 # ---- sitemap.xml も生成物から自動生成（構成ズレ防止） ----
 import datetime
