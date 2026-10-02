@@ -4,7 +4,7 @@
 共通ヘッダー/フッターを一元管理し、全ページを生成する。
   $ python3 build.py
 """
-import os, time
+import os, time, json, re, html as _html
 
 VER = str(int(time.time()))  # cache buster
 
@@ -195,9 +195,9 @@ def footer():
 """
 
 
-def page_hero(eyebrow, h1, sub, img):
+def page_hero(eyebrow, h1, sub, img, alt=""):
     return f"""<section class="page-hero">
-  <img src="assets/img/{img}" alt="">
+  <img src="assets/img/{img}" alt="{alt}">
   <div class="wrap">
     <span class="eyebrow">{eyebrow}</span>
     <h1>{h1}</h1>
@@ -591,7 +591,8 @@ s = head("アクセス｜中村歯科医院（大阪 南港コスモスクエア
          "中村歯科医院へのアクセス。Osaka Metro中央線コスモスクエア駅 徒歩8分、ニュートラム トレードセンター前駅 徒歩5分。大阪府咲洲庁舎（コスモタワー）3F。",
          "access.html", "assets/img/cosmo-tower-real.jpg")
 s += header("access.html")
-s += page_hero("Access", "アクセス", "咲洲庁舎（コスモタワー）3F ｜ トレードセンター前駅 徒歩5分", "cosmo-tower-real.jpg")
+s += page_hero("Access", "アクセス", "咲洲庁舎（コスモタワー）3F ｜ トレードセンター前駅 徒歩5分", "cosmo-tower-real.jpg",
+                "中村歯科医院が入る大阪府咲洲庁舎（コスモタワー）の外観")
 s += f"""<section class="section access">
   <div class="wrap">
     <div class="access-grid">
@@ -616,6 +617,32 @@ s += tramband("ニュートラムに乗って、海辺の歯科医院へ。", "�
 s += cta()
 s += footer()
 PAGES["access.html"] = s
+
+# ---------------------- NEWS ----------------------
+# お知らせは JS だけで描くと検索エンジンに読まれにくいので、ビルド時に HTML へ焼き込む。
+# 表示ロジック（新しい順・最大6件・カテゴリ色）は assets/js/main.js と揃えること。
+# JS も引き続き data/news.json を読み直すので、焼き込み後の更新もそのまま反映される。
+NEWS_CAT = {"お知らせ": "", "診療案内": "info", "重要": "holiday", "休診": "holiday"}
+
+
+def news_html():
+    with open(os.path.join(ROOT, "data", "news.json"), encoding="utf-8") as f:
+        items = json.load(f)
+    if not items:
+        return '<p class="news-empty">現在お知らせはありません。</p>'
+    items.sort(key=lambda n: n["date"], reverse=True)
+    out = []
+    for n in items[:6]:
+        cat = n.get("category") or "お知らせ"
+        out.append('<a class="news-item" href="#news">'
+                   '<time class="news-date" datetime="%s">%s</time>'
+                   '<span class="news-cat %s">%s</span>'
+                   '<span class="news-title">%s</span>'
+                   '<span class="arw">›</span></a>'
+                   % (n["date"], n["date"].replace("-", "."), NEWS_CAT.get(cat, ""),
+                      _html.escape(cat), _html.escape(n["title"])))
+    return "".join(out)
+
 
 # ---------------------- INDEX ----------------------
 JSONLD = """<script type="application/ld+json">
@@ -695,7 +722,7 @@ s += """<section class="hero" id="top">
 s += """<section class="section news" id="news">
   <div class="wrap">
     <div class="sec-head reveal"><span class="eyebrow">News</span><h2 class="ja">お知らせ<span class="en">/ News</span></h2></div>
-    <div class="news-grid reveal" id="newsList" data-src="data/news.json?v=%s" data-d="1"></div>
+    <div class="news-grid reveal" id="newsList" data-src="data/news.json?v=%s" data-d="1">%s</div>
   </div>
 </section>
 
@@ -760,10 +787,52 @@ s += """<section class="section news" id="news">
     </div>
   </div>
 </section>
-""" % (VER, svc_cards, HOURS_TABLE)
+""" % (VER, news_html(), svc_cards, HOURS_TABLE)
 s += cta()
 s += footer()
 PAGES["index.html"] = s
+
+# ================= 構造化データ（パンくず・FAQ） =================
+# ページに表示しているパンくずと「よくあるご質問」から JSON-LD を作る。
+# 表示内容から機械的に作るので、本文と構造化データが食い違わない。
+def _text(fragment):
+    return _html.unescape(re.sub(r"<[^>]+>", "", fragment)).strip()
+
+
+def _url(href, name):
+    if href == "index.html":
+        return SITE + "/"
+    return f"{SITE}/{href}" if href else (SITE + "/" if name == "index.html" else f"{SITE}/{name}")
+
+
+def structured_data(name, content):
+    blocks = []
+    m = re.search(r'<nav class="crumb"><div class="wrap">(.*?)</div></nav>', content, re.S)
+    if m:
+        parts = re.findall(r'<a href="([^"]+)">(.*?)</a>|<span>(?!›)(.*?)</span>', m.group(1))
+        items = []
+        for i, (href, a_text, span_text) in enumerate(parts, 1):
+            label = _text(a_text or span_text)
+            if label.upper() == "HOME":
+                label = "ホーム"
+            items.append({"@type": "ListItem", "position": i, "name": label,
+                          "item": _url(href, name)})
+        if len(items) >= 2:
+            blocks.append({"@context": "https://schema.org", "@type": "BreadcrumbList",
+                           "itemListElement": items})
+    qa = re.findall(r'<span class="qm">Q</span><span>(.*?)</span>.*?<div class="faq-a"><div class="inner">(.*?)</div></div>',
+                    content, re.S)
+    if qa:
+        blocks.append({"@context": "https://schema.org", "@type": "FAQPage",
+                       "mainEntity": [{"@type": "Question", "name": _text(q),
+                                       "acceptedAnswer": {"@type": "Answer", "text": _text(a)}}
+                                      for q, a in qa]})
+    return "".join('<script type="application/ld+json">%s</script>\n'
+                   % json.dumps(b, ensure_ascii=False, separators=(",", ":")) for b in blocks)
+
+
+for name in PAGES:
+    PAGES[name] = PAGES[name].replace("</head>", structured_data(name, PAGES[name]) + "</head>", 1)
 
 # ============================ WRITE ============================
 for name, content in PAGES.items():

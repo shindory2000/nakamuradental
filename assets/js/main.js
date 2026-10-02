@@ -126,16 +126,17 @@
         list.innerHTML = '<p class="news-empty">現在お知らせはありません。</p>';
         return;
       }
-      items.sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+      items.sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
       list.innerHTML = items.slice(0, 6).map(function (n) {
         return '<a class="news-item" href="#news">' +
-          '<span class="news-date">' + fmt(n.date) + "</span>" +
+          '<time class="news-date" datetime="' + esc(n.date) + '">' + fmt(n.date) + "</time>" +
           '<span class="news-cat ' + (CAT[n.category] || "") + '">' + esc(n.category || "お知らせ") + "</span>" +
           '<span class="news-title">' + esc(n.title) + "</span>" +
           '<span class="arw">›</span></a>';
       }).join("");
     }
 
+    // 一覧は build.py が HTML に焼き込み済み（検索エンジン向け）。ここでは最新の news.json で描き直す。
     // 公開ページは必ず data/news.json を表示する。
     // 管理画面の下書き(localStorage)を混ぜると、編集した本人の端末でだけ
     // 未公開の内容が反映済みに見えてしまい、公開されたものと区別がつかなくなる。
