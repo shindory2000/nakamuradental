@@ -143,4 +143,82 @@
     // 管理画面から直接公開すると ?v= は変わらないので、毎回サーバーに更新の有無を確認させる。
     fetch(base, { cache: "no-cache" }).then(function (r) { return r.json(); }).then(render).catch(function () { render([]); });
   }
+
+  /* ---------- 本日の診療・休診カレンダー（assets/js/clinic-days.js を使う） ---------- */
+  var todayEls = d.querySelectorAll("[data-today]"), calEls = d.querySelectorAll("[data-cal]");
+  if (window.ClinicDays && (todayEls.length || calEls.length)) {
+    var CD = window.ClinicDays;
+    function esc(v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+    // 閲覧者の端末の時計ではなく、日本時間で判定する
+    function tokyoNow() {
+      var p = {};
+      new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tokyo", year: "numeric", month: "2-digit", day: "2-digit",
+        hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date())
+        .forEach(function (x) { p[x.type] = x.value; });
+      return { date: p.year + "-" + p.month + "-" + p.day, min: (+p.hour) * 60 + (+p.minute) };
+    }
+    function getJSON(u, opt) { return fetch(u, opt).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); }
+
+    Promise.all([getJSON("data/closures.json", { cache: "no-cache" }), getJSON("data/jp-holidays.json")]).then(function (res) {
+      var closures = res[0] || [], holidays = res[1] || {}, now = tokyoNow();
+
+      function paintToday() {
+        now = tokyoNow();
+        var st = CD.todayStatus(now, closures, holidays);
+        todayEls.forEach(function (el) {
+          el.className = "today today--" + st.state;
+          el.innerHTML = '<span class="today-dot" aria-hidden="true"></span><b>' + esc(st.head) + "</b>" +
+            (st.sub ? '<span class="today-sub">' + esc(st.sub) + "</span>" : "");
+          el.hidden = false;
+        });
+      }
+      paintToday();
+      setInterval(paintToday, 60000);
+
+      calEls.forEach(function (box) {
+        var base = CD.parse(now.date), offset = 0;
+        function month(off) {
+          var first = new Date(base.getFullYear(), base.getMonth() + off, 1);
+          var y = first.getFullYear(), m = first.getMonth(), days = new Date(y, m + 1, 0).getDate();
+          var cells = "", notes = [];
+          for (var i = 0; i < first.getDay(); i++) cells += '<span class="cal-cell cal-cell--blank"></span>';
+          for (var dd = 1; dd <= days; dd++) {
+            var id = CD.iso(new Date(y, m, dd)), inf = CD.dayInfo(id, closures, holidays), cls = "cal-cell", tag = "";
+            if (inf.closed) { cls += " is-closed"; tag = inf.part === "holiday" ? "祝" : inf.part === "sunday" ? "" : "休"; }
+            else if (inf.part === "pm") { cls += " is-half"; tag = "午後休"; }
+            else if (inf.part === "am") { cls += " is-half"; tag = "午前休"; }
+            if (id === now.date) cls += " is-today";
+            if ((inf.part === "pm" || inf.part === "am" || inf.part === "all") && id >= now.date)
+              notes.push(CD.jpDate(id) + " " + CD.PART_LABEL[inf.part] + (inf.reason && inf.reason !== CD.PART_LABEL[inf.part] ? "（" + inf.reason + "）" : ""));
+            cells += '<span class="' + cls + '" title="' + esc(inf.closed ? "休診" : CD.hoursText(inf)) + '"><b>' + dd + "</b>" +
+              (tag ? "<i>" + tag + "</i>" : "") + "</span>";
+          }
+          return '<div class="cal-head"><button type="button" class="cal-nav" data-go="-1" aria-label="前の月"' + (off <= 0 ? " disabled" : "") + '>‹</button>' +
+            "<b>" + y + "年" + (m + 1) + "月</b>" +
+            '<button type="button" class="cal-nav" data-go="1" aria-label="次の月"' + (off >= 1 ? " disabled" : "") + ">›</button></div>" +
+            '<div class="cal-grid">' + CD.DOW.map(function (w, i) { return '<span class="cal-dow' + (i === 0 ? " is-sun" : i === 6 ? " is-sat" : "") + '">' + w + "</span>"; }).join("") + cells + "</div>" +
+            '<p class="cal-legend"><span class="lg lg-closed"></span>休診日（日曜・祝日・臨時休診）<span class="lg lg-half"></span>半日休診</p>' +
+            (notes.length ? '<ul class="cal-notes">' + notes.map(function (n) { return "<li>" + esc(n) + "</li>"; }).join("") + "</ul>" : "");
+        }
+        function draw() { box.innerHTML = month(offset); }
+        box.addEventListener("click", function (e) {
+          var b = e.target.closest(".cal-nav"); if (!b || b.disabled) return;
+          offset = Math.max(0, Math.min(1, offset + (+b.getAttribute("data-go")))); draw();
+        });
+        draw();
+      });
+    });
+  }
+
+  /* ---------- 計測（Google アナリティクス。build.py の GA_ID が空なら何もしない） ---------- */
+  if (typeof window.gtag === "function") {
+    d.addEventListener("click", function (e) {
+      var a = e.target.closest("a[href]"); if (!a) return;
+      var href = a.getAttribute("href");
+      var ev = /^tel:/.test(href) ? "tel_tap"
+             : /share\.google|google\.[a-z.]+\/maps|maps\.google|g\.page/.test(href) ? (/review\.html$/.test(location.pathname) ? "review_tap" : "map_tap")
+             : null;
+      if (ev) window.gtag("event", ev, { link_url: href, page_path: location.pathname });
+    });
+  }
 })();

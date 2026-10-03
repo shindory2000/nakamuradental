@@ -574,3 +574,43 @@ table.price tbody tr:hover{background:var(--sand)}
   .member-grid{grid-template-columns:repeat(2,1fr)}
   .member-name{font-size:1.2rem}
 }
+
+/* ---------- 本日の診療（全ページの予約バンド） ---------- */
+.today{display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.2em .7em;margin:0 auto 1.2rem;
+  padding:.55em 1.2em;border-radius:1.4em;background:#fff;color:var(--navy-deep);font-size:.95rem;line-height:1.5;
+  box-shadow:var(--shadow-sm);max-width:100%}
+.today b{font-weight:700}
+.today-sub{color:var(--ink-soft);font-size:.86rem}
+.today-dot{width:.6em;height:.6em;border-radius:50%;background:var(--ink-faint);flex:none}
+.today--open .today-dot{background:#2f9e6b;box-shadow:0 0 0 4px rgba(47,158,107,.18)}
+.today--later .today-dot{background:var(--sky)}
+.today--closed .today-dot,.today--done .today-dot{background:var(--coral)}
+
+/* ---------- 診療カレンダー（紺地のクリニック情報欄に置く） ---------- */
+.cal{color:#fff;max-width:420px}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem}
+.cal-head b{font-family:var(--f-latin);font-weight:500;letter-spacing:.08em}
+.cal-nav{appearance:none;background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:50%;
+  width:2.2rem;height:2.2rem;font-size:1.1rem;line-height:1;cursor:pointer}
+.cal-nav:disabled{opacity:.25;cursor:default}
+.cal-nav:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;font-variant-numeric:tabular-nums}
+.cal-dow{text-align:center;font-size:.72rem;color:rgba(255,255,255,.6);padding:.2rem 0}
+.cal-dow.is-sun{color:#f2a7a0}.cal-dow.is-sat{color:#a9c8f0}
+.cal-cell{position:relative;aspect-ratio:1/1;max-width:100%;border-radius:6px;background:rgba(255,255,255,.07);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.86rem;line-height:1.1}
+.cal-cell--blank{background:transparent}
+.cal-cell b{font-weight:500}
+.cal-cell i{font-style:normal;font-size:.56rem;letter-spacing:0;margin-top:.15rem;white-space:nowrap}
+.cal-cell.is-closed{background:rgba(232,120,106,.28);color:#ffd9d3}
+.cal-cell.is-half{background:linear-gradient(135deg,rgba(255,255,255,.07) 50%,rgba(232,120,106,.32) 50%)}
+.cal-cell.is-today{box-shadow:inset 0 0 0 2px #fff}
+.cal-legend{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem .9rem;font-size:.75rem;color:rgba(255,255,255,.7);margin:.7rem 0 0}
+.cal-legend .lg{display:inline-block;width:.9em;height:.9em;border-radius:3px;margin-right:.35rem;vertical-align:-.1em}
+.lg-closed{background:rgba(232,120,106,.5)}
+.lg-half{background:linear-gradient(135deg,rgba(255,255,255,.2) 50%,rgba(232,120,106,.55) 50%)}
+.cal-notes{list-style:none;padding:0;margin:.8rem 0 0;font-size:.85rem;color:#ffd9d3}
+.cal-notes li::before{content:"● ";font-size:.6em;vertical-align:.2em}
+.foot-ga{font-size:.75rem;opacity:.7}
+.foot-ga a{color:inherit;text-decoration:underline}
+@media (prefers-reduced-motion:reduce){.today-dot{box-shadow:none}}
