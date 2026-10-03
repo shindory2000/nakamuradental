@@ -115,6 +115,13 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
 .field label{display:block;font-size:.76rem;color:var(--soft);letter-spacing:.06em;margin-bottom:6px}
 .field input,.field select{width:100%;padding:.7em .9em;border:1px solid var(--line);border-radius:10px;font-size:.95rem}
 .field input:focus,.field select:focus{outline:2px solid var(--sky);border-color:transparent}
+.cnote,.gnote{margin:0;padding:12px 22px;font-size:.82rem;color:var(--soft)}
+.gnote{padding:0}
+.field textarea{width:100%;padding:.7em .9em;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:.9rem;line-height:1.6;resize:vertical}
+.field .btn.mini{margin-top:8px}
+.check{display:flex;align-items:center;gap:.5em;font-size:.9rem;color:var(--ink)}
+.check input{width:1.1em;height:1.1em}
+tr.past td{opacity:.45}
 .modal-card .mf{padding:18px 26px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,120%);background:var(--navy-deep);color:#fff;padding:.9em 1.6em;border-radius:999px;font-size:.86rem;box-shadow:var(--shadow);transition:.4s cubic-bezier(.22,.61,.36,1);z-index:60}
 .toast.show{transform:translate(-50%,0)}
@@ -232,6 +239,12 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
         <table><thead><tr><th style="width:130px">日付</th><th style="width:120px">カテゴリ</th><th>タイトル</th><th style="width:150px"></th></tr></thead><tbody id="rows"></tbody></table>
         <div class="empty" id="empty" style="display:none">まだお知らせがありません。「＋ 新規追加」から作成してください。</div>
       </div>
+      <div class="panel">
+        <div class="ph"><h3>臨時休診日</h3><button class="btn ghost mini" id="addClosureBtn">＋ 休診日を追加</button></div>
+        <p class="cnote">ここに入れた日は、ホームページの「診療カレンダー」と「本日の診療」に表示されます。日曜・祝日は入力しなくて大丈夫です。</p>
+        <table><thead><tr><th style="width:150px">日付</th><th style="width:110px">休診</th><th>理由</th><th style="width:230px"></th></tr></thead><tbody id="crows"></tbody></table>
+        <div class="empty" id="cempty" style="display:none">これからの臨時休診日はありません。</div>
+      </div>
       <div class="note" id="publishNote"><b>公開するには：</b>編集が終わったら <b>「サイトに反映を依頼」</b> を押してください。送り先と内容が入ったメールが開くので、そのまま <b>「送信」</b> を押せば完了です。<a href="guide.html" target="_blank" style="color:var(--sky)">使い方ガイド</a><br><span style="font-size:.85em">メールが開かないときは <a href="#" id="fileSend" style="color:var(--sky)">ファイルで送る</a></span></div>
     </section>
 
@@ -272,8 +285,34 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
     <div class="mf"><button class="btn ghost" id="cancelBtn">キャンセル</button><button class="btn primary" id="saveBtn">保存する</button></div>
   </div>
 </div>
+<div class="modal" id="cmodal">
+  <div class="modal-card">
+    <div class="mh">臨時休診日を追加</div>
+    <div class="mb">
+      <div class="field"><label for="cDate">日付</label><input type="date" id="cDate"></div>
+      <div class="field"><label for="cPart">休診する時間</label><select id="cPart"><option value="all">終日</option><option value="pm">午後のみ</option><option value="am">午前のみ</option></select></div>
+      <div class="field"><label for="cNote">理由（任意）</label><input type="text" id="cNote" placeholder="例）研修会のため" maxlength="40"></div>
+      <label class="check"><input type="checkbox" id="cNews" checked> お知らせにも載せる</label>
+    </div>
+    <div class="mf"><button class="btn ghost" id="cCancel">キャンセル</button><button class="btn primary" id="cSave">保存する</button></div>
+  </div>
+</div>
+<div class="modal" id="gmodal">
+  <div class="modal-card">
+    <div class="mh">Googleマップ用の文面</div>
+    <div class="mb">
+      <p class="gnote">Googleビジネスプロフィールに貼ると、Googleマップでも休診が正しく表示されます。</p>
+      <div class="field"><label for="gPost">① 投稿（「最新情報」に貼る文）</label><textarea id="gPost" rows="6" readonly></textarea>
+        <button class="btn ghost mini" data-copy="gPost">コピー</button></div>
+      <div class="field"><label for="gHours">② 特別営業時間（「営業時間」→「特別営業時間」に入れる）</label><input type="text" id="gHours" readonly>
+        <button class="btn ghost mini" data-copy="gHours">コピー</button></div>
+    </div>
+    <div class="mf"><button class="btn primary" id="gClose">閉じる</button></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
+<script src="../assets/js/clinic-days.js"></script>
 <script>
 (function(){
   "use strict";
@@ -323,6 +362,9 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
     {date:"2026-03-10",category:"重要",title:"院内感染対策を強化しました（歯科外来診療感染対策加算1）"}
   ];
   var data=loadNews();
+  var CKEY="ndo_closures";
+  var closures=(function(){try{var c=JSON.parse(localStorage.getItem(CKEY)||"null");return Array.isArray(c)?c:[];}catch(e){return [];}})();
+  function saveClosures(){try{localStorage.setItem(CKEY,JSON.stringify(closures));}catch(e){}}
   function loadNews(){try{var s=JSON.parse(localStorage.getItem(KEY)||"null");return(s&&s.length)?s:DEFAULT.slice();}catch(e){return DEFAULT.slice();}}
   function saveNews(){localStorage.setItem(KEY,JSON.stringify(data));}
   // 未公開の変更があるか。直接公開モードでは、変更がなければ毎回公開中の内容から始める。
@@ -330,15 +372,18 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
   function setDirty(on){if(on)localStorage.setItem(DIRTY,"1");else localStorage.removeItem(DIRTY);updateDirty();}
   function updateDirty(){var b=d.getElementById("dirtyBadge");if(b)b.style.display=isDirty()?"inline-flex":"none";}
   function key(list){return JSON.stringify(list.map(function(n){return [n.date,n.category,n.title];}).sort().reverse());}
+  function ckey(list){return JSON.stringify(list.map(function(c){return [c.date,c.part,c.note||""];}).sort());}
   // 公開中の news.json を読む。下書きがなければそれを編集の出発点にし、
   // 下書きが公開中と同じになっていれば（反映が済んだ）未公開の印を外す。
   // こうしないと、新しい端末では古い初期データから始まり、送るとサイトが巻き戻る。
+  function getJSON(u){return fetch(u,{cache:"no-cache"}).then(function(r){if(!r.ok)throw 0;return r.json();});}
   function loadPublished(){
-    return fetch("../data/news.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw 0;return r.json();})
-      .then(function(j){
+    return Promise.all([getJSON("../data/news.json"),getJSON("../data/closures.json").catch(function(){return [];})])
+      .then(function(res){
+        var j=res[0],c=res[1];
         if(!Array.isArray(j))return;
-        if(!isDirty()){data=j;renderNews();}
-        else if(key(j)===key(data))setDirty(false);
+        if(!isDirty()){data=j;closures=Array.isArray(c)?c:[];renderNews();renderClosures();}
+        else if(key(j)===key(data)&&ckey(c||[])===ckey(closures))setDirty(false);
       });
   }
   var CAT={"お知らせ":"","診療案内":"info","重要":"holiday","休診":"holiday"};
@@ -360,6 +405,56 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
   d.getElementById("cancelBtn").addEventListener("click",closeModal);
   modal.addEventListener("click",function(e){if(e.target===modal)closeModal();});
   d.getElementById("saveBtn").addEventListener("click",function(){var dt=d.getElementById("fDate").value,c=d.getElementById("fCat").value,t=d.getElementById("fTitle").value.trim();if(!dt||!t){toast("日付とタイトルを入力してください");return;}var o={date:dt,category:c,title:t};if(editing<0)data.push(o);else data[editing]=o;setDirty(true);renderNews();closeModal();toast(editing<0?"追加しました":"更新しました");});
+  /* ---------- 臨時休診日 ---------- */
+  var CD=window.ClinicDays, crows=d.getElementById("crows"), cempty=d.getElementById("cempty");
+  var SITE_URL="https://nakamuradental.jp/";
+  function todayIso(){var t=new Date();return CD.iso(t);}
+  function partWord(p){return p==="pm"?"午後":p==="am"?"午前":"";}
+  function closureTitle(c){return CD.jpDate(c.date)+partWord(c.part)+"は"+(c.note?c.note:"")+"休診します";}
+  function renderClosures(){
+    closures.sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:0;});saveClosures();
+    var t=todayIso();
+    var shown=closures.filter(function(c){return c.date>=CD.addDays(t,-30);});
+    cempty.style.display=shown.some(function(c){return c.date>=t;})?"none":"block";
+    crows.innerHTML=shown.map(function(c){var i=closures.indexOf(c),past=c.date<t;
+      return "<tr"+(past?" class='past'":"")+"><td><span class='date'>"+esc(CD.jpDate(c.date))+"</span></td><td><span class='tag holiday'>"+esc(CD.PART_LABEL[c.part])+"</span></td><td>"+esc(c.note||"")+(past?"（終了）":"")+
+        "</td><td><div class='row-act'>"+(past?"":"<button class='btn ghost mini' data-gbp='"+i+"'>Google用の文面</button>")+"<button class='btn ghost mini danger' data-cdel='"+i+"'>削除</button></div></td></tr>";}).join("");
+  }
+  var cmodal=d.getElementById("cmodal");
+  d.getElementById("addClosureBtn").addEventListener("click",function(){
+    d.getElementById("cDate").value=CD.addDays(todayIso(),1);d.getElementById("cPart").value="all";d.getElementById("cNote").value="";d.getElementById("cNews").checked=true;
+    cmodal.classList.add("show");});
+  d.getElementById("cCancel").addEventListener("click",function(){cmodal.classList.remove("show");});
+  cmodal.addEventListener("click",function(e){if(e.target===cmodal)cmodal.classList.remove("show");});
+  d.getElementById("cSave").addEventListener("click",function(){
+    var c={date:d.getElementById("cDate").value,part:d.getElementById("cPart").value,note:d.getElementById("cNote").value.trim()};
+    if(!c.date){toast("日付を入力してください");return;}
+    if(c.note&&!/ため$/.test(c.note))c.note+="のため";
+    closures=closures.filter(function(x){return x.date!==c.date;});closures.push(c);
+    if(d.getElementById("cNews").checked)data.push({date:todayIso(),category:"休診",title:closureTitle(c)});
+    setDirty(true);renderClosures();renderNews();cmodal.classList.remove("show");
+    toast("休診日を追加しました。「サイトに反映を依頼」で送ってください");});
+  crows.addEventListener("click",function(e){
+    var g=e.target.getAttribute("data-gbp"),dl=e.target.getAttribute("data-cdel");
+    if(dl!==null&&confirm("この休診日を削除しますか？")){closures.splice(+dl,1);setDirty(true);renderClosures();toast("削除しました");}
+    if(g!==null)openGbp(closures[+g]);});
+  // Googleビジネスプロフィール用：投稿文と特別営業時間
+  var gmodal=d.getElementById("gmodal");
+  function openGbp(c){
+    var inf=CD.dayInfo(c.date,closures,{}), open=CD.hoursText(inf);
+    var post=CD.jpDate(c.date)+partWord(c.part)+"は、"+(c.note||"")+"休診いたします。"+
+      (inf.closed?"":(c.part==="pm"?"午前":"午後")+"（"+open+"）は通常どおり診療しております。")+
+      "ご不便をおかけしますが、よろしくお願いいたします。\n"+SITE_URL;
+    d.getElementById("gPost").value=post;
+    d.getElementById("gHours").value=CD.specialHoursText(c.date,closures,{});
+    gmodal.classList.add("show");}
+  d.getElementById("gClose").addEventListener("click",function(){gmodal.classList.remove("show");});
+  gmodal.addEventListener("click",function(e){
+    if(e.target===gmodal)gmodal.classList.remove("show");
+    var id=e.target.getAttribute("data-copy");if(!id)return;
+    var el=d.getElementById(id);
+    var done=function(){toast("コピーしました");}, fallback=function(){el.focus();el.select();toast("選択しました。長押しでコピーしてください");};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(el.value).then(done,fallback);else fallback();});
   rows.addEventListener("click",function(e){var ed=e.target.getAttribute("data-edit"),dl=e.target.getAttribute("data-del");if(ed!==null)openModal(+ed);if(dl!==null){if(confirm("このお知らせを削除しますか？")){data.splice(+dl,1);setDirty(true);renderNews();toast("削除しました");}}});
   // 反映依頼：スマホは共有シート（LINE等へ直接）、PCはファイル保存。
   // どちらも使えない環境ではクリップボードへコピーして貼り付けてもらう。
@@ -383,9 +478,12 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
   // 本文の最後の1行が反映用のデータ（JSON）。上の一覧は人が読んで確認するためのもの。
   function mailRequest(){
     var lines=data.map(function(n){return fmt(n.date)+"［"+n.category+"］"+n.title;});
+    var t=todayIso(), up=closures.filter(function(c){return c.date>=t;});
+    var clines=up.map(function(c){return CD.jpDate(c.date)+" "+CD.PART_LABEL[c.part]+(c.note?"（"+c.note+"）":"");});
     var body="中村歯科医院のお知らせを、次の内容でホームページに反映してください。\n\n"+
       "■ 公開する内容（新しい順）\n"+lines.join("\n")+"\n\n"+
-      "――――――――――\n反映用のデータです。消さずにそのまま送ってください。\n"+JSON.stringify(data);
+      "■ 臨時休診日\n"+(clines.length?clines.join("\n"):"なし")+"\n\n"+
+      "――――――――――\n反映用のデータです。消さずにそのまま送ってください。\n"+JSON.stringify({news:data,closures:up});
     var url="mailto:"+MAIL_TO+"?subject="+encodeURIComponent("【中村歯科】お知らせ反映のお願い")+"&body="+encodeURIComponent(body);
     if(url.length>16000){shareFile();return;}
     location.href=url;
@@ -398,7 +496,7 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
   d.getElementById("fileSend").addEventListener("click",function(e){e.preventDefault();shareFile();});
   // 予備：メールが開かない端末向けに、従来どおり news.json をファイルで渡す。
   function shareFile(){
-    var txt=JSON.stringify(data,null,2);
+    var txt=JSON.stringify({news:data,closures:closures.filter(function(c){return c.date>=todayIso();})},null,2);
     var file=null;
     try{ file=new File([txt],"news.json",{type:"application/json"}); }catch(e){}
     if(file&&navigator.canShare&&navigator.canShare({files:[file]})&&navigator.share){
@@ -414,7 +512,7 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
     downloadJson(txt);
   }
   d.getElementById("importBtn").addEventListener("click",function(){d.getElementById("file").click();});
-  d.getElementById("file").addEventListener("change",function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var j=JSON.parse(r.result);if(Array.isArray(j)){data=j;setDirty(true);renderNews();toast("読み込みました");}else toast("形式が正しくありません");}catch(err){toast("読み込みに失敗しました");}};r.readAsText(f);e.target.value="";});
+  d.getElementById("file").addEventListener("change",function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var j=JSON.parse(r.result);if(Array.isArray(j)||(j&&Array.isArray(j.news))){data=Array.isArray(j)?j:j.news;if(j.closures)closures=j.closures;setDirty(true);renderNews();renderClosures();toast("読み込みました");}else toast("形式が正しくありません");}catch(err){toast("読み込みに失敗しました");}};r.readAsText(f);e.target.value="";});
 
   /* ================= SEO / MEO STEPS ================= */
   var SEO=[
@@ -473,7 +571,7 @@ td .row-act{display:flex;gap:6px;justify-content:flex-end}
     }
     updateDirty();
     loadPublished().catch(function(){toast("公開中のお知らせを読み込めませんでした");});
-    renderNews();refresh();
+    renderNews();renderClosures();refresh();
   }
 
   // ログイン済みならそのまま復帰（data 初期化後にここで実行）

@@ -4,7 +4,7 @@
 共通ヘッダー/フッターを一元管理し、全ページを生成する。
   $ python3 build.py
 """
-import os, time, json, re, html as _html
+import os, time, json, re, datetime, html as _html
 
 VER = str(int(time.time()))  # cache buster
 
@@ -12,6 +12,9 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://nakamuradental.jp"
 # Google ビジネスプロフィール（医院の店舗ページ）。地図ボタン・口コミ依頼・構造化データで共用。
 GMAP_URL = "https://share.google/6fNv94of4EXdPigKL"
+# Google アナリティクス 4 の測定 ID（例 "G-XXXXXXXXXX"）。空のあいだは計測タグを出さない。
+# 入れると全ページで計測が始まり、電話・地図・口コミボタンのタップがイベントとして記録される。
+GA_ID = ""
 TEL, TELR = "06-6615-6180", "0666156180"
 ADDR1 = "大阪市住之江区南港北1丁目14-16"
 ADDR2 = "大阪府咲洲庁舎（コスモタワー）3F"
@@ -85,6 +88,14 @@ TEL_ICON = ('<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><pa
             '1-.24 1z"/></svg>')
 
 
+def ga_tag():
+    if not GA_ID:
+        return ""
+    return (f'<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>\n'
+            "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}"
+            f"gtag('js',new Date());gtag('config','{GA_ID}');</script>\n")
+
+
 def head(title, desc, path, og_img="assets/img/hero-reception.jpg", extra=""):
     return f"""<!DOCTYPE html>
 <html lang="ja">
@@ -110,7 +121,7 @@ def head(title, desc, path, og_img="assets/img/hero-reception.jpg", extra=""):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css?v={VER}">
-{extra}</head>
+{ga_tag()}{extra}</head>
 <body>
 """
 
@@ -163,11 +174,16 @@ def cta():
   <div class="wrap">
     <p class="en">RESERVATION &amp; CONTACT</p>
     <h3>お電話でのお問い合わせ・ご予約</h3>
+    <p class="today" data-today hidden></p>
     <a class="tel" href="tel:{TELR}">{TEL_ICON}{TEL}</a>
     <p class="hours">{HOURS_LINE}</p>
   </div>
 </section>
 """
+
+
+GA_NOTE = ('<span class="foot-ga">当サイトは利用状況の把握のため Google アナリティクスを使用しています'
+           '（<a href="https://policies.google.com/technologies/partner-sites?hl=ja" target="_blank" rel="noopener">データの取り扱い</a>）。</span>')
 
 
 def footer():
@@ -188,9 +204,11 @@ def footer():
     <div class="foot-bottom">
       <span>© <span id="yr"></span> Nakamura Dental Office. All rights reserved.</span>
       <span>大阪 南港 コスモスクエア・咲洲庁舎の歯科医院</span>
+      {GA_NOTE if GA_ID else ""}
     </div>
   </div>
 </footer>
+<script src="assets/js/clinic-days.js?v={VER}"></script>
 <script src="assets/js/main.js?v={VER}"></script>
 </body>
 </html>
@@ -609,6 +627,8 @@ s += f"""<section class="section access">
           <div class="info-row"><dt>TEL</dt><dd><span class="big">{TEL}</span></dd></div>
           <div class="info-row"><dt>HOURS</dt><dd>9:30〜13:00 ／ 15:00〜19:00<span class="sub">土曜午後は15:00〜17:00　休診日：日曜日・祝日</span></dd></div>
         </dl>
+        <h3 class="blk-ttl" style="margin-top:2.2rem">診療カレンダー</h3>
+        <div class="cal" data-cal><noscript>休診日：日曜日・祝日</noscript></div>
         <a class="btn btn-ghost" style="margin-top:1.6rem;border-color:rgba(255,255,255,.3);color:#fff" href="{GMAP_URL}" target="_blank" rel="noopener">Googleマップで見る<span class="arw">›</span></a>
       </div>
     </div>
@@ -677,6 +697,45 @@ def news_html():
     return "".join(out)
 
 
+# ---------------------- 臨時休診 → Google 向け特別営業時間 ----------------------
+# data/closures.json（管理画面の「臨時休診日」）のうち今日以降のものを、
+# specialOpeningHoursSpecification として構造化データに載せる。
+# 通常枠は assets/js/clinic-days.js の REGULAR と同じ。
+REGULAR = {0: (None, None), 1: (("09:30", "13:00"), ("15:00", "19:00")), 2: (("09:30", "13:00"), ("15:00", "19:00")),
+           3: (("09:30", "13:00"), ("15:00", "19:00")), 4: (("09:30", "13:00"), ("15:00", "19:00")),
+           5: (("09:30", "13:00"), ("15:00", "19:00")), 6: (("09:30", "13:00"), ("15:00", "17:00"))}
+
+
+def special_hours_ld():
+    path = os.path.join(ROOT, "data", "closures.json")
+    if not os.path.exists(path):
+        return ""
+    with open(path, encoding="utf-8") as f:
+        closures = json.load(f)
+    today = time.strftime("%Y-%m-%d")
+    specs = []
+    for c in sorted(closures, key=lambda c: c["date"]):
+        if c["date"] < today:
+            continue
+        dow = datetime.date.fromisoformat(c["date"]).isoweekday() % 7  # 0=日
+        am, pm = REGULAR[dow]
+        if c["part"] == "am":
+            am = None
+        elif c["part"] == "pm":
+            pm = None
+        else:
+            am = pm = None
+        base = {"@type": "OpeningHoursSpecification", "validFrom": c["date"], "validThrough": c["date"]}
+        open_slots = [s for s in (am, pm) if s]
+        if not open_slots:  # 終日休診は 00:00〜00:00 で「閉店」を表す（Google の指定どおり）
+            specs.append(dict(base, opens="00:00", closes="00:00"))
+        for o, cl in open_slots:
+            specs.append(dict(base, opens=o, closes=cl))
+    if not specs:
+        return ""
+    return ',\n"specialOpeningHoursSpecification":' + json.dumps(specs, ensure_ascii=False, separators=(",", ":"))
+
+
 # ---------------------- INDEX ----------------------
 JSONLD = """<script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Dentist","name":"中村歯科医院","alternateName":"Nakamura Dental Office",
@@ -689,9 +748,9 @@ JSONLD = """<script type="application/ld+json">
 {"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"15:00","closes":"19:00"},
 {"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:30","closes":"13:00"},
 {"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"15:00","closes":"17:00"}],
-"areaServed":["南港","コスモスクエア","住之江区","大阪市"],"hasMap":"%s"}
+"areaServed":["南港","コスモスクエア","住之江区","大阪市"],"hasMap":"%s"%s}
 </script>
-""" % (SITE, SITE, GMAP_URL)
+""" % (SITE, SITE, GMAP_URL, special_hours_ld())
 
 # 実サイト同様、院内カットに咲洲庁舎の外観・診療風景を織り交ぜてフェード
 # (ファイル名, alt文, 通常時のobject-position, 縦長画面でのobject-position, モード, PC用の横長版)
@@ -810,6 +869,7 @@ s += """<section class="section news" id="news">
         <h3 class="blk-ttl">診療時間</h3>
         <p class="blk-note">予約制　新患　急患随時</p>
         %s
+        <div class="cal" data-cal style="margin-top:1.6rem"></div>
         <h3 class="blk-ttl" style="margin-top:2.4rem">所在地</h3>
         <p class="blk-body">大阪市住之江区南港北１丁目１４－１６ 大阪府咲洲庁舎 ３Ｆ<br>
           <span class="sub">地下鉄中央線コスモスクエア駅 徒歩8分／ニュートラム トレードセンター前駅 徒歩5分</span></p>
