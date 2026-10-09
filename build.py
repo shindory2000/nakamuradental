@@ -12,6 +12,11 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://nakamuradental.jp"
 # Google ビジネスプロフィール（医院の店舗ページ）。地図ボタン・口コミ依頼・構造化データで共用。
 GMAP_URL = "https://share.google/6fNv94of4EXdPigKL"
+# 同じ医院の外部ページ（電話番号・住所の一致を確認済み）。構造化データの sameAs で「同一の医院」と Google に伝える。
+SAME_AS = [GMAP_URL,
+           "https://doctorsfile.jp/h/104180/",
+           "https://epark.jp/shopinfo/shk307444/",
+           "https://haisha-yoyaku.jp/bun2sdental/detail/index/id/2735902823/"]
 # Google アナリティクス 4 の測定 ID（例 "G-XXXXXXXXXX"）。空のあいだは計測タグを出さない。
 # 入れると全ページで計測が始まり、電話・地図・口コミボタンのタップがイベントとして記録される。
 GA_ID = ""
@@ -752,9 +757,9 @@ JSONLD = """<script type="application/ld+json">
 {"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"15:00","closes":"19:00"},
 {"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:30","closes":"13:00"},
 {"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"15:00","closes":"17:00"}],
-"areaServed":["南港","コスモスクエア","住之江区","大阪市"],"hasMap":"%s"%s}
+"areaServed":["南港","コスモスクエア","住之江区","大阪市"],"hasMap":"%s","sameAs":%s%s}
 </script>
-""" % (SITE, SITE, GMAP_URL, special_hours_ld())
+""" % (SITE, SITE, GMAP_URL, json.dumps(SAME_AS), special_hours_ld())
 
 # 実サイト同様、院内カットに咲洲庁舎の外観・診療風景を織り交ぜてフェード
 # (ファイル名, alt文, 通常時のobject-position, 縦長画面でのobject-position, モード, PC用の横長版)
