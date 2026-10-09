@@ -570,7 +570,10 @@ PRICE = [
 ]
 cards = ""
 for ic, cat, sub, rows, wide in PRICE:
-    items = "".join(f'<li><span class="pi-name">{n}</span><span class="pi-yen">{p}</span></li>' for n, p in rows)
+    def yen(p):  # 「¥44,000〜」→「44,000円〜」（検索で「○○円」と書かれた金額として読まれやすくする）
+        m = re.fullmatch(r"¥([\d,]+)(〜?)", p)
+        return f"{m.group(1)}円{m.group(2)}" if m else p
+    items = "".join(f'<li><span class="pi-name">{n}</span><span class="pi-yen">{yen(p)}</span></li>' for n, p in rows)
     cards += f"""<article class="price-card{' price-card--wide' if wide else ''} reveal">
   <div class="price-card-head"><span class="price-ic">{icon(ic)}</span>
     <div><h3>{cat}</h3><span class="pc-sub">{sub}</span></div></div>
@@ -595,6 +598,7 @@ s += f"""<section class="section price-sec">
     <div class="lead-block reveal" style="margin-bottom:clamp(2.4rem,5vw,4rem)">
       <h2>納得いただいたうえで、治療を始めます。</h2>
       <p>自費診療をご検討の際は、治療内容と費用を事前に必ずご説明します。ご不明な点はどうぞお気軽におたずねください。</p>
+      <p>大阪・南港コスモスクエア（咲洲庁舎3F）の中村歯科医院の自費診療の料金表です。セラミック・ジルコニアの被せ物、インプラント、入れ歯、矯正、ホワイトニングの費用の目安を、税込でご案内しています。</p>
     </div>
     <div class="price-grid">{cards}</div>
     <p class="price-note">※表示価格はすべて税込です。<br>※治療内容やお口の状態により、別途費用がかかる場合がございます。詳しくは診療時にご説明いたします。</p>
