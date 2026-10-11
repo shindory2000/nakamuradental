@@ -159,7 +159,8 @@
     }
     function getJSON(u, opt) { return fetch(u, opt).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); }
 
-    Promise.all([getJSON("data/closures.json", { cache: "no-cache" }), getJSON("data/jp-holidays.json")]).then(function (res) {
+    var DB = window.NK_DATA_BASE || ""; // 別ドメインのページから読むときだけ設定される
+    Promise.all([getJSON(DB + "data/closures.json", { cache: "no-cache" }), getJSON(DB + "data/jp-holidays.json")]).then(function (res) {
       var closures = res[0] || [], holidays = res[1] || {}, now = tokyoNow();
 
       function paintToday() {
