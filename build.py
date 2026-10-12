@@ -680,6 +680,123 @@ s += footer()
 REVIEW_PAGE = s
 
 
+# ---------------------- 治療後の経過チェック（受付で渡すカードの QR から開く） ----------------------
+# 治療の約2週間後に「お口の調子」を4段階で答えてもらい、その流れで口コミと次回の検診につなげる。
+# Google のポリシー上、良い回答の人にだけ口コミを頼むのは禁止（レビューゲーティング）なので、
+# 口コミの案内は回答に関係なく全員に出す。調子が悪い人には、先に電話相談を大きく出す。
+# 回答はどこにも送らない（端末内だけ）。GA_ID を入れれば回答の件数だけイベントで数えられる。
+s = head("治療後のお口の調子チェック｜中村歯科医院", "中村歯科医院で治療を受けた方へ。治療後のお口の調子をお聞かせください。",
+         "checkup.html", extra='<meta name="robots" content="noindex">\n')
+s += header()
+s += f"""<section class="page-hero page-hero--plain">
+  <span class="ph-deco" aria-hidden="true"></span>
+  <div class="wrap">
+    <span class="eyebrow">After Care</span>
+    <h1>治療後のお口の調子チェック</h1>
+    <p class="sub">治療からしばらくたった今の状態を教えてください（10秒ほどで終わります）。</p>
+  </div>
+</section>
+<section class="section ck">
+  <div class="wrap" style="max-width:680px">
+    <div class="ck-remind" id="ckRemind">
+      <h2 class="ck-ttl">本日ご来院の方へ</h2>
+      <p>2週間後にこのページをもう一度開けるよう、スマートフォンのカレンダーにお知らせを入れておけます。</p>
+      <div class="ck-btns">
+        <a class="btn btn-ghost" id="ckGcal" target="_blank" rel="noopener">Googleカレンダーに入れる<span class="arw">›</span></a>
+        <a class="btn btn-ghost" id="ckIcs" download="nakamura-dental-check.ics">iPhoneのカレンダーに入れる<span class="arw">›</span></a>
+      </div>
+    </div>
+
+    <div class="ck-q" id="ckQ">
+      <h2 class="ck-ttl">治療後、お口の調子はいかがですか？</h2>
+      <div class="ck-opts">
+        <button type="button" class="ck-opt" data-v="4">とても良くなった</button>
+        <button type="button" class="ck-opt" data-v="3">良くなった</button>
+        <button type="button" class="ck-opt" data-v="2">変わらない</button>
+        <button type="button" class="ck-opt" data-v="1">気になる・悪くなった</button>
+      </div>
+    </div>
+
+    <div class="ck-res" id="ckGood" hidden>
+      <h2 class="ck-ttl">お聞かせいただき、ありがとうございます。</h2>
+      <p>経過が順調で何よりです。よろしければ、当院の印象をGoogleの口コミでお聞かせください。歯科医院を探している地域の方の参考になります。</p>
+      <p class="ck-cta"><a class="btn btn-primary" href="{GMAP_URL}" target="_blank" rel="noopener" data-ck="review">Googleで口コミを書く<span class="arw">›</span></a></p>
+    </div>
+
+    <div class="ck-res" id="ckBad" hidden>
+      <h2 class="ck-ttl">お知らせいただき、ありがとうございます。</h2>
+      <p>気になる症状が続くときは、次回の予約日を待たずにお電話でご相談ください。状態をうかがって、早めの受診をご案内します。</p>
+      <p class="ck-cta"><a class="btn btn-primary" href="tel:{TELR}" data-ck="tel">{TEL_ICON}{TEL} に電話する</a></p>
+      <p class="ck-sub">当院へのご意見・ご感想は、Googleの口コミでもお聞かせいただけます。</p>
+      <p class="ck-cta"><a class="btn btn-ghost" href="{GMAP_URL}" target="_blank" rel="noopener" data-ck="review">Googleで口コミを書く<span class="arw">›</span></a></p>
+    </div>
+
+    <div class="ck-next" id="ckNext" hidden>
+      <h3>次の定期検診も忘れずに</h3>
+      <p>歯の健康を保つには3か月〜半年ごとの検診がおすすめです。3か月後のお知らせをカレンダーに入れておけます。ご予約はお電話で承ります。</p>
+      <div class="ck-btns">
+        <a class="btn btn-ghost" id="ckGcal3" target="_blank" rel="noopener">3か月後の検診をGoogleカレンダーに<span class="arw">›</span></a>
+        <a class="btn btn-ghost" id="ckIcs3" download="nakamura-dental-kenshin.ics">iPhoneのカレンダーに<span class="arw">›</span></a>
+        <a class="btn btn-ghost" href="tel:{TELR}" data-ck="tel">電話で予約する（{TEL}）<span class="arw">›</span></a>
+      </div>
+    </div>
+
+    <p class="ck-note">※ 回答はこの端末の中だけで使い、どこにも送信されません。口コミは任意です。投稿の有無で診療内容が変わることはありません。</p>
+  </div>
+</section>
+<script>
+(function () {{
+  var URL = "{SITE}/checkup.html", NAME = "中村歯科医院", TEL = "{TEL}";
+  function ymd(d) {{ return d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2); }}
+  function later(days) {{ var d = new Date(); d.setDate(d.getDate() + days); return d; }}
+  function gcal(d, title, body) {{
+    var e = new Date(d); e.setDate(e.getDate() + 1);
+    return "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + encodeURIComponent(title) +
+      "&dates=" + ymd(d) + "/" + ymd(e) + "&details=" + encodeURIComponent(body);
+  }}
+  function ics(d, title, body) {{
+    var e = new Date(d); e.setDate(e.getDate() + 1);
+    var t = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//nakamuradental.jp//checkup//JA", "BEGIN:VEVENT",
+      "UID:" + Date.now() + "@nakamuradental.jp", "DTSTAMP:" + ymd(new Date()) + "T000000Z",
+      "DTSTART;VALUE=DATE:" + ymd(d), "DTEND;VALUE=DATE:" + ymd(e),
+      "SUMMARY:" + title, "DESCRIPTION:" + body.replace(/\\n/g, "\\\\n"), "URL:" + URL,
+      "BEGIN:VALARM", "TRIGGER:PT10H", "ACTION:DISPLAY", "DESCRIPTION:" + title, "END:VALARM",
+      "END:VEVENT", "END:VCALENDAR"].join("\\r\\n");
+    return "data:text/calendar;charset=utf-8," + encodeURIComponent(t);
+  }}
+  var d14 = later(14), t14 = NAME + "：治療後のお口の調子チェック",
+      b14 = "治療から2週間です。お口の調子を教えてください（10秒）\\n" + URL;
+  var d90 = later(90), t90 = NAME + "：定期検診の時期です",
+      b90 = "定期検診のご予約は お電話で（" + TEL + "）\\n" + "{SITE}/";
+  document.getElementById("ckGcal").href = gcal(d14, t14, b14);
+  document.getElementById("ckIcs").href = ics(d14, t14, b14);
+  document.getElementById("ckGcal3").href = gcal(d90, t90, b90);
+  document.getElementById("ckIcs3").href = ics(d90, t90, b90);
+
+  function track(name, params) {{ if (typeof window.gtag === "function") window.gtag("event", name, params || {{}}); }}
+  document.querySelectorAll(".ck-opt").forEach(function (b) {{
+    b.addEventListener("click", function () {{
+      var v = +b.getAttribute("data-v");
+      document.querySelectorAll(".ck-opt").forEach(function (x) {{ x.classList.toggle("on", x === b); }});
+      document.getElementById("ckGood").hidden = v < 3;
+      document.getElementById("ckBad").hidden = v >= 3;
+      document.getElementById("ckNext").hidden = false;
+      document.getElementById("ckRemind").hidden = true;
+      track("checkup_answer", {{ value: v }});
+      var res = document.getElementById(v >= 3 ? "ckGood" : "ckBad");
+      res.scrollIntoView({{ behavior: "smooth", block: "start" }});
+    }});
+  }});
+  document.querySelectorAll("[data-ck]").forEach(function (a) {{
+    a.addEventListener("click", function () {{ track("checkup_" + a.getAttribute("data-ck")); }});
+  }});
+}})();
+</script>
+"""
+s += footer()
+CHECKUP_PAGE = s
+
+
 # ---------------------- NEWS ----------------------
 # お知らせは JS だけで描くと検索エンジンに読まれにくいので、ビルド時に HTML へ焼き込む。
 # 表示ロジック（新しい順・最大6件・カテゴリ色）は assets/js/main.js と揃えること。
@@ -945,6 +1062,9 @@ for name, content in PAGES.items():
 with open(os.path.join(ROOT, "review.html"), "w", encoding="utf-8") as f:
     f.write(REVIEW_PAGE)
 print("built review.html (noindex, not in sitemap)")
+with open(os.path.join(ROOT, "checkup.html"), "w", encoding="utf-8") as f:
+    f.write(CHECKUP_PAGE)
+print("built checkup.html (noindex, not in sitemap)")
 
 # ---- sitemap.xml も生成物から自動生成（構成ズレ防止） ----
 import datetime
