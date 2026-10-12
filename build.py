@@ -804,7 +804,7 @@ staff_cards = "".join("""<article class="member reveal" data-d="%d">
     for i, (img, name, ja, en, cm) in enumerate(STAFF[:4]))
 
 HERO_PORTRAIT_STYLE = "<style>@media(max-aspect-ratio:1/1){\n%s\n}</style>\n" % slide_portrait_css
-s = head("中村歯科医院｜大阪 南港コスモスクエア・咲洲庁舎3Fの歯科",
+s = head("中村歯科医院｜大阪・南港コスモスクエアの歯医者（咲洲庁舎3F）",
          "大阪市住之江区南港・コスモスクエア（大阪府咲洲庁舎3F）の中村歯科医院。30年の信頼と実績で、一般歯科・小児歯科・インプラント・審美歯科・入れ歯まで対応。コスモスクエア駅・トレードセンター前駅すぐ。",
          "", "assets/img/hero-reception.jpg", JSONLD + HERO_PORTRAIT_STYLE)
 s += header("index.html")
@@ -814,7 +814,7 @@ s += """<section class="hero" id="top">
   <div class="hero-skyline" data-tram="assets/img/skyline-silhouette.svg?v=%s" aria-hidden="true"></div>
   <div class="hero-dots">%s</div>
   <div class="hero-copy">
-    <h1 class="hero-vert">あなたの笑顔のために</h1>
+    <h1 class="hero-vert">あなたの笑顔のために<span class="sr-only">｜中村歯科医院（大阪市住之江区 南港・コスモスクエアの歯医者）</span></h1>
     <p class="hero-vert">信頼と実績を</p>
   </div>
   <a href="#news" class="scroll-cue">SCROLL</a>
