@@ -1054,16 +1054,21 @@ for name in PAGES:
     PAGES[name] = PAGES[name].replace("</head>", structured_data(name, PAGES[name]) + "</head>", 1)
 
 # ============================ WRITE ============================
+def root_links(html):
+    # 「index.html」へのリンクは「./」にそろえる（Google が / と index.html を重複として扱うため）
+    return html.replace('href="index.html#', 'href="./#').replace('href="index.html"', 'href="./"')
+
+
 for name, content in PAGES.items():
     with open(os.path.join(ROOT, name), "w", encoding="utf-8") as f:
-        f.write(content)
+        f.write(root_links(content))
     print("built", name)
 
 with open(os.path.join(ROOT, "review.html"), "w", encoding="utf-8") as f:
-    f.write(REVIEW_PAGE)
+    f.write(root_links(REVIEW_PAGE))
 print("built review.html (noindex, not in sitemap)")
 with open(os.path.join(ROOT, "checkup.html"), "w", encoding="utf-8") as f:
-    f.write(CHECKUP_PAGE)
+    f.write(root_links(CHECKUP_PAGE))
 print("built checkup.html (noindex, not in sitemap)")
 
 # ---- sitemap.xml も生成物から自動生成（構成ズレ防止） ----
