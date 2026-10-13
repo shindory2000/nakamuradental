@@ -12,8 +12,12 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://nakamuradental.jp"
 # Google ビジネスプロフィール（医院の店舗ページ）。地図ボタン・口コミ依頼・構造化データで共用。
 GMAP_URL = "https://share.google/6fNv94of4EXdPigKL"
+# Google の「クチコミを書く」画面に直接開くリンク（ビジネスプロフィールの「クチコミを増やす」で発行）
+REVIEW_URL = "https://g.page/r/CdsKDBQD0uDPEAE/review"
+# Google マップ上の医院そのもの（場所 ID から作った固定リンク）
+MAPS_CID_URL = "https://www.google.com/maps?cid=14979203271297338075"
 # 同じ医院の外部ページ（電話番号・住所の一致を確認済み）。構造化データの sameAs で「同一の医院」と Google に伝える。
-SAME_AS = [GMAP_URL,
+SAME_AS = [MAPS_CID_URL, GMAP_URL,
            "https://doctorsfile.jp/h/104180/",
            "https://epark.jp/shopinfo/shk307444/",
            "https://haisha-yoyaku.jp/bun2sdental/detail/index/id/2735902823/"]
@@ -644,7 +648,7 @@ s += f"""<section class="section access">
     <div class="access-grid">
       <div class="access-map reveal">
         <iframe title="中村歯科医院 地図" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-          src="https://maps.google.com/maps?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%92%B2%E6%B4%B2%E5%BA%81%E8%88%8E&t=&z=16&ie=UTF8&iwloc=&output=embed"></iframe>
+          src="https://maps.google.com/maps?q=%E4%B8%AD%E6%9D%91%E6%AD%AF%E7%A7%91%E5%8C%BB%E9%99%A2%20%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%92%B2%E6%B4%B2%E5%BA%81%E8%88%8E&t=&z=16&ie=UTF8&iwloc=&output=embed"></iframe>
       </div>
       <div class="reveal" data-d="1">
         <dl>
@@ -688,7 +692,7 @@ s += f"""<section class="page-hero page-hero--plain">
       <li>「クチコミ」を選び、「クチコミを書く」を押します。</li>
       <li>星の数を選び、よろしければひとことご感想をお書きください。</li>
     </ol>
-    <p style="text-align:center"><a class="btn btn-primary" href="{GMAP_URL}" target="_blank" rel="noopener">Googleで口コミを書く<span class="arw">›</span></a></p>
+    <p style="text-align:center"><a class="btn btn-primary" href="{REVIEW_URL}" target="_blank" rel="noopener">Googleで口コミを書く<span class="arw">›</span></a></p>
     <p style="font-size:.85rem;color:var(--ink-soft);margin-top:2em">※ 投稿にはGoogleアカウントが必要です。口コミは任意です。投稿の有無で診療内容が変わることはありません。</p>
   </div>
 </section>
@@ -737,7 +741,7 @@ s += f"""<section class="page-hero page-hero--plain">
     <div class="ck-res" id="ckGood" hidden>
       <h2 class="ck-ttl">お聞かせいただき、ありがとうございます。</h2>
       <p>経過が順調で何よりです。よろしければ、当院の印象をGoogleの口コミでお聞かせください。歯科医院を探している地域の方の参考になります。</p>
-      <p class="ck-cta"><a class="btn btn-primary" href="{GMAP_URL}" target="_blank" rel="noopener" data-ck="review">Googleで口コミを書く<span class="arw">›</span></a></p>
+      <p class="ck-cta"><a class="btn btn-primary" href="{REVIEW_URL}" target="_blank" rel="noopener" data-ck="review">Googleで口コミを書く<span class="arw">›</span></a></p>
     </div>
 
     <div class="ck-res" id="ckBad" hidden>
@@ -745,7 +749,7 @@ s += f"""<section class="page-hero page-hero--plain">
       <p>気になる症状が続くときは、次回の予約日を待たずにお電話でご相談ください。状態をうかがって、早めの受診をご案内します。</p>
       <p class="ck-cta"><a class="btn btn-primary" href="tel:{TELR}" data-ck="tel">{TEL_ICON}{TEL} に電話する</a></p>
       <p class="ck-sub">当院へのご意見・ご感想は、Googleの口コミでもお聞かせいただけます。</p>
-      <p class="ck-cta"><a class="btn btn-ghost" href="{GMAP_URL}" target="_blank" rel="noopener" data-ck="review">Googleで口コミを書く<span class="arw">›</span></a></p>
+      <p class="ck-cta"><a class="btn btn-ghost" href="{REVIEW_URL}" target="_blank" rel="noopener" data-ck="review">Googleで口コミを書く<span class="arw">›</span></a></p>
     </div>
 
     <div class="ck-next" id="ckNext" hidden>
@@ -885,7 +889,7 @@ JSONLD = """<script type="application/ld+json">
 "url":"%s/","image":"%s/assets/img/hero-reception.jpg","telephone":"+81-6-6615-6180",
 "priceRange":"¥¥","medicalSpecialty":["Dentistry"],
 "address":{"@type":"PostalAddress","streetAddress":"南港北1丁目14-16 大阪府咲洲庁舎3F","addressLocality":"大阪市住之江区","addressRegion":"大阪府","postalCode":"559-0034","addressCountry":"JP"},
-"geo":{"@type":"GeoCoordinates","latitude":34.6376,"longitude":135.4106},
+"geo":{"@type":"GeoCoordinates","latitude":34.6376945,"longitude":135.4143232},
 "openingHoursSpecification":[
 {"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:30","closes":"13:00"},
 {"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"15:00","closes":"19:00"},
@@ -893,7 +897,7 @@ JSONLD = """<script type="application/ld+json">
 {"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"15:00","closes":"17:00"}],
 "areaServed":["南港","コスモスクエア","住之江区","大阪市"],"hasMap":"%s","sameAs":%s%s}
 </script>
-""" % (SITE, SITE, GMAP_URL, json.dumps(SAME_AS), special_hours_ld())
+""" % (SITE, SITE, MAPS_CID_URL, json.dumps(SAME_AS), special_hours_ld())
 
 # 実サイト同様、院内カットに咲洲庁舎の外観・診療風景を織り交ぜてフェード
 # (ファイル名, alt文, 通常時のobject-position, 縦長画面でのobject-position, モード, PC用の横長版)
@@ -1006,7 +1010,7 @@ s += """<section class="section news" id="news">
     <div class="access-grid">
       <div class="access-map reveal">
         <iframe title="中村歯科医院 地図" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-          src="https://maps.google.com/maps?q=%%E5%%A4%%A7%%E9%%98%%AA%%E5%%BA%%9C%%E5%%92%%B2%%E6%%B4%%B2%%E5%%BA%%81%%E8%%88%%8E&t=&z=16&ie=UTF8&iwloc=&output=embed"></iframe>
+          src="https://maps.google.com/maps?q=%%E4%%B8%%AD%%E6%%9D%%91%%E6%%AD%%AF%%E7%%A7%%91%%E5%%8C%%BB%%E9%%99%%A2%%20%%E5%%A4%%A7%%E9%%98%%AA%%E5%%BA%%9C%%E5%%92%%B2%%E6%%B4%%B2%%E5%%BA%%81%%E8%%88%%8E&t=&z=16&ie=UTF8&iwloc=&output=embed"></iframe>
       </div>
       <div class="reveal" data-d="1">
         <h3 class="blk-ttl">診療時間</h3>
