@@ -314,10 +314,25 @@ def svc_block(anchor, icon_key, title, sub, paras, img=None, img_alt="", extra="
 </section>"""
 
 
+SVC_META = {
+    "service.html": ("一般歯科・小児歯科・予防歯科｜大阪市住之江区 南港の歯医者 中村歯科医院",
+                     "虫歯・歯周病の治療から、小児歯科、定期検診、PMTCによる予防歯科まで。大阪市住之江区南港・咲洲庁舎3Fの中村歯科医院。コスモスクエア駅・トレードセンター前駅から徒歩圏内。"),
+    "service-implant.html": ("インプラント｜大阪市住之江区 南港の歯医者 中村歯科医院（咲洲庁舎3F）",
+                             "大口式インプラントなどで、骨が少ない場所や抜歯と同時の埋入にも対応。治療期間・費用（330,000円〜・税込）・リスクを事前にご説明します。大阪・南港コスモスクエアの中村歯科医院。"),
+    "service-denture.html": ("入れ歯（義歯）｜大阪市住之江区 南港の歯医者 中村歯科医院（咲洲庁舎3F）",
+                             "義歯専門の技工所と連携し、保険の入れ歯から金属床・ノンクラスプデンチャーまで対応します。大阪・南港コスモスクエアの中村歯科医院。"),
+    "service-aesthetic.html": ("審美歯科・ホワイトニング｜大阪市住之江区 南港の歯医者 中村歯科医院",
+                               "セラミック・ジルコニアの被せ物、ラミネートベニア、ホワイトニング（ホーム・デュアル）に対応。費用は事前にご説明します。大阪・南港コスモスクエアの中村歯科医院。"),
+    "service-ortho.html": ("矯正歯科（小児矯正・成人矯正）｜大阪市住之江区 南港の歯医者 中村歯科医院",
+                           "お子さまの咬合誘導（予防矯正）から大人の本格矯正まで。ブラケット矯正・床矯正・リンガルアーチなど症状に合わせてご提案します。大阪・南港コスモスクエアの中村歯科医院。"),
+}
+
+
 def svc_page(fname, h1, sub, hero_img, blocks, faqs, crumb_mid=True, after_blocks=""):
-    t = f"{h1}｜中村歯科医院（大阪 南港コスモスクエア・咲洲庁舎3F）"
     label = h1.replace("診療のご案内｜", "")
-    d = f"中村歯科医院の{label}についてのご案内です。大阪 南港コスモスクエア・咲洲庁舎3F。"
+    # 検索で「治療名＋地域」で探す人に向けた題名と説明文（ページ本文にある事実だけで書く）
+    t, d = SVC_META.get(fname, (f"{h1}｜中村歯科医院（大阪 南港コスモスクエア・咲洲庁舎3F）",
+                                f"中村歯科医院の{label}についてのご案内です。大阪 南港コスモスクエア・咲洲庁舎3F。"))
     s = head(t, d, fname, "assets/img/hero-shelf.jpg")
     s += header()
     mid = '<a href="service.html">診療のご案内</a><span>›</span>' if crumb_mid else ""
@@ -505,8 +520,8 @@ STAFF = [
     ("staff-tabata.jpg",     "田端",    "受付・助手", "Dental Receptionist・Assistant",
      "患者様の心配と不安が少しでも軽くなるようなお話ができればうれしいです。"),
 ]
-s = head("スタッフ紹介｜中村歯科医院（大阪 南港コスモスクエア）",
-         "スタッフ紹介。医師、歯科衛生士、受付スタッフが連携して診療を行っています。",
+s = head("スタッフ紹介｜大阪市住之江区 南港の歯医者 中村歯科医院",
+         "大阪市住之江区南港・咲洲庁舎3Fの中村歯科医院のスタッフ紹介。院長・歯科医師・歯科衛生士・受付が連携して診療しています。",
          "staff.html", "assets/img/logo-mark.png")
 s += header("staff.html")
 s += """<section class="page-hero page-hero--plain">
@@ -584,7 +599,7 @@ for ic, cat, sub, rows, wide in PRICE:
     <div><h3>{cat}</h3><span class="pc-sub">{sub}</span></div></div>
   <ul class="price-items">{items}</ul>
 </article>"""
-s = head("自費診療 料金表｜中村歯科医院（大阪 南港コスモスクエア）",
+s = head("自費診療の料金表（インプラント・矯正・セラミック）｜南港の歯医者 中村歯科医院",
          "中村歯科医院の自費診療料金表。セラミック・ジルコニア・インプラント・入れ歯・矯正・ホワイトニングの料金を掲載しています。表示価格はすべて税込です。",
          "price.html", "assets/img/hero-shelf.jpg")
 s += header("price.html")
@@ -616,7 +631,7 @@ s += footer()
 PAGES["price.html"] = s
 
 # ---------------------- ACCESS ----------------------
-s = head("アクセス｜中村歯科医院（大阪 南港コスモスクエア・咲洲庁舎3F）",
+s = head("アクセス（コスモスクエア駅・トレードセンター前駅）｜中村歯科医院 咲洲庁舎3F",
          "中村歯科医院へのアクセス。Osaka Metro中央線コスモスクエア駅 徒歩8分、ニュートラム トレードセンター前駅 徒歩5分。大阪府咲洲庁舎（コスモタワー）3F。",
          "access.html", "assets/img/cosmo-tower-real.jpg")
 s += header("access.html")
@@ -922,7 +937,7 @@ staff_cards = "".join("""<article class="member reveal" data-d="%d">
 
 HERO_PORTRAIT_STYLE = "<style>@media(max-aspect-ratio:1/1){\n%s\n}</style>\n" % slide_portrait_css
 s = head("中村歯科医院｜大阪・南港コスモスクエアの歯医者（咲洲庁舎3F）",
-         "大阪市住之江区南港・コスモスクエア（大阪府咲洲庁舎3F）の中村歯科医院。30年の信頼と実績で、一般歯科・小児歯科・インプラント・審美歯科・入れ歯まで対応。コスモスクエア駅・トレードセンター前駅すぐ。",
+         "大阪市住之江区南港・コスモスクエア（大阪府咲洲庁舎3F）の中村歯科医院。20年以上の信頼と実績で、一般歯科・小児歯科・インプラント・審美歯科・入れ歯まで対応。コスモスクエア駅・トレードセンター前駅すぐ。",
          "", "assets/img/hero-reception.jpg", JSONLD + HERO_PORTRAIT_STYLE)
 s += header("index.html")
 s += """<section class="hero" id="top">
