@@ -124,7 +124,9 @@ def head(title, desc, path, og_img="assets/img/hero-reception.jpg", extra=""):
 <link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- フォントは表示を止めずに後から読み込む（スマホでの初回表示を速くする） -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"></noscript>
 <link rel="stylesheet" href="assets/css/style.css?v={VER}">
 {ga_tag()}{extra}</head>
 <body>
@@ -1069,9 +1071,18 @@ for name in PAGES:
     PAGES[name] = PAGES[name].replace("</head>", structured_data(name, PAGES[name]) + "</head>", 1)
 
 # ============================ WRITE ============================
+def _webp(m):
+    # 同名の .webp があるページ内の画像は軽い WebP で配る（og:image・構造化データの絶対 URL は JPG のまま）
+    path = m.group(2)
+    w = os.path.splitext(path)[0] + ".webp"
+    return m.group(1) + (w if os.path.exists(os.path.join(ROOT, w)) else path)
+
+
 def root_links(html):
     # 「index.html」へのリンクは「./」にそろえる（Google が / と index.html を重複として扱うため）
-    return html.replace('href="index.html#', 'href="./#').replace('href="index.html"', 'href="./"')
+    html = html.replace('href="index.html#', 'href="./#').replace('href="index.html"', 'href="./"')
+    html = re.sub(r'((?:src|href|data-src|srcset)="|url\([\'"]?)(assets/img/[^"\')?\s]+\.(?:jpe?g|png))', _webp, html)
+    return html
 
 
 for name, content in PAGES.items():

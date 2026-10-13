@@ -20,15 +20,17 @@
 <link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=1791868495">
+<!-- フォントは表示を止めずに後から読み込む（スマホでの初回表示を速くする） -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"></noscript>
+<link rel="stylesheet" href="assets/css/style.css?v=1791868716">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nakamuradental.jp/"},{"@type":"ListItem","position":2,"name":"診療のご案内","item":"https://nakamuradental.jp/service.html"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"虫歯はどのように進行しますか？","acceptedAnswer":{"@type":"Answer","text":"初期（C0）から重度（C4）まで段階があります。早期であれば削る量も少なく、通院回数も抑えられます。気になる段階でご相談ください。"}},{"@type":"Question","name":"3Mix-MP法とはどんな治療ですか？","acceptedAnswer":{"@type":"Answer","text":"3種類の抗菌薬を用いた治療法で、歯を削る量を最小限に抑えながら虫歯や根尖病変の治療が可能です。"}},{"@type":"Question","name":"何歳から受診できますか？","acceptedAnswer":{"@type":"Answer","text":"歯が生え始めた頃（1歳前後）からご相談いただけます。まずは慣れることから始めます。"}},{"@type":"Question","name":"定期検診はどれくらいの間隔ですか？","acceptedAnswer":{"@type":"Answer","text":"通常３ヶ月〜６ヶ月で行いますが、その方の症状によって１ヶ月〜２ヶ月で行う場合もあります。"}}]}</script>
 </head>
 <body>
 <header class="site-header" id="header">
   <div class="wrap">
-    <a href="./" class="brand" aria-label="中村歯科医院 ホーム"><img class="logo-mark" src="assets/img/logo-mark.png" alt="" aria-hidden="true">
+    <a href="./" class="brand" aria-label="中村歯科医院 ホーム"><img class="logo-mark" src="assets/img/logo-mark.webp" alt="" aria-hidden="true">
       <span class="name"><b>Nakamura Dental Office</b><span>COSMOSQUARE</span></span></a>
     <nav class="nav" aria-label="グローバルナビ"><a href="./">ホーム</a><a href="service.html">診療のご案内</a><a href="staff.html">スタッフ紹介</a><a href="price.html">自費診療 料金表</a><a href="access.html">アクセス</a></nav>
     <a class="header-tel" href="tel:0666156180"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11.4 11.4 0 0 0 3.6.58 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .58 3.6 1 1 0 0 1-.24 1z"/></svg>06-6615-6180</a>
@@ -61,21 +63,21 @@
     <div><h2>小児歯科</h2></div>
   </div>
   <div class="svc-card-body"><p>お子さまの成長に合わせた診療を行います。虫歯予防、フッ素塗布、シーラント、ブラッシング指導などを通して、将来の健康な歯を育てます。</p><p>痛くない・怖くない歯科体験を大切にしています。定期検診を習慣にすることで、生涯の歯の健康を守る基盤をつくります。</p></div>
-  <div class="blk-fig wipe"><img src="assets/img/kids-group.jpg" alt="小児歯科の診療風景" loading="lazy"></div>
+  <div class="blk-fig wipe"><img src="assets/img/kids-group.webp" alt="小児歯科の診療風景" loading="lazy"></div>
 </section><section class="svc-card-lg reveal" id="checkup">
   <div class="svc-card-head">
     <span class="svc-card-ic"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="10" width="26" height="24" rx="3"/><path d="M7 17h26M14 7v6M26 7v6"/><path d="M20 21c2.4 0 3.8 1.5 3.8 3.8 0 1.8-.4 3.2-.9 4.6-.4 1.1-.7 2-1.4 2-.6 0-.7-2.1-1.5-2.1s-.4 2.1-1.2 2.1c-.8 0-1.1-.9-1.5-2-.5-1.4-.9-2.8-.9-4.6 0-2.3 1.4-3.8 3.6-3.8z"/></svg></span>
     <div><h2>定期検診</h2></div>
   </div>
   <div class="svc-card-body"><p>当院では「定期健診」により、小さいときから生涯にわたって、歯と口の衛生を守り、痛くならないようにしていくことが、生涯自分の歯で豊かな生活をおくるために一番効果であると思っております。</p><p>少しの不注意で歯周炎、虫歯を進行さし歯を抜かなければならないことは、生涯取り返しのできないことではないでしょうか？</p><p>「定期健診」では、歯科医師・歯科衛生士が普段ブラッシングでは取れない汚れをクリーニングしたり、口腔清掃指導、予防剤（フッ素）塗布、レントゲン写真による検査などを行います。</p><p>「定期健診」の間隔は、通常３ヶ月〜６ヶ月で行いますが、その方の症状によって１ヶ月〜２ヶ月で行う場合もあります。</p></div>
-  <div class="blk-fig wipe"><img src="assets/img/checkup.jpg" alt="定期検診の様子" loading="lazy"></div>
+  <div class="blk-fig wipe"><img src="assets/img/checkup.webp" alt="定期検診の様子" loading="lazy"></div>
 </section><section class="svc-card-lg reveal" id="pmtc">
   <div class="svc-card-head">
     <span class="svc-card-ic"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="14" width="12" height="20" rx="2"/><path d="M12 14v-3h6v3M12 24h6M15 21v6"/><rect x="25" y="12" width="8" height="22" rx="3"/><path d="M25 18h8"/></svg></span>
     <div><h2>予防歯科</h2><span class="svc-sub">（PMTC）</span></div>
   </div>
   <div class="svc-card-body"><p>PMTC（専門家による機械的歯面清掃）を中心に、虫歯・歯周病を未然に防ぐための予防ケアを提供しています。</p><p>歯科衛生士による丁寧なクリーニング、フッ素塗布、歯茎マッサージにより、清潔で健康な口腔環境を保ちます。定期検診を通じて、長期的なお口の健康維持をサポートします。</p></div>
-  <div class="blk-fig wipe"><img src="assets/img/pmtc-hygienist.jpg" alt="歯科衛生士によるPMTC（機械的歯面清掃）" loading="lazy"></div><ul class="chk-cards"><li class="chk-card"><span class="chk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.4l3 3 6-6.4"/></svg></span><span class="chk-txt"><b>歯周病の予防</b><span>歯の付け根のプラークを除去し、歯肉炎の症状が改善される。</span></span></li><li class="chk-card"><span class="chk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.4l3 3 6-6.4"/></svg></span><span class="chk-txt"><b>虫歯の予防</b><span>バイオフィルムが破壊され、プラークの再付着を防ぐ。</span></span></li><li class="chk-card"><span class="chk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.4l3 3 6-6.4"/></svg></span><span class="chk-txt"><b>歯がきれいに</b><span>歯についたステイン(着色物)を除去し、光沢のある歯になる。</span></span></li><li class="chk-card"><span class="chk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.4l3 3 6-6.4"/></svg></span><span class="chk-txt"><b>歯の強化</b><span>フッ素ジェルを用いることで再石灰化を促進し、歯を強くする。</span></span></li></ul>
+  <div class="blk-fig wipe"><img src="assets/img/pmtc-hygienist.webp" alt="歯科衛生士によるPMTC（機械的歯面清掃）" loading="lazy"></div><ul class="chk-cards"><li class="chk-card"><span class="chk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.4l3 3 6-6.4"/></svg></span><span class="chk-txt"><b>歯周病の予防</b><span>歯の付け根のプラークを除去し、歯肉炎の症状が改善される。</span></span></li><li class="chk-card"><span class="chk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.4l3 3 6-6.4"/></svg></span><span class="chk-txt"><b>虫歯の予防</b><span>バイオフィルムが破壊され、プラークの再付着を防ぐ。</span></span></li><li class="chk-card"><span class="chk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.4l3 3 6-6.4"/></svg></span><span class="chk-txt"><b>歯がきれいに</b><span>歯についたステイン(着色物)を除去し、光沢のある歯になる。</span></span></li><li class="chk-card"><span class="chk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.4l3 3 6-6.4"/></svg></span><span class="chk-txt"><b>歯の強化</b><span>フッ素ジェルを用いることで再石灰化を促進し、歯を強くする。</span></span></li></ul>
 </section></div>
 </section>
 <section class="section" style="padding-top:0">
@@ -118,7 +120,7 @@
   </div>
 </section>
 <section class="tramband">
-  <div class="tram-scene" data-tram="assets/img/tram-scene.svg?v=1791868495" aria-hidden="true"></div>
+  <div class="tram-scene" data-tram="assets/img/tram-scene.svg?v=1791868716" aria-hidden="true"></div>
 </section>
 <section class="cta">
   <div class="wrap">
@@ -133,7 +135,7 @@
   <div class="wrap">
     <div class="foot-grid">
       <div class="foot-brand">
-        <a href="./" class="brand"><img class="logo-mark" src="assets/img/logo-mark.png" alt="" aria-hidden="true">
+        <a href="./" class="brand"><img class="logo-mark" src="assets/img/logo-mark.webp" alt="" aria-hidden="true">
           <span class="name"><b>Nakamura Dental Office</b><span>COSMOSQUARE</span></span></a>
         <p>大阪市住之江区南港北1丁目14-16<br>大阪府咲洲庁舎（コスモタワー）3F<br>TEL 06-6615-6180</p>
       </div>
@@ -147,7 +149,7 @@
     </div>
   </div>
 </footer>
-<script src="assets/js/clinic-days.js?v=1791868495"></script>
-<script src="assets/js/main.js?v=1791868495"></script>
+<script src="assets/js/clinic-days.js?v=1791868716"></script>
+<script src="assets/js/main.js?v=1791868716"></script>
 </body>
 </html>
