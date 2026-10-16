@@ -110,6 +110,7 @@ def head(title, desc, path, og_img="assets/img/hero-reception.jpg", extra=""):
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="msvalidate.01" content="F79966AAB5E42CDC206C8936D06AF3A1">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
