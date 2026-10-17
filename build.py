@@ -1000,6 +1000,23 @@ staff_cards = "".join("""<article class="member reveal" data-d="%d">
   <p class="member-name">%s</p><p class="member-role">%s</p></article>""" % (i % 4, img, name, name, ja)
     for i, (img, name, ja, en, cm) in enumerate(STAFF[:4]))
 
+# トップページの「特徴」と「よくあるご質問」。サイト内に既にある事実だけで書く（診療時間・アクセス・診療内容）。
+REASONS_HTML = checks([
+    ("駅から歩いて通える咲洲庁舎3階", "Osaka Metro中央線「コスモスクエア駅」徒歩8分、ニュートラム「トレードセンター前駅」徒歩5分。"),
+    ("平日は19時まで、土曜も診療", "平日 9:30〜13:00／15:00〜19:00、土曜は 9:30〜13:00／15:00〜17:00。日曜・祝日は休診です。"),
+    ("歯科医師2名体制で20年以上", "院長・副院長の2名体制で、20年以上にわたり地域の皆さまの歯の健康を支えてきました。"),
+    ("できるだけ歯を残す治療", "虫歯は進み具合に応じて治療し、神経まで進んだ歯も根管治療で残すことを目指します。削る量を抑える3Mix-MP法も行っています。"),
+    ("入れ歯は専門の技工所と連携", "保険の入れ歯から、金属床・マグネット義歯・コンフォート（生体シリコーン）まで、ご希望に合わせてご提案します。"),
+    ("お子さまと予防のケア", "フッ素塗布・シーラント・ブラッシング指導、歯科衛生士によるPMTC。歯が生え始めた1歳前後からご相談いただけます。"),
+])
+TOP_FAQ = [
+    ("予約は必要ですか？", "予約制です。初めての方・急に痛みが出た方も随時受け付けていますので、まずはお電話（06-6615-6180）でご連絡ください。"),
+    ("土曜日も診療していますか？", "はい。土曜日は 9:30〜13:00、15:00〜17:00 に診療しています。日曜・祝日は休診です。"),
+    ("最寄り駅はどこですか？", "Osaka Metro中央線「コスモスクエア駅」から徒歩8分、ニュートラム「トレードセンター前駅」から徒歩5分です。大阪府咲洲庁舎（さきしまコスモタワー）の3階です。"),
+    ("子どもは何歳から診てもらえますか？", "歯が生え始めた頃（1歳前後）からご相談いただけます。まずは歯医者に慣れることから始めます。"),
+    ("車椅子でも受診できますか？", "はい。当院はバリアフリーに対応しています。"),
+]
+
 HERO_PORTRAIT_STYLE = "<style>@media(max-aspect-ratio:1/1){\n%s\n}</style>\n" % slide_portrait_css
 s = head("中村歯科医院｜大阪・南港コスモスクエアの歯医者（咲洲庁舎3F）",
          "大阪市住之江区南港・コスモスクエア（大阪府咲洲庁舎3F）の中村歯科医院。20年以上の信頼と実績で、一般歯科・小児歯科・インプラント・審美歯科・入れ歯まで対応。コスモスクエア駅・トレードセンター前駅すぐ。",
@@ -1049,6 +1066,14 @@ s += """<section class="section news" id="news">
   </div>
 </section>
 
+<section class="section reasons" id="features">
+  <div class="wrap">
+    <div class="sec-head center reveal"><span class="eyebrow">Features</span><h2 class="ja"><span class="h2-pre">南港・コスモスクエアの歯医者</span>中村歯科医院の特徴<span class="en">/ Features</span></h2></div>
+    <p class="reasons-lead reveal">大阪市住之江区南港北、大阪府咲洲庁舎（さきしまコスモタワー）3階の歯科医院です。お住まいの方はもちろん、咲洲庁舎やコスモスクエア周辺で働く方にも、お昼休みやお仕事帰りに通っていただいています。</p>
+    %s
+  </div>
+</section>
+
 <section class="section staff" id="staff">
   <div class="wrap">
     <div class="sec-head reveal"><span class="eyebrow">Staff</span><h2 class="ja">スタッフ紹介<span class="en">/ Staff</span></h2></div>
@@ -1086,7 +1111,8 @@ s += """<section class="section news" id="news">
     </div>
   </div>
 </section>
-""" % (VER, news_html(), svc_cards, HOURS_TABLE)
+""" % (VER, news_html(), svc_cards, REASONS_HTML, HOURS_TABLE)
+s += faq(TOP_FAQ)
 s += cta()
 s += footer()
 PAGES["index.html"] = s

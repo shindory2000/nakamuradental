@@ -636,3 +636,7 @@ table.price tbody tr:hover{background:var(--sand)}
 .ck-sub a{color:var(--navy);text-decoration:underline}
 .ck-note{font-size:.82rem;color:var(--ink-faint);line-height:1.8}
 @media (max-width:560px){.ck-opts{grid-template-columns:1fr}.ck-btns .btn{width:100%;justify-content:center}}
+
+/* トップページ：医院の特徴 */
+.reasons .reasons-lead{max-width:760px;margin:0 auto 2.4rem;text-align:center;line-height:1.9}
+.reasons .h2-pre{display:block;font-size:.55em;letter-spacing:.08em;margin-bottom:.3em;opacity:.8}
