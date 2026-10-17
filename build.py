@@ -18,9 +18,15 @@ REVIEW_URL = "https://g.page/r/CdsKDBQD0uDPEAE/review"
 MAPS_CID_URL = "https://www.google.com/maps?cid=14979203271297338075"
 # 同じ医院の外部ページ（電話番号・住所の一致を確認済み）。構造化データの sameAs で「同一の医院」と Google に伝える。
 SAME_AS = [MAPS_CID_URL, GMAP_URL,
+           "https://suminoe-sika.com/wp/clinic/%E4%B8%AD%E6%9D%91%E6%AD%AF%E7%A7%91%E5%8C%BB%E9%99%A2/",
+           "https://www.jda.or.jp/search/detail_44539.html",
            "https://doctorsfile.jp/h/104180/",
            "https://epark.jp/shopinfo/shk307444/",
-           "https://haisha-yoyaku.jp/bun2sdental/detail/index/id/2735902823/"]
+           "https://haisha-yoyaku.jp/bun2sdental/detail/index/id/2735902823/",
+           "https://caloo.jp/hospitals/detail/3270021770",
+           "https://medicalnote.jp/hospitals/96125",
+           "https://medley.life/institutions/564d89921c1b604d59c58af8",
+           "https://map.yahoo.co.jp/v3/place/1z_uIoXlWMA"]
 # Google アナリティクス 4 の測定 ID（例 "G-XXXXXXXXXX"）。空のあいだは計測タグを出さない。
 # 入れると全ページで計測が始まり、電話・地図・口コミボタンのタップがイベントとして記録される。
 GA_ID = ""
@@ -941,14 +947,14 @@ JSONLD = """<script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Dentist","name":"中村歯科医院","alternateName":"Nakamura Dental Office",
 "url":"%s/","image":"%s/assets/img/hero-reception.jpg","telephone":"+81-6-6615-6180",
 "priceRange":"¥¥","medicalSpecialty":["Dentistry"],
-"address":{"@type":"PostalAddress","streetAddress":"南港北1丁目14-16 大阪府咲洲庁舎3F","addressLocality":"大阪市住之江区","addressRegion":"大阪府","postalCode":"559-0034","addressCountry":"JP"},
+"address":{"@type":"PostalAddress","streetAddress":"南港北1丁目14-16 大阪府咲洲庁舎3F 305号室","addressLocality":"大阪市住之江区","addressRegion":"大阪府","postalCode":"559-0034","addressCountry":"JP"},
 "geo":{"@type":"GeoCoordinates","latitude":34.6376945,"longitude":135.4143232},
 "openingHoursSpecification":[
 {"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:30","closes":"13:00"},
 {"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"15:00","closes":"19:00"},
 {"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:30","closes":"13:00"},
 {"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"15:00","closes":"17:00"}],
-"areaServed":["南港","コスモスクエア","住之江区","大阪市"],"hasMap":"%s","sameAs":%s%s}
+"areaServed":["南港","コスモスクエア","住之江区","大阪市"],"employee":{"@type":"Person","name":"中村 聡","jobTitle":"院長"},"hasMap":"%s","sameAs":%s%s}
 </script>
 """ % (SITE, SITE, MAPS_CID_URL, json.dumps(SAME_AS), special_hours_ld())
 
