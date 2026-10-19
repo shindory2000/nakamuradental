@@ -433,15 +433,15 @@ PAGES["service-pediatric.html"] = svc_page(
             "痛くない・怖くない歯科体験を大切にしています。定期検診を習慣にすることで、生涯の歯の健康を守る基盤をつくります。",
         ], "kids-group.jpg", "小児歯科の診療風景"),
         svc_block("kids-care", "ic-checkup", "お子さまの予防ケア", "", [
-            "虫歯になってから治すのではなく、虫歯になりにくい歯と習慣をつくることを大切にしています。",
+            "虫歯予防、フッ素塗布、シーラント、ブラッシング指導などを行っています。",
         ], None, "", checks([
             ("フッ素塗布", "歯の表面にフッ素を塗り、再石灰化を促して虫歯になりにくい歯にします。"),
             ("シーラント", "奥歯の溝を樹脂でふさぎ、汚れがたまりにくくします。"),
-            ("ブラッシング指導", "お子さまと保護者の方に、年齢に合わせた歯みがきの方法をお伝えします。"),
+            ("ブラッシング指導", "毎日の歯みがきの方法をお伝えします。"),
             ("定期検診", "通常３ヶ月〜６ヶ月ごとに、虫歯の早期発見とクリーニングを行います。"),
         ])),
         svc_block("kids-ortho", "ic-ortho", "お子さまの歯並び", "咬合誘導（予防矯正）", [
-            "お子さまの咬合誘導（予防矯正）にも対応しています。歯並びや噛み合わせが気になるときは、検診の際にご相談ください。",
+            "お子さまの咬合誘導（予防矯正）にも対応しています。",
             '<a class="more-link" href="service-ortho.html">矯正歯科について詳しく ›</a>',
         ], None, ""),
         near_block(),
@@ -1069,7 +1069,7 @@ s += """<section class="section news" id="news">
 <section class="section reasons" id="features">
   <div class="wrap">
     <div class="sec-head center reveal"><span class="eyebrow">Features</span><h2 class="ja"><span class="h2-pre">南港・コスモスクエアの歯医者</span>中村歯科医院の特徴<span class="en">/ Features</span></h2></div>
-    <p class="reasons-lead reveal">大阪市住之江区南港北、大阪府咲洲庁舎（さきしまコスモタワー）3階の歯科医院です。お住まいの方はもちろん、咲洲庁舎やコスモスクエア周辺で働く方にも、お昼休みやお仕事帰りに通っていただいています。</p>
+    <p class="reasons-lead reveal">大阪市住之江区南港北、大阪府咲洲庁舎（さきしまコスモタワー）3階の歯科医院です。</p>
     %s
   </div>
 </section>
