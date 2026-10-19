@@ -1182,9 +1182,15 @@ for name, content in PAGES.items():
 with open(os.path.join(ROOT, "review.html"), "w", encoding="utf-8") as f:
     f.write(root_links(REVIEW_PAGE))
 print("built review.html (noindex, not in sitemap)")
+# 経過チェックは医院の了承が出るまで公開しない（2026-10-19）。True に戻すと本来のページを出す。
+CHECKUP_LIVE = False
+CHECKUP_PAUSED = """<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow"><meta http-equiv="refresh" content="0;url=./">
+<title>中村歯科医院</title></head><body><a href="./">中村歯科医院のトップページへ</a></body></html>
+"""
 with open(os.path.join(ROOT, "checkup.html"), "w", encoding="utf-8") as f:
-    f.write(root_links(CHECKUP_PAGE))
-print("built checkup.html (noindex, not in sitemap)")
+    f.write(root_links(CHECKUP_PAGE) if CHECKUP_LIVE else CHECKUP_PAUSED)
+print("built checkup.html (%s)" % ("live, noindex" if CHECKUP_LIVE else "paused -> redirects to top"))
 
 # ---- sitemap.xml も生成物から自動生成（構成ズレ防止） ----
 import datetime
