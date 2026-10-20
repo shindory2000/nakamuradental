@@ -35,7 +35,7 @@ SAME_AS = [MAPS_CID_URL, GMAP_URL,
            "https://map.yahoo.co.jp/v3/place/1z_uIoXlWMA"]
 # Google アナリティクス 4 の測定 ID（例 "G-XXXXXXXXXX"）。空のあいだは計測タグを出さない。
 # 入れると全ページで計測が始まり、電話・地図・口コミボタンのタップがイベントとして記録される。
-GA_ID = ""
+GA_ID = "G-0TX8SE5Q0W"
 TEL, TELR = "06-6615-6180", "0666156180"
 ADDR1 = "大阪市住之江区南港北1丁目14-16"
 ADDR2 = "大阪府咲洲庁舎（コスモタワー）3F"
