@@ -9,6 +9,12 @@ import os, time, json, re, datetime, html as _html
 VER = str(int(time.time()))  # cache buster
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
+# 公開済みのコラムがあるか（フッターに「コラム」を出すかどうか）
+def _has_published_columns():
+    d = os.path.join(ROOT, "data", "columns")
+    return os.path.isdir(d) and any("status: published" in open(os.path.join(d, f), encoding="utf-8").read()
+                                    for f in os.listdir(d) if f.endswith(".md"))
+HAS_COLUMNS = _has_published_columns()
 SITE = "https://nakamuradental.jp"
 # Google ビジネスプロフィール（医院の店舗ページ）。地図ボタン・口コミ依頼・構造化データで共用。
 GMAP_URL = "https://share.google/6fNv94of4EXdPigKL"
@@ -206,6 +212,8 @@ GA_NOTE = ('<span class="foot-ga">当サイトは利用状況の把握のため 
 
 def footer():
     menu = "".join(f'<a href="{h}">{ja}</a>' for h, ja, en in NAV)
+    if HAS_COLUMNS:
+        menu += '<a href="column.html">コラム</a>'
     svc = "".join(f'<a href="{h}">{ja}</a>' for h, ja, en, ic, d, hero in SERVICES)
     # Admin panel: admin/ directory
     return f"""<footer class="site-footer">
@@ -1116,6 +1124,112 @@ s += faq(TOP_FAQ)
 s += cta()
 s += footer()
 PAGES["index.html"] = s
+
+# ================= コラム（ブログ） =================
+# data/columns/*.md を読み、status: published のものだけをページにする。
+# 下書き（status: draft）は公開しない。院長の確認（reviewed: true）が付いた記事にだけ「監修」を表示する。
+DIRECTOR = "院長 中村 聡"
+
+
+def _read_column(path):
+    raw = open(path, encoding="utf-8").read()
+    m = re.match(r"---\n(.*?)\n---\n(.*)", raw, re.S)
+    meta, body = {}, raw
+    if m:
+        for line in m.group(1).splitlines():
+            if ":" in line:
+                k, v = line.split(":", 1)
+                meta[k.strip()] = v.strip()
+        body = m.group(2)
+    meta["slug"] = os.path.splitext(os.path.basename(path))[0]
+    meta["body"] = body
+    return meta
+
+
+def _md(body):
+    """見出し（##）・段落・箇条書き（- ）・リンク [文字](URL) だけの小さな変換"""
+    out, items = [], []
+    def flush():
+        if items:
+            out.append("<ul class=\"col-list\">" + "".join(f"<li>{i}</li>" for i in items) + "</ul>")
+            items.clear()
+    def inline(t):
+        t = _html.escape(t)
+        return re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a class="ul" href="\2">\1</a>', t)
+    for block in re.split(r"\n\s*\n", body.strip()):
+        lines = block.strip().splitlines()
+        if not lines:
+            continue
+        if lines[0].startswith("## "):
+            flush(); out.append(f"<h2>{inline(lines[0][3:])}</h2>")
+            lines = lines[1:]
+            if not lines:
+                continue
+        if all(l.startswith("- ") for l in lines):
+            items.extend(inline(l[2:]) for l in lines); flush(); continue
+        flush(); out.append("<p>" + "<br>".join(inline(l) for l in lines) + "</p>")
+    flush()
+    return "\n".join(out)
+
+
+COLUMNS = sorted((_read_column(os.path.join(ROOT, "data", "columns", f))
+                  for f in os.listdir(os.path.join(ROOT, "data", "columns")) if f.endswith(".md")),
+                 key=lambda c: c.get("date", ""), reverse=True)
+PUBLISHED_COLUMNS = [c for c in COLUMNS if c.get("status") == "published"]
+
+
+def column_page(c):
+    fname = f"column-{c['slug']}.html"
+    t = f"{c['title']}｜大阪市住之江区 南港の歯医者 中村歯科医院"
+    reviewed = c.get("reviewed") == "true"
+    s = head(t, c.get("description", ""), fname)
+    s += header()
+    s += f"""<section class="page-hero page-hero--plain">
+  <span class="ph-deco" aria-hidden="true"></span>
+  <div class="wrap">
+    <span class="eyebrow">Column</span>
+    <h1>{_html.escape(c['title'])}</h1>
+    <p class="sub">{'監修：' + DIRECTOR + '　／　' if reviewed else ''}更新日：{c.get('date', '')}</p>
+  </div>
+</section>
+<nav class="crumb"><div class="wrap"><a href="index.html">HOME</a><span>›</span><a href="column.html">コラム</a><span>›</span><span>{_html.escape(c['title'])}</span></div></nav>
+<section class="section col-article">
+  <div class="wrap col-wrap">
+    {_md(c['body'])}
+    <p class="col-note">※ 一般的な内容です。お口の状態によって治療は異なります。気になる症状があるときは、お気軽にご相談ください。</p>
+  </div>
+</section>
+"""
+    s += cta()
+    s += footer()
+    ld = {"@context": "https://schema.org", "@type": "MedicalWebPage", "headline": c["title"],
+          "datePublished": c.get("date", ""), "dateModified": c.get("date", ""),
+          "url": f"{SITE}/{fname}", "publisher": {"@type": "Dentist", "name": "中村歯科医院", "url": SITE + "/"}}
+    if reviewed:
+        ld["reviewedBy"] = {"@type": "Person", "name": "中村 聡", "jobTitle": "院長"}
+    s = s.replace("</head>", '<script type="application/ld+json">%s</script>\n</head>' % json.dumps(ld, ensure_ascii=False), 1)
+    return fname, s
+
+
+if PUBLISHED_COLUMNS:
+    cards = "".join(f"""<a class="col-card reveal" href="column-{c['slug']}.html">
+  <span class="col-date">{c.get('date', '')}</span><h3>{_html.escape(c['title'])}</h3><p>{_html.escape(c.get('description', ''))}</p>
+  <span class="more">読む<span class="arw">›</span></span></a>""" for c in PUBLISHED_COLUMNS)
+    s = head("コラム｜大阪市住之江区 南港の歯医者 中村歯科医院",
+             "歯の痛み・歯ぐきの出血・定期検診など、お口の気になることを中村歯科医院が解説します。大阪市住之江区南港・咲洲庁舎3F。",
+             "column.html")
+    s += header()
+    s += f"""<section class="page-hero page-hero--plain"><span class="ph-deco" aria-hidden="true"></span>
+  <div class="wrap"><span class="eyebrow">Column</span><h1>コラム</h1><p class="sub">お口の気になることを、わかりやすく解説します。</p></div></section>
+<nav class="crumb"><div class="wrap"><a href="index.html">HOME</a><span>›</span><span>コラム</span></div></nav>
+<section class="section"><div class="wrap col-grid">{cards}</div></section>
+"""
+    s += cta() + footer()
+    PAGES["column.html"] = s
+    for c in PUBLISHED_COLUMNS:
+        fn, html_ = column_page(c)
+        PAGES[fn] = html_
+print("columns: %d published / %d drafts" % (len(PUBLISHED_COLUMNS), len(COLUMNS) - len(PUBLISHED_COLUMNS)))
 
 # ================= 構造化データ（パンくず・FAQ） =================
 # ページに表示しているパンくずと「よくあるご質問」から JSON-LD を作る。

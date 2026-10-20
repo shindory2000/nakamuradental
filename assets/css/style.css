@@ -640,3 +640,16 @@ table.price tbody tr:hover{background:var(--sand)}
 /* トップページ：医院の特徴 */
 .reasons .reasons-lead{max-width:760px;margin:0 auto 2.4rem;text-align:center;line-height:1.9}
 .reasons .h2-pre{display:block;font-size:.55em;letter-spacing:.08em;margin-bottom:.3em;opacity:.8}
+
+/* コラム */
+.col-wrap{max-width:760px}
+.col-article h2{font-size:1.35rem;margin:2.4rem 0 1rem;padding-left:.8rem;border-left:4px solid var(--navy,#1f3f74);line-height:1.5}
+.col-article p{line-height:2;margin:0 0 1.1rem}
+.col-article .col-list{margin:0 0 1.2rem 1.4rem;line-height:1.9;list-style:disc;padding-left:.4rem}
+.col-article .col-list li{list-style:disc}
+.col-article .col-note{margin-top:2.4rem;font-size:.85rem;opacity:.75}
+.col-grid{display:grid;gap:1.2rem;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.col-card{display:block;padding:1.4rem 1.5rem;border-radius:14px;background:#fff;box-shadow:0 2px 12px rgba(20,40,80,.06);color:inherit;text-decoration:none}
+.col-card h3{font-size:1.1rem;margin:.4rem 0 .6rem;line-height:1.5}
+.col-card p{font-size:.9rem;line-height:1.8;opacity:.8;margin:0 0 .8rem}
+.col-card .col-date{font-size:.8rem;opacity:.6}
