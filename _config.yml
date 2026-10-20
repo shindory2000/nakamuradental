@@ -1,0 +1,8 @@
+# GitHub Pages（Jekyll）で公開しないもの。サイト本体（HTML・assets・data・admin）以外の作業用ファイル。
+exclude:
+  - PUBLISHING.md
+  - SEO-MEO-CHECKLIST.md
+  - build.py
+  - build-mainjp.py
+  - cloudflare
+  - dist-mainjp
