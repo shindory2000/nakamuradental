@@ -11,7 +11,7 @@ VER = str(int(time.time()))  # cache buster
 ROOT = os.path.dirname(os.path.abspath(__file__))
 # 公開済みのコラムがあるか（フッターに「コラム」を出すかどうか）
 def _has_published_columns():
-    d = os.path.join(ROOT, "data", "columns")
+    d = os.path.join(ROOT, "_columns")
     return os.path.isdir(d) and any("status: published" in open(os.path.join(d, f), encoding="utf-8").read()
                                     for f in os.listdir(d) if f.endswith(".md"))
 HAS_COLUMNS = _has_published_columns()
@@ -1126,7 +1126,7 @@ s += footer()
 PAGES["index.html"] = s
 
 # ================= コラム（ブログ） =================
-# data/columns/*.md を読み、status: published のものだけをページにする。
+# _columns/*.md を読み（先頭が _ のフォルダは GitHub Pages で公開されない）、status: published のものだけをページにする。
 # 下書き（status: draft）は公開しない。院長の確認（reviewed: true）が付いた記事にだけ「監修」を表示する。
 DIRECTOR = "院長 中村 聡"
 
@@ -1172,8 +1172,8 @@ def _md(body):
     return "\n".join(out)
 
 
-COLUMNS = sorted((_read_column(os.path.join(ROOT, "data", "columns", f))
-                  for f in os.listdir(os.path.join(ROOT, "data", "columns")) if f.endswith(".md")),
+COLUMNS = sorted((_read_column(os.path.join(ROOT, "_columns", f))
+                  for f in os.listdir(os.path.join(ROOT, "_columns")) if f.endswith(".md")),
                  key=lambda c: c.get("date", ""), reverse=True)
 PUBLISHED_COLUMNS = [c for c in COLUMNS if c.get("status") == "published"]
 
