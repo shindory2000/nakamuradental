@@ -6,3 +6,4 @@ exclude:
   - build-mainjp.py
   - cloudflare
   - dist-mainjp
+  - ops
