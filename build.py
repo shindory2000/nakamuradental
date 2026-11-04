@@ -222,7 +222,7 @@ def footer():
       <div class="foot-brand">
         <a href="index.html" class="brand">{LOGO_SVG}
           <span class="name"><b>Nakamura Dental Office</b><span>COSMOSQUARE</span></span></a>
-        <p>{ADDR1}<br>{ADDR2}<br>TEL {TEL}</p>
+        <p>中村歯科医院<br>{ADDR1}<br>{ADDR2}<br>TEL {TEL}</p>
       </div>
       <div class="foot-col"><h5>MENU</h5>{menu}</div>
       <div class="foot-col"><h5>SERVICE</h5>{svc}</div>
