@@ -54,7 +54,8 @@ function setup() {
   if (!prop('WEBHOOK_KEY')) props().setProperty('WEBHOOK_KEY', Utilities.getUuid().replace(/-/g, ''));
   if (!prop('PAIR_CODE')) props().setProperty('PAIR_CODE', String(Math.floor(1000 + Math.random() * 9000)));
   if (!prop('DRY_RUN')) props().setProperty('DRY_RUN', 'true');
-  ScriptApp.getProjectTriggers().forEach(function (t) { ScriptApp.deleteTrigger(t); });
+  ScriptApp.getProjectTriggers().filter(function (t) { return ['syncHolidays', 'sendDrafts'].indexOf(t.getHandlerFunction()) >= 0; })
+    .forEach(function (t) { ScriptApp.deleteTrigger(t); });
   ScriptApp.newTrigger('syncHolidays').timeBased().everyDays(1).atHour(6).create();
   ScriptApp.newTrigger('sendDrafts').timeBased().everyDays(1).atHour(10).create();
   log('setup', 'WEBHOOK_KEY と PAIR_CODE を作成し、毎朝6時（休診日）と10時（下書き送信）の定期実行を設定しました');
@@ -212,10 +213,20 @@ function onApproved(hit, replyToken) {
 
 /** LINE の Webhook（ウェブアプリとして公開し、URL の末尾に ?k=WEBHOOK_KEY を付けて登録する） */
 function doPost(e) {
+  // 経過観察の LIFF（ホームページ /line/）からの呼び出し。本人確認は LINE の ID トークンで行う（Followup.gs）
+  if (e && e.parameter && e.parameter.a === 'liff') {
+    var out;
+    try { out = fuLiff(JSON.parse(e.postData.contents)); } catch (err) { log('fu-liff-error', err); out = { ok: false, error: 'server' }; }
+    return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
+  }
   if (!e || !e.parameter || e.parameter.k !== prop('WEBHOOK_KEY')) return ContentService.createTextOutput('ng');
   var events = (JSON.parse(e.postData.contents).events) || [];
   events.forEach(function (ev) {
     var uid = ev.source && ev.source.userId, isAdmin = admins().indexOf(uid) >= 0;
+    // 管理者の下書き確認（ok:/fix: のボタン・修正文）以外は、患者さんの経過観察として扱う
+    var adminFlow = isAdmin && ((ev.type === 'postback' && /^(ok|fix):/.test(ev.postback.data)) || (ev.type === 'message' && props().getProperty('FIX_WAITING_' + uid)));
+    var pairing = ev.type === 'message' && ev.message.type === 'text' && ev.message.text.replace(/\s/g, '') === '登録' + prop('PAIR_CODE');
+    if (!adminFlow && !pairing && typeof fuEvent === 'function' && fuEvent(ev)) return;
     if (ev.type === 'message' && ev.message.type === 'text') {
       var txt = ev.message.text.trim();
       if (txt === '登録 ' + prop('PAIR_CODE') || txt === '登録' + prop('PAIR_CODE')) {

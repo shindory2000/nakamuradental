@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>LINE 経過観察の確認用｜中村歯科医院</title>
+<!-- 院長・本人に流れを見てもらうための確認用。実際の送信はしない。文面は ops/apps-script/Followup.gs の FU_MSG と同じ。 -->
+<style>
+  :root{--ink:#16212e;--soft:#5b6b7b;--navy:#1f3f74;--line:#d9e1ea}
+  *{box-sizing:border-box}
+  body{margin:0;background:#e9edf2;color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans",Meiryo,sans-serif}
+  header{max-width:1200px;margin:0 auto;padding:20px 16px 6px}
+  header h1{font-size:19px;margin:0 0 4px}
+  header p{margin:0;color:var(--soft);font-size:13.5px}
+  .row{max-width:1200px;margin:0 auto;padding:12px 16px 32px;display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
+  .col{flex:1 1 340px;max-width:380px}
+  .step{font-size:13px;font-weight:700;color:var(--navy);margin:0 0 8px}
+  .step span{display:inline-block;background:var(--navy);color:#fff;border-radius:4px;padding:1px 7px;margin-right:6px}
+  .phone{background:#fff;border:8px solid #1b1f24;border-radius:30px;height:700px;overflow:hidden;display:flex;flex-direction:column}
+  .phone iframe{border:0;width:100%;flex:1}
+  .bar{background:#1f2a37;color:#fff;font-size:14px;font-weight:700;padding:12px 14px;display:flex;align-items:center;gap:8px}
+  .bar i{width:26px;height:26px;border-radius:50%;background:#fff;color:var(--navy);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:12px}
+  .chat{flex:1;overflow-y:auto;background:#8fa9c4;padding:12px 10px 18px}
+  .day{text-align:center;margin:6px 0 10px}
+  .day b{font-size:11px;font-weight:400;color:#fff;background:rgba(0,0,0,.22);border-radius:10px;padding:2px 10px}
+  .msg{display:flex;gap:6px;margin:0 0 10px;align-items:flex-start}
+  .msg .av{width:30px;height:30px;border-radius:50%;background:#fff;color:var(--navy);font-size:11px;display:flex;align-items:center;justify-content:center;flex:none;font-weight:700}
+  .bub{background:#fff;border-radius:16px;padding:9px 12px;font-size:13.5px;line-height:1.6;max-width:84%;white-space:pre-wrap}
+  .me{justify-content:flex-end}
+  .me .bub{background:#c7f0a4}
+  .flex{background:#fff;border-radius:14px;max-width:86%;overflow:hidden;font-size:13.5px;line-height:1.6}
+  .flex .bd{padding:12px 14px;white-space:pre-wrap}
+  .flex .bd small{display:block;color:var(--navy);font-weight:700;font-size:11px;margin-bottom:6px}
+  .flex .ft{border-top:1px solid #eef1f4;padding:8px 10px 10px;display:flex;flex-direction:column;gap:6px}
+  .flex button{font:inherit;font-size:13.5px;border:0;border-radius:8px;padding:9px;cursor:pointer;background:#eef1f5;color:var(--ink)}
+  .flex button.p{background:var(--navy);color:#fff}
+  .flex button.l{background:none;color:#2a64c5;padding:6px}
+  .flex button:disabled{opacity:.5;cursor:default}
+  .type{display:flex;gap:6px;padding:8px;background:#fff;border-top:1px solid var(--line)}
+  .type input{flex:1;font:inherit;font-size:14px;border:1px solid var(--line);border-radius:18px;padding:8px 12px}
+  .type button{font:inherit;font-size:13px;border:0;background:var(--navy);color:#fff;border-radius:18px;padding:0 14px;cursor:pointer}
+  .reset{font:inherit;font-size:12.5px;margin-top:8px;background:none;border:1px solid #b9c6d4;border-radius:8px;padding:6px 10px;cursor:pointer;color:var(--soft)}
+  .note{font-size:12.5px;color:var(--soft);margin:8px 2px 0;line-height:1.6}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <h1>LINE 経過観察 — 確認用の画面</h1>
+  <p>実際には送信されません。ボタンを押すと、患者さんの画面がどう進むかを確かめられます。</p>
+</header>
+<div class="row">
+  <div class="col">
+    <p class="step"><span>当日①</span>会計待ち：QR から開く画面</p>
+    <div class="phone"><iframe src="index.html?demo=1" title="当日の登録画面"></iframe></div>
+    <p class="note">QR を読むと LINE が開き、友だち追加と「許可する」の画面のあとにこの画面になります。［受け取る］は経過のご連絡の同意だけです。口コミは登録後に任意のボタンで案内します。</p>
+  </div>
+  <div class="col">
+    <p class="step"><span>当日②・1週間後</span>LINE のトーク</p>
+    <div class="phone">
+      <div class="bar"><i>中村</i>中村歯科医院</div>
+      <div class="chat" id="chat"></div>
+      <div class="type" id="typeBox" hidden><input id="typeIn" placeholder="症状を入力（例：噛むと少し痛い）"><button id="typeSend">送信</button></div>
+    </div>
+    <button class="reset" id="reset">最初からやり直す</button>
+    <p class="note">［問題ない］［少し気になる］［もう一度診てほしい］のどれを押しても、最後に同じ文面で口コミを案内します（良い答えの人だけに頼むのは Google の規約違反）。</p>
+  </div>
+  <div class="col">
+    <p class="step"><span>1週間後</span>［希望日を選ぶ］で開く画面</p>
+    <div class="phone"><iframe src="index.html?demo=1&p=wish" title="希望日の画面"></iframe></div>
+    <p class="note">日曜・祝日・臨時休診（ホームページの休診データ）は選べません。送るとトークに患者さんの発言として残るので、スタッフはそのまま LINE のチャットで返信できます。</p>
+  </div>
+</div>
+<script>
+(function () {
+  var TEL = '06-6615-6180';
+  var REVIEW = 'よろしければ、Google の口コミで率直なご感想をお聞かせください。星だけでも、ひと言でも構いません（任意です）。';
+  var chat = document.getElementById('chat');
+  function el(h) { var d = document.createElement('div'); d.innerHTML = h; return d.firstChild; }
+  function esc(s) { return s.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
+  function add(node) { chat.appendChild(node); chat.scrollTop = chat.scrollHeight; return node; }
+  function day(t) { add(el('<div class="day"><b>' + t + '</b></div>')); }
+  function bot(t) { add(el('<div class="msg"><div class="av">中村</div><div class="bub">' + esc(t) + '</div></div>')); }
+  function me(t) { add(el('<div class="msg me"><div class="bub">' + esc(t) + '</div></div>')); }
+  function card(body, buttons, head) {
+    var n = add(el('<div class="msg"><div class="av">中村</div><div class="flex"><div class="bd">' + (head ? '<small>' + head + '</small>' : '') + esc(body) + '</div><div class="ft"></div></div></div>'));
+    var ft = n.querySelector('.ft');
+    buttons.forEach(function (b) {
+      var x = document.createElement('button'); x.textContent = b[0]; x.className = b[2] || '';
+      x.addEventListener('click', function () { b[1](x, ft); }); ft.appendChild(x);
+    });
+  }
+  function review() { card(REVIEW, [['Google で口コミを書く', function () { alert('外のブラウザで Google の口コミ画面が開きます（確認用なので開きません）'); }, 'l']]); }
+  function lock(ft) { ft.querySelectorAll('button').forEach(function (b) { b.disabled = true; }); }
+
+  function start() {
+    chat.innerHTML = ''; document.getElementById('typeBox').hidden = true;
+    day('11月9日（月）');
+    bot('友だち追加ありがとうございます。中村歯科医院です。\nご予約・ご相談はお電話（' + TEL + '）か、このトークでお気軽にどうぞ。');
+    bot('ナカムラ ハナコ 様\n本日はご来院ありがとうございました。中村歯科医院です。\n\n11月16日（月）ごろに、治療後のご様子をこの LINE でおうかがいします。ボタンを押すだけでご回答いただけます。\n\nどうぞお大事になさってください。');
+    day('11月16日（月） 10:00');
+    card('ナカムラ ハナコ 様\n中村歯科医院です。11月9日（月）のご診療から1週間がたちました。\nその後、お口の具合はいかがですか？', [
+      ['問題ない', function (x, ft) { lock(ft); me('問題ない'); bot('安心いたしました。ご回答ありがとうございます。\n\n歯の健康を保つには、3か月〜半年ごとの定期検診がおすすめです。ご予約はお電話（' + TEL + '）か、このトークでお気軽にどうぞ。'); review(); }, 'p'],
+      ['少し気になる', function (x, ft) { lock(ft); me('少し気になる'); bot('ご回答ありがとうございます。\n気になるご様子を、このトークに文字でお送りください（写真も送れます）。\n\n※ LINE のご相談は診療時間内に順に確認するため、当日中にお返事できないことがあります。\n※ 腫れが広がる・血が止まらない・熱がある場合は、お電話（' + TEL + '）へ。診療時間外は #7119 へご相談ください。'); askText(); }],
+      ['もう一度診てほしい', function (x, ft) { lock(ft); me('もう一度診てほしい'); wish(); }]
+    ], '中村歯科医院');
+  }
+  function wish() {
+    card('ご回答ありがとうございます。\nご都合のよい日を、下のボタンからお選びください（第1希望のみでも大丈夫です）。', [['希望日を選ぶ', function (x, ft) {
+      lock(ft);
+      me('【受診のご希望】\n第1希望：11月18日（水） 午前\n第2希望：11月20日（金） 17〜19時');
+      bot('ご希望を受け付けました。\n\n【まだご予約は確定していません】\n医院で空きを確認して、このトークでご連絡します。ご希望の日が埋まっている場合も、こちらから別の日をご相談します。');
+      review();
+    }, 'p']]);
+  }
+  function askText() {
+    var box = document.getElementById('typeBox'), inp = document.getElementById('typeIn');
+    box.hidden = false; inp.value = '';
+    document.getElementById('typeSend').onclick = function () {
+      var t = inp.value.trim() || '噛むと少し痛みます'; box.hidden = true; me(t);
+      bot('受け付けました。診療時間内に、医院からこのトークでお返事します。\n\n※ 痛みや腫れが強くなった場合は、お返事を待たずにお電話（' + TEL + '）ください。');
+      card('受診をご希望の場合は、ご都合のよい日をお送りください。', [['希望日を選ぶ', function (x, ft) { lock(ft); wish(); }]]);
+      day('医院のスタッフがチャットで返信・「対応済み」にした翌朝');
+      bot('その後のご様子はいかがでしょうか。お大事になさってください。');
+      review();
+    };
+  }
+  document.getElementById('reset').addEventListener('click', start);
+  start();
+})();
+</script>
+</body>
+</html>

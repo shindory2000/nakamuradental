@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>経過のご連絡｜中村歯科医院</title>
+<!--
+  LINE の中で開く画面（LIFF）。公開時に https://nakamuradental.jp/line/ に置き、LIFF のエンドポイントに登録する。
+    ・当日（会計待ち）：  https://liff.line.me/<LIFF_ID>          … 経過のご連絡の登録（フリガナ・同意）
+    ・1週間後の希望日：  https://liff.line.me/<LIFF_ID>?p=wish   … 受診の希望日（第1 必須・第2/第3 任意）
+  ?demo=1 を付けると LINE なしで画面だけ動く（確認用。何も送らない）。
+-->
+<style>
+  :root{--ink:#16212e;--soft:#5b6b7b;--faint:#8a97a5;--navy:#1f3f74;--navy-deep:#16294a;--line:#d9e1ea;--bg:#f4f6f9;--paper:#fff;--warn:#9a3b1f;--ok:#1d6b46}
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;font-size:16px;line-height:1.7;-webkit-text-size-adjust:100%}
+  .wrap{max-width:480px;margin:0 auto;padding:20px 16px calc(28px + env(safe-area-inset-bottom))}
+  .brand{display:flex;align-items:baseline;gap:10px;margin:0 0 14px}
+  .brand b{font-size:15px;letter-spacing:.12em;color:var(--navy)}
+  .brand span{font-size:10px;letter-spacing:.22em;color:var(--faint)}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px 18px}
+  h1{font-size:19px;line-height:1.55;margin:0 0 10px}
+  p{margin:0 0 12px}
+  .lead{color:var(--soft);font-size:15px}
+  .date{display:inline-block;font-weight:700;color:var(--navy)}
+  label.f{display:block;font-size:14px;font-weight:700;margin:18px 0 6px}
+  label.f small{font-weight:400;color:var(--faint);margin-left:6px}
+  input[type=text],select{width:100%;font:inherit;font-size:17px;padding:12px 12px;border:1px solid #b9c6d4;border-radius:10px;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none}
+  select{background-image:linear-gradient(45deg,transparent 50%,var(--soft) 50%),linear-gradient(135deg,var(--soft) 50%,transparent 50%);background-position:calc(100% - 18px) 52%,calc(100% - 13px) 52%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
+  input:focus,select:focus{outline:2px solid var(--navy);outline-offset:1px}
+  .hint{font-size:12.5px;color:var(--faint);margin:6px 0 0}
+  .agree{display:flex;gap:10px;align-items:flex-start;margin:20px 0 4px;font-size:14.5px}
+  .agree input{width:22px;height:22px;margin:2px 0 0;flex:none;accent-color:var(--navy)}
+  details{font-size:13px;color:var(--soft);margin:4px 0 0 32px}
+  details summary{cursor:pointer;color:var(--navy)}
+  details ul{margin:6px 0 0;padding-left:1.1em}
+  .btn{display:block;width:100%;font:inherit;font-weight:700;font-size:17px;border:0;border-radius:12px;padding:15px 12px;cursor:pointer;text-align:center;text-decoration:none}
+  .btn-primary{background:var(--navy);color:#fff;margin-top:22px}
+  .btn-primary:disabled{background:#a9b6c6;cursor:default}
+  .btn-sub{background:#fff;color:var(--navy);border:1px solid #b9c6d4;margin-top:12px}
+  .btn-text{background:none;color:var(--soft);font-weight:400;font-size:14.5px;text-decoration:underline;margin-top:10px;padding:10px}
+  .note{font-size:13px;color:var(--soft);background:#f7f9fb;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:16px 0 0}
+  .note.warn{color:var(--warn);background:#fbf4f1;border-color:#efd9cf}
+  .review{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+  .review p{font-size:14.5px;color:var(--soft)}
+  .wish{border:1px solid var(--line);border-radius:12px;padding:12px 12px 14px;margin-top:14px}
+  .wish h2{font-size:15px;margin:0 0 8px}
+  .wish h2 em{font-style:normal;font-size:11.5px;font-weight:700;color:#fff;background:var(--navy);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+  .wish h2 em.opt{background:#8a97a5}
+  .bands{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .bands button{font:inherit;font-size:14px;border:1px solid #b9c6d4;background:#fff;color:var(--ink);border-radius:999px;padding:8px 12px;cursor:pointer}
+  .bands button[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
+  .bands button:disabled{opacity:.35;cursor:default}
+  .done{text-align:center}
+  .done .mark{width:52px;height:52px;border-radius:50%;background:#e9f3ee;color:var(--ok);display:flex;align-items:center;justify-content:center;margin:4px auto 12px;font-size:26px;font-weight:700}
+  .done .review{text-align:left}
+  .err{color:var(--warn);font-size:14px;margin-top:10px}
+  .tel{color:var(--navy);font-weight:700}
+  [hidden]{display:none!important}
+  .demo{font-size:12px;color:#fff;background:#5b6b7b;border-radius:6px;padding:4px 8px;display:inline-block;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><b>中村歯科医院</b><span>NAKAMURA DENTAL</span></div>
+  <div id="demoBadge" class="demo" hidden>確認用の画面です（送信されません）</div>
+
+  <!-- 読み込み中 -->
+  <div id="v-loading" class="card"><p class="lead">読み込んでいます…</p></div>
+
+  <!-- 当日：経過のご連絡の登録 -->
+  <form id="v-register" class="card" hidden novalidate>
+    <h1>治療後のご様子を、<br>1週間後に LINE でおうかがいします</h1>
+    <p class="lead"><span class="date" data-senddate>1週間後</span>ごろ、この LINE にメッセージが届きます。ボタンを押すだけでご回答いただけます。</p>
+
+    <label class="f" for="kana">受診された方のお名前（フリガナ）</label>
+    <input type="text" id="kana" name="kana" autocomplete="off" inputmode="text" placeholder="ナカムラ ハナコ" maxlength="40" required>
+    <p class="hint">医院でカルテを確認するために使います。ご家族の LINE でお受け取りでも大丈夫です。</p>
+
+    <label class="agree"><input type="checkbox" id="agree"> <span>経過のご連絡と、ご回答・ご相談内容の取り扱いに同意します</span></label>
+    <details>
+      <summary>取り扱いについて</summary>
+      <ul>
+        <li>目的：治療後の経過のご連絡、ご相談・受診のご希望への対応</li>
+        <li>お預かりする内容：LINE の名前と ID、フリガナ、来院日、ご回答・ご相談の内容、受診の希望日</li>
+        <li>保存先：LINE（LINEヤフー株式会社）と、医院が管理する Google のスプレッドシート</li>
+        <li>見る人：中村歯科医院のスタッフ（医院から運用を任された担当者を含みます）</li>
+        <li>保存期間：対応が終わってから1年で削除します</li>
+        <li>やめるとき：トークで「停止」と送るか、LINE をブロックしてください</li>
+      </ul>
+    </details>
+
+    <button type="submit" class="btn btn-primary" id="btnYes" disabled>受け取る</button>
+    <button type="button" class="btn btn-text" id="btnNo">今回は受け取らない</button>
+    <p class="err" id="regErr" hidden></p>
+  </form>
+
+  <!-- 当日：登録できた／受け取らない -->
+  <div id="v-registered" class="card done" hidden>
+    <div class="mark">✓</div>
+    <h1 id="doneTitle">ありがとうございます</h1>
+    <p class="lead" id="doneText"><span class="date" data-senddate>1週間後</span>ごろにお送りします。<br>どうぞお大事になさってください。</p>
+    <div class="review">
+      <p>よろしければ、Google の口コミで率直なご感想をお聞かせください。星だけでも、ひと言でも構いません（任意です）。</p>
+      <button type="button" class="btn btn-sub" data-review>Google で口コミを書く</button>
+    </div>
+    <button type="button" class="btn btn-text" data-close>閉じる</button>
+  </div>
+
+  <!-- 1週間後：受診の希望日 -->
+  <form id="v-wish" class="card" hidden novalidate>
+    <h1>ご都合のよい日を<br>お選びください</h1>
+    <p class="lead">第1希望だけでも大丈夫です。日曜・祝日・休診日は選べません。</p>
+    <div id="wishRows"></div>
+    <div class="note">まだご予約は確定しません。医院で空きを確認して、この LINE でご連絡します。</div>
+    <button type="submit" class="btn btn-primary" id="btnWish" disabled>この内容で送る</button>
+    <p class="err" id="wishErr" hidden></p>
+  </form>
+
+  <div id="v-wished" class="card done" hidden>
+    <div class="mark">✓</div>
+    <h1>ご希望を受け付けました</h1>
+    <p class="lead" id="wishSummary"></p>
+    <div class="note warn">まだご予約は確定していません。医院からの LINE をお待ちください。ご希望の日が埋まっている場合も、こちらから別の日をご相談します。</div>
+    <button type="button" class="btn btn-text" data-close>閉じる</button>
+  </div>
+
+  <div id="v-error" class="card" hidden>
+    <h1>うまく開けませんでした</h1>
+    <p class="lead">お手数ですが、受付にお声がけいただくか、お電話（<a class="tel" href="tel:0666156180">06-6615-6180</a>）でご連絡ください。</p>
+  </div>
+</div>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js" charset="utf-8"></script>
+<script>
+(function () {
+  /* ===== 公開時に入れる値（どれも秘密ではない） ===== */
+  var LIFF_ID = '';      // LINE Developers の LIFF ID
+  var GAS_URL = '';      // Apps Script のウェブアプリの URL（…/exec）
+  var REVIEW_URL = 'https://g.page/r/CdsKDBQD0uDPEAE/review';
+  var FU_DAYS = 7;
+
+  var qs = new URLSearchParams(location.search);
+  var DEMO = qs.get('demo') === '1' || !LIFF_ID;
+  var page = qs.get('p') === 'wish' ? 'wish' : 'register';
+  var BAND = { am: '午前（9:30〜13:00）', pm1: '15:00〜17:00', pm2: '17:00〜19:00', any: '時間はいつでも' };
+  var BAND_SHORT = { am: '午前', pm1: '15〜17時', pm2: '17〜19時', any: 'いつでも' };
+  var $ = function (id) { return document.getElementById(id); };
+  var cal = { holidays: {}, closures: [] };
+
+  function show(id) { ['v-loading', 'v-register', 'v-registered', 'v-wish', 'v-wished', 'v-error'].forEach(function (v) { $(v).hidden = v !== id; }); window.scrollTo(0, 0); }
+  function pad(n) { return ('0' + n).slice(-2); }
+  function isoOf(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function addDays(iso, n) { var p = iso.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2]); d.setDate(d.getDate() + n); return isoOf(d); }
+  function dow(iso) { var p = iso.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]).getDay(); }
+  function jp(iso) { var p = iso.split('-'); return +p[1] + '月' + +p[2] + '日（' + '日月火水木金土'.charAt(dow(iso)) + '）'; }
+  function openBands(iso) {
+    var w = dow(iso);
+    if (w === 0 || cal.holidays[iso]) return [];
+    var b = w === 6 ? ['am', 'pm1'] : ['am', 'pm1', 'pm2'];
+    cal.closures.forEach(function (c) {
+      if (c.date !== iso) return;
+      if (c.part === 'all') b = [];
+      if (c.part === 'am') b = b.filter(function (x) { return x !== 'am'; });
+      if (c.part === 'pm') b = b.filter(function (x) { return x === 'am'; });
+    });
+    return b;
+  }
+  function nextOpen(iso) { for (var i = 0; i < 14; i++) { var d = addDays(iso, i); if (openBands(d).length) return d; } return iso; }
+  function today() { return isoOf(new Date()); }
+
+  function loadCal() {
+    var get = function (u) { return fetch(u, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
+    return Promise.all([get('/data/jp-holidays.json'), get('/data/closures.json')]).then(function (r) {
+      cal.holidays = r[0] || {}; cal.closures = r[1] || [];
+    });
+  }
+
+  function api(body) {
+    if (DEMO) {
+      console.log('[demo] 送る内容', body);
+      return new Promise(function (ok) { setTimeout(function () { ok({ ok: true, sendOnJp: jp(nextOpen(addDays(today(), FU_DAYS))) }); }, 400); });
+    }
+    body.idToken = liff.getIDToken();
+    return fetch(GAS_URL + '?a=liff', { method: 'POST', body: JSON.stringify(body) }).then(function (r) { return r.json(); });
+  }
+  function openReview() {
+    if (!DEMO && liff.isInClient()) liff.openWindow({ url: REVIEW_URL, external: true });
+    else window.open(REVIEW_URL, '_blank', 'noopener');
+  }
+  function closeWin() { if (!DEMO && liff.isInClient()) liff.closeWindow(); else show(page === 'wish' ? 'v-wish' : 'v-register'); }
+  document.querySelectorAll('[data-review]').forEach(function (b) { b.addEventListener('click', openReview); });
+  document.querySelectorAll('[data-close]').forEach(function (b) { b.addEventListener('click', closeWin); });
+
+  /* ---------- 当日の登録 ---------- */
+  function toKatakana(s) { return s.replace(/[ぁ-ゖ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) + 0x60); }); }
+  function initRegister() {
+    var sendOn = jp(nextOpen(addDays(today(), FU_DAYS)));
+    document.querySelectorAll('[data-senddate]').forEach(function (el) { el.textContent = sendOn; });
+    var kana = $('kana'), agree = $('agree'), yes = $('btnYes');
+    var valid = function () { return toKatakana(kana.value.trim()).replace(/[\s　]/g, '').length >= 2; };
+    var update = function () { yes.disabled = !(valid() && agree.checked); };
+    kana.addEventListener('input', update); agree.addEventListener('change', update);
+    kana.addEventListener('blur', function () { kana.value = toKatakana(kana.value.trim()); });
+    var busy = false;
+    function send(kind) {
+      if (busy) return; busy = true; $('regErr').hidden = true;
+      yes.disabled = true;
+      api({ kind: kind, kana: toKatakana(kana.value.trim()) }).then(function (r) {
+        busy = false;
+        if (!r || !r.ok) throw new Error((r && r.error) || 'ng');
+        if (kind === 'register') {
+          if (r.sendOnJp) document.querySelectorAll('[data-senddate]').forEach(function (el) { el.textContent = r.sendOnJp; });
+          $('doneTitle').textContent = 'ありがとうございます';
+        } else {
+          $('doneTitle').textContent = '承知しました';
+          $('doneText').innerHTML = 'どうぞお大事になさってください。<br>気になることがあれば、お電話（<a class="tel" href="tel:0666156180">06-6615-6180</a>）でご相談ください。';
+        }
+        show('v-registered');
+      }).catch(function () {
+        busy = false; update();
+        $('regErr').textContent = '送信できませんでした。電波のよい所でもう一度お試しください。'; $('regErr').hidden = false;
+      });
+    }
+    $('v-register').addEventListener('submit', function (e) { e.preventDefault(); if (valid() && agree.checked) send('register'); });
+    $('btnNo').addEventListener('click', function () { send('decline'); });
+    show('v-register');
+  }
+
+  /* ---------- 1週間後：受診の希望日 ---------- */
+  var wishes = [{}, {}, {}];
+  function initWish() {
+    var days = [], d = addDays(today(), 1);
+    for (var i = 0; i < 45 && days.length < 30; i++, d = addDays(d, 1)) if (openBands(d).length) days.push(d);
+    var rows = $('wishRows');
+    ['第1希望', '第2希望', '第3希望'].forEach(function (name, idx) {
+      var box = document.createElement('div'); box.className = 'wish';
+      box.innerHTML = '<h2>' + name + (idx === 0 ? '<em>必須</em>' : '<em class="opt">任意</em>') + '</h2>'
+        + '<select aria-label="' + name + 'の日付"><option value="">日付を選ぶ</option>'
+        + days.map(function (x) { return '<option value="' + x + '">' + jp(x) + (dow(x) === 6 ? '　土曜は17時まで' : '') + '</option>'; }).join('')
+        + '</select><div class="bands" role="group" aria-label="' + name + 'の時間帯"></div>';
+      rows.appendChild(box);
+      var sel = box.querySelector('select'), bands = box.querySelector('.bands');
+      sel.addEventListener('change', function () {
+        wishes[idx] = sel.value ? { date: sel.value } : {};
+        bands.innerHTML = '';
+        if (!sel.value) return refresh();
+        var open = openBands(sel.value);
+        ['am', 'pm1', 'pm2', 'any'].forEach(function (b) {
+          if (b !== 'any' && open.indexOf(b) < 0) return;
+          var btn = document.createElement('button'); btn.type = 'button'; btn.textContent = BAND[b]; btn.setAttribute('aria-pressed', 'false');
+          btn.addEventListener('click', function () {
+            bands.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+            btn.setAttribute('aria-pressed', 'true'); wishes[idx].band = b; refresh();
+          });
+          bands.appendChild(btn);
+        });
+        refresh();
+      });
+    });
+    function refresh() { $('btnWish').disabled = !(wishes[0].date && wishes[0].band); }
+    var busy = false;
+    $('v-wish').addEventListener('submit', function (e) {
+      e.preventDefault(); if (busy || $('btnWish').disabled) return;
+      var list = wishes.filter(function (w) { return w.date && w.band; });
+      var lines = list.map(function (w, i) { return '第' + (i + 1) + '希望：' + jp(w.date) + ' ' + BAND_SHORT[w.band]; });
+      var viaChat = !DEMO && liff.isInClient() && liff.getContext() && ['utou', 'group', 'room'].indexOf(liff.getContext().type) >= 0;
+      busy = true; $('btnWish').disabled = true; $('wishErr').hidden = true;
+      api({ kind: 'wish', wishes: list, viaChat: !!viaChat }).then(function (r) {
+        if (!r || !r.ok) throw new Error((r && r.error) || 'ng');
+        // トークから開いたときは、希望をトークに残す（医院のスタッフに通知が行き、返事もトークでできる）
+        var post = viaChat ? liff.sendMessages([{ type: 'text', text: '【受診のご希望】\n' + lines.join('\n') }]).catch(function () {}) : Promise.resolve();
+        return post.then(function () {
+          $('wishSummary').innerHTML = lines.map(function (l) { return l.replace(/^(第\d希望：)/, '<b>$1</b>'); }).join('<br>');
+          show('v-wished'); busy = false;
+        });
+      }).catch(function () {
+        busy = false; refresh();
+        $('wishErr').textContent = '送信できませんでした。電波のよい所でもう一度お試しください。'; $('wishErr').hidden = false;
+      });
+    });
+    show('v-wish');
+  }
+
+  function start() { loadCal().then(function () { page === 'wish' ? initWish() : initRegister(); }); }
+  if (DEMO) { $('demoBadge').hidden = false; start(); return; }
+  liff.init({ liffId: LIFF_ID }).then(function () {
+    if (!liff.isLoggedIn()) { liff.login({ redirectUri: location.href }); return; }
+    start();
+  }).catch(function (e) { console.error(e); show('v-error'); });
+})();
+</script>
+</body>
+</html>
