@@ -15,23 +15,23 @@
   header p{margin:0;color:var(--soft);font-size:13.5px}
   .row{max-width:1200px;margin:0 auto;padding:12px 16px 32px;display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
   .col{flex:1 1 340px;max-width:380px}
-  .step{font-size:13px;font-weight:700;color:var(--navy);margin:0 0 8px}
-  .step span{display:inline-block;background:var(--navy);color:#fff;border-radius:4px;padding:1px 7px;margin-right:6px}
+  .step{font-size:13px;font-weight:600;color:var(--navy);margin:0 0 8px}
+  .step span{margin-right:8px}
   .phone{background:#fff;border:8px solid #1b1f24;border-radius:30px;height:700px;overflow:hidden;display:flex;flex-direction:column}
   .phone iframe{border:0;width:100%;flex:1}
-  .bar{background:#1f2a37;color:#fff;font-size:14px;font-weight:700;padding:12px 14px;display:flex;align-items:center;gap:8px}
-  .bar i{width:26px;height:26px;border-radius:50%;background:#fff;color:var(--navy);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:12px}
+  .bar{background:#1f2a37;color:#fff;font-size:14px;font-weight:600;padding:12px 14px;display:flex;align-items:center;gap:8px}
+  .bar i{display:none}
   .chat{flex:1;overflow-y:auto;background:#8fa9c4;padding:12px 10px 18px}
   .day{text-align:center;margin:6px 0 10px}
   .day b{font-size:11px;font-weight:400;color:#fff;background:rgba(0,0,0,.22);border-radius:10px;padding:2px 10px}
   .msg{display:flex;gap:6px;margin:0 0 10px;align-items:flex-start}
-  .msg .av{width:30px;height:30px;border-radius:50%;background:#fff;color:var(--navy);font-size:11px;display:flex;align-items:center;justify-content:center;flex:none;font-weight:700}
+  .msg .av{width:30px;height:30px;border-radius:50%;background:#fff;color:var(--navy);display:flex;align-items:center;justify-content:center;flex:none}
   .bub{background:#fff;border-radius:16px;padding:9px 12px;font-size:13.5px;line-height:1.6;max-width:84%;white-space:pre-wrap}
   .me{justify-content:flex-end}
   .me .bub{background:#c7f0a4}
   .flex{background:#fff;border-radius:14px;max-width:86%;overflow:hidden;font-size:13.5px;line-height:1.6}
   .flex .bd{padding:12px 14px;white-space:pre-wrap}
-  .flex .bd small{display:block;color:var(--navy);font-weight:700;font-size:11px;margin-bottom:6px}
+  .flex .bd small{display:block;color:var(--navy);font-weight:600;font-size:11px;margin-bottom:6px}
   .flex .ft{border-top:1px solid #eef1f4;padding:8px 10px 10px;display:flex;flex-direction:column;gap:6px}
   .flex button{font:inherit;font-size:13.5px;border:0;border-radius:8px;padding:9px;cursor:pointer;background:#eef1f5;color:var(--ink)}
   .flex button.p{background:var(--navy);color:#fff}
@@ -59,7 +59,7 @@
   <div class="col">
     <p class="step"><span>当日②・1週間後</span>LINE のトーク</p>
     <div class="phone">
-      <div class="bar"><i>中村</i>中村歯科医院</div>
+      <div class="bar">中村歯科医院</div>
       <div class="chat" id="chat"></div>
       <div class="type" id="typeBox" hidden><input id="typeIn" placeholder="症状を入力（例：噛むと少し痛い）"><button id="typeSend">送信</button></div>
     </div>
@@ -81,10 +81,10 @@
   function esc(s) { return s.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
   function add(node) { chat.appendChild(node); chat.scrollTop = chat.scrollHeight; return node; }
   function day(t) { add(el('<div class="day"><b>' + t + '</b></div>')); }
-  function bot(t) { add(el('<div class="msg"><div class="av">中村</div><div class="bub">' + esc(t) + '</div></div>')); }
+  function bot(t) { add(el('<div class="msg"><div class="av"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg></div><div class="bub">' + esc(t) + '</div></div>')); }
   function me(t) { add(el('<div class="msg me"><div class="bub">' + esc(t) + '</div></div>')); }
   function card(body, buttons, head) {
-    var n = add(el('<div class="msg"><div class="av">中村</div><div class="flex"><div class="bd">' + (head ? '<small>' + head + '</small>' : '') + esc(body) + '</div><div class="ft"></div></div></div>'));
+    var n = add(el('<div class="msg"><div class="av"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg></div><div class="flex"><div class="bd">' + (head ? '<small>' + head + '</small>' : '') + esc(body) + '</div><div class="ft"></div></div></div>'));
     var ft = n.querySelector('.ft');
     buttons.forEach(function (b) {
       var x = document.createElement('button'); x.textContent = b[0]; x.className = b[2] || '';
@@ -94,15 +94,19 @@
   function review() { card(REVIEW, [['Google で口コミを書く', function () { alert('外のブラウザで Google の口コミ画面が開きます（確認用なので開きません）'); }, 'l']]); }
   function lock(ft) { ft.querySelectorAll('button').forEach(function (b) { b.disabled = true; }); }
 
+  function jpd(d) { return (d.getMonth() + 1) + '月' + d.getDate() + '日（' + '日月火水木金土'.charAt(d.getDay()) + '）'; }
+  var D0 = new Date(), D7 = new Date(); D7.setDate(D7.getDate() + 7);
+  if (D7.getDay() === 0) D7.setDate(D7.getDate() + 1);
+  var T0 = jpd(D0), T7 = jpd(D7);
   function start() {
     chat.innerHTML = ''; document.getElementById('typeBox').hidden = true;
-    day('11月9日（月）');
+    day(T0);
     bot('友だち追加ありがとうございます。中村歯科医院です。\nご予約・ご相談はお電話（' + TEL + '）か、このトークでお気軽にどうぞ。');
-    bot('ナカムラ ハナコ 様\n本日はご来院ありがとうございました。中村歯科医院です。\n\n11月16日（月）ごろに、治療後のご様子をこの LINE でおうかがいします。ボタンを押すだけでご回答いただけます。\n\nどうぞお大事になさってください。');
-    day('11月16日（月） 10:00');
-    card('ナカムラ ハナコ 様\n中村歯科医院です。11月9日（月）のご診療から1週間がたちました。\nその後、お口の具合はいかがですか？', [
+    bot('ナカムラ ハナコ 様\n本日はご来院ありがとうございました。中村歯科医院です。\n\n' + T7 + 'ごろに、治療後のご様子をこの LINE でおうかがいします。ボタンを押すだけでご回答いただけます。\n\nどうぞお大事になさってください。');
+    day(T7 + ' 10:00');
+    card('ナカムラ ハナコ 様\n中村歯科医院です。' + T0 + 'のご診療から1週間がたちました。\nその後、お口の具合はいかがですか？', [
       ['問題ない', function (x, ft) { lock(ft); me('問題ない'); bot('安心いたしました。ご回答ありがとうございます。\n\n歯の健康を保つには、3か月〜半年ごとの定期検診がおすすめです。ご予約はお電話（' + TEL + '）か、このトークでお気軽にどうぞ。'); review(); }, 'p'],
-      ['少し気になる', function (x, ft) { lock(ft); me('少し気になる'); bot('ご回答ありがとうございます。\n気になるご様子を、このトークに文字でお送りください（写真も送れます）。\n\n※ LINE のご相談は診療時間内に順に確認するため、当日中にお返事できないことがあります。\n※ 腫れが広がる・血が止まらない・熱がある場合は、お電話（' + TEL + '）へ。診療時間外は #7119 へご相談ください。'); askText(); }],
+      ['少し気になる', function (x, ft) { lock(ft); me('少し気になる'); bot('ご回答ありがとうございます。\n気になるご様子を、このトークに文字でお送りください（写真も送れます）。\n\nLINE のご相談は診療時間内に順に確認するため、当日中にお返事できないことがあります。\n腫れが広がる・血が止まらない・熱がある場合は、お電話（' + TEL + '）へ。診療時間外は #7119 へご相談ください。'); askText(); }],
       ['もう一度診てほしい', function (x, ft) { lock(ft); me('もう一度診てほしい'); wish(); }]
     ], '中村歯科医院');
   }
@@ -119,7 +123,7 @@
     box.hidden = false; inp.value = '';
     document.getElementById('typeSend').onclick = function () {
       var t = inp.value.trim() || '噛むと少し痛みます'; box.hidden = true; me(t);
-      bot('受け付けました。診療時間内に、医院からこのトークでお返事します。\n\n※ 痛みや腫れが強くなった場合は、お返事を待たずにお電話（' + TEL + '）ください。');
+      bot('受け付けました。診療時間内に、医院からこのトークでお返事します。\n\n痛みや腫れが強くなった場合は、お返事を待たずにお電話（' + TEL + '）ください。');
       card('受診をご希望の場合は、ご都合のよい日をお送りください。', [['希望日を選ぶ', function (x, ft) { lock(ft); wish(); }]]);
       day('医院のスタッフがチャットで返信・「対応済み」にした翌朝');
       bot('その後のご様子はいかがでしょうか。お大事になさってください。');

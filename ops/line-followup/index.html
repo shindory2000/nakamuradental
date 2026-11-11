@@ -18,14 +18,13 @@
   body{background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;font-size:16px;line-height:1.7;-webkit-text-size-adjust:100%}
   .wrap{max-width:480px;margin:0 auto;padding:20px 16px calc(28px + env(safe-area-inset-bottom))}
   .brand{display:flex;align-items:baseline;gap:10px;margin:0 0 14px}
-  .brand b{font-size:15px;letter-spacing:.12em;color:var(--navy)}
-  .brand span{font-size:10px;letter-spacing:.22em;color:var(--faint)}
+  .brand b{font-size:15px;font-weight:600;letter-spacing:.06em;color:var(--navy)}
   .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px 18px}
-  h1{font-size:19px;line-height:1.55;margin:0 0 10px}
+  h1{font-size:19px;font-weight:600;line-height:1.55;margin:0 0 10px}
   p{margin:0 0 12px}
   .lead{color:var(--soft);font-size:15px}
-  .date{display:inline-block;font-weight:700;color:var(--navy)}
-  label.f{display:block;font-size:14px;font-weight:700;margin:18px 0 6px}
+  .date{display:inline-block;font-weight:600;color:var(--navy)}
+  label.f{display:block;font-size:14px;font-weight:600;margin:18px 0 6px}
   label.f small{font-weight:400;color:var(--faint);margin-left:6px}
   input[type=text],select{width:100%;font:inherit;font-size:17px;padding:12px 12px;border:1px solid #b9c6d4;border-radius:10px;background:#fff;color:var(--ink);-webkit-appearance:none;appearance:none}
   select{background-image:linear-gradient(45deg,transparent 50%,var(--soft) 50%),linear-gradient(135deg,var(--soft) 50%,transparent 50%);background-position:calc(100% - 18px) 52%,calc(100% - 13px) 52%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
@@ -36,7 +35,7 @@
   details{font-size:13px;color:var(--soft);margin:4px 0 0 32px}
   details summary{cursor:pointer;color:var(--navy)}
   details ul{margin:6px 0 0;padding-left:1.1em}
-  .btn{display:block;width:100%;font:inherit;font-weight:700;font-size:17px;border:0;border-radius:12px;padding:15px 12px;cursor:pointer;text-align:center;text-decoration:none}
+  .btn{display:block;width:100%;font:inherit;font-weight:600;font-size:17px;border:0;border-radius:12px;padding:15px 12px;cursor:pointer;text-align:center;text-decoration:none}
   .btn-primary{background:var(--navy);color:#fff;margin-top:22px}
   .btn-primary:disabled{background:#a9b6c6;cursor:default}
   .btn-sub{background:#fff;color:var(--navy);border:1px solid #b9c6d4;margin-top:12px}
@@ -47,24 +46,24 @@
   .review p{font-size:14.5px;color:var(--soft)}
   .wish{border:1px solid var(--line);border-radius:12px;padding:12px 12px 14px;margin-top:14px}
   .wish h2{font-size:15px;margin:0 0 8px}
-  .wish h2 em{font-style:normal;font-size:11.5px;font-weight:700;color:#fff;background:var(--navy);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:2px}
-  .wish h2 em.opt{background:#8a97a5}
+  .wish h2 em{font-style:normal;font-size:12.5px;font-weight:600;color:var(--navy);margin-left:8px}
+  .wish h2 em.opt{color:var(--faint);font-weight:400}
   .bands{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
   .bands button{font:inherit;font-size:14px;border:1px solid #b9c6d4;background:#fff;color:var(--ink);border-radius:999px;padding:8px 12px;cursor:pointer}
   .bands button[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
   .bands button:disabled{opacity:.35;cursor:default}
   .done{text-align:center}
-  .done .mark{width:52px;height:52px;border-radius:50%;background:#e9f3ee;color:var(--ok);display:flex;align-items:center;justify-content:center;margin:4px auto 12px;font-size:26px;font-weight:700}
+  .done .mark{width:52px;height:52px;border-radius:50%;background:#e9f3ee;color:var(--ok);display:flex;align-items:center;justify-content:center;margin:4px auto 12px}
   .done .review{text-align:left}
   .err{color:var(--warn);font-size:14px;margin-top:10px}
-  .tel{color:var(--navy);font-weight:700}
+  .tel{color:var(--navy);font-weight:600}
   [hidden]{display:none!important}
   .demo{font-size:12px;color:#fff;background:#5b6b7b;border-radius:6px;padding:4px 8px;display:inline-block;margin-bottom:10px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="brand"><b>中村歯科医院</b><span>NAKAMURA DENTAL</span></div>
+  <div class="brand"><b>中村歯科医院</b></div>
   <div id="demoBadge" class="demo" hidden>確認用の画面です（送信されません）</div>
 
   <!-- 読み込み中 -->
@@ -99,7 +98,7 @@
 
   <!-- 当日：登録できた／受け取らない -->
   <div id="v-registered" class="card done" hidden>
-    <div class="mark">✓</div>
+    <div class="mark"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
     <h1 id="doneTitle">ありがとうございます</h1>
     <p class="lead" id="doneText"><span class="date" data-senddate>1週間後</span>ごろにお送りします。<br>どうぞお大事になさってください。</p>
     <div class="review">
@@ -120,7 +119,7 @@
   </form>
 
   <div id="v-wished" class="card done" hidden>
-    <div class="mark">✓</div>
+    <div class="mark"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
     <h1>ご希望を受け付けました</h1>
     <p class="lead" id="wishSummary"></p>
     <div class="note warn">まだご予約は確定していません。医院からの LINE をお待ちください。ご希望の日が埋まっている場合も、こちらから別の日をご相談します。</div>
