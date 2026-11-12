@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>デザイン見比べ｜中村歯科医院</title>
+<style>
+ body{margin:0;background:#f3f4f6;color:#1c232b;font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif}
+ .top{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px 16px}
+ .top b{font-size:15px;font-weight:600;margin-right:8px}
+ .top button{font:inherit;font-size:13px;border:1px solid #c9d1da;background:#fff;border-radius:6px;padding:6px 10px;cursor:pointer}
+ .top button[aria-pressed=true]{border-color:#1f3f74;color:#1f3f74;font-weight:600}
+ .row{display:flex;gap:20px;padding:0 16px 20px;justify-content:center}
+ .col h2{font-size:14px;font-weight:600;margin:0 0 6px}
+ iframe{border:1px solid #d5dbe2;border-radius:6px;background:#fff}
+</style></head><body>
+<div class="top"><b>見比べる場所</b><span id="btns"></span>
+ <button id="w" aria-pressed="false">パソコン幅にする</button></div>
+<div class="row">
+ <div class="col"><h2>いまのサイト</h2><iframe id="a" src="/index.html" width="390" height="760"></iframe></div>
+ <div class="col"><h2>直した見本</h2><iframe id="b" src="/index.html" width="390" height="760"></iframe></div>
+</div>
+<script>
+var spots=[['先頭',''],['お知らせ','#news'],['医院について','.about-body'],['診療のご案内','.svc-grid'],['特徴','.feat, [class*=feature]'],['スタッフ','.staff'],['よくあるご質問','.faq-item'],['ご予約','[class*=contact], .cta'],['いちばん下','footer']];
+var a=document.getElementById('a'),b=document.getElementById('b');
+[a,b].forEach(function(f){f.addEventListener('load',function(){setTimeout(function(){f.contentDocument.querySelectorAll('.reveal,.wipe').forEach(function(e){e.classList.add('in');});},300);});});
+b.addEventListener('load',function(){var d=b.contentDocument,l=d.createElement('link');l.rel='stylesheet';l.href='/ops/design-preview/preview.css';d.head.appendChild(l);
+ d.querySelectorAll('.badge span').forEach(function(s){if(/YEARS/.test(s.textContent))s.textContent='年';});
+ d.querySelectorAll('.foot-col h5').forEach(function(h){if(h.textContent.trim()==='MENU')h.textContent='メニュー';});});
+function go(sel){[a,b].forEach(function(f){var d=f.contentDocument,w=f.contentWindow;if(!sel){w.scrollTo(0,0);return;}var e=d.querySelector(sel);if(e){w.scrollTo(0,e.getBoundingClientRect().top+w.scrollY-70);}});}
+spots.forEach(function(s){var x=document.createElement('button');x.textContent=s[0];x.onclick=function(){go(s[1]);};document.getElementById('btns').appendChild(x);});
+document.getElementById('w').onclick=function(){var wide=this.getAttribute('aria-pressed')!=='true';this.setAttribute('aria-pressed',wide);[a,b].forEach(function(f){f.width=wide?720:390;});};
+</script></body></html>

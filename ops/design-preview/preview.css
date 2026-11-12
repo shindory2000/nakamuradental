@@ -1,0 +1,23 @@
+/* design-rules.md に合わせた見本（本番には入れていない）。今のサイトの CSS の後に読み込む。 */
+:root{
+  --f-mincho:var(--f-gothic);            /* 明朝 → ゴシック */
+  --sand:#f5f6f8; --sand-2:#eef0f3;       /* クリーム地 → ごく薄いグレー */
+  --line:#e3e7ec;
+  --gold:var(--navy-soft);                /* 金 → 紺 */
+}
+/* 見出しの上・横の英字、カードの英字、メニューの英字、ロゴ下の英字を外す */
+.en,.eyebrow,.brand .name span,
+.hero-scroll,.contact .en,[class*="band-copy"] .en{display:none!important}
+/* 見出しの太さは 600 まで・字間を詰める */
+h1,h2,h3,h4,.sec-head .ja,.hero-vert,.about-body h3,.svc-card h4{font-weight:600!important;letter-spacing:.04em!important}
+.brand .name b{font-weight:600}
+/* アクセントは紺の1色。電話ボタンも紺に（休診の色は意味色として残す） */
+.btn-tel,.header .tel,.h-tel,a[href^="tel:"].btn,.header a[href^="tel:"]{background:var(--navy)!important}
+.drawer .d-tel{color:#fff}
+/* 飾りのぼかし模様をやめて平らに */
+.tramband{background:#eef4f9!important}
+[class*="blob"],.cta::before,.cta::after{display:none!important}
+/* アイコンの丸もクリーム → 薄いグレー */
+.svc-ic{background:var(--sand)!important}
+.scroll-cue{display:none!important}
+.header-tel,.contact .tel{background:var(--navy)!important}
