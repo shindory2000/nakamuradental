@@ -142,8 +142,8 @@ def head(title, desc, path, og_img="assets/img/hero-reception.jpg", extra=""):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- フォントは表示を止めずに後から読み込む（スマホでの初回表示を速くする） -->
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"></noscript>
 <link rel="stylesheet" href="assets/css/style.css?v={VER}">
 {ga_tag()}{extra}</head>
 <body>
@@ -155,11 +155,11 @@ def header(current=""):
         '<a href="%s"%s>%s</a>' % (h, ' class="current"' if h == current else "", ja)
         for h, ja, en in NAV
     )
-    drawer = "".join(f'<a href="{h}">{ja}<span class="en">{en}</span></a>' for h, ja, en in NAV)
+    drawer = "".join(f'<a href="{h}">{ja}</a>' for h, ja, en in NAV)
     return f"""<header class="site-header" id="header">
   <div class="wrap">
     <a href="index.html" class="brand" aria-label="中村歯科医院 ホーム">{LOGO_SVG}
-      <span class="name"><b>中村歯科医院</b><span>NAKAMURA DENTAL</span></span></a>
+      <span class="name"><b>中村歯科医院</b></span></a>
     <nav class="nav" aria-label="グローバルナビ">{nav}</nav>
     <a class="header-tel" href="tel:{TELR}">{TEL_ICON}{TEL}</a>
     <button class="burger" id="burger" aria-label="メニューを開く" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -196,7 +196,6 @@ def checks(items):
 def cta():
     return f"""<section class="cta">
   <div class="wrap">
-    <p class="en">RESERVATION &amp; CONTACT</p>
     <h3>お電話でのお問い合わせ・ご予約</h3>
     <p class="today" data-today hidden></p>
     <a class="tel" href="tel:{TELR}">{TEL_ICON}{TEL}</a>
@@ -221,11 +220,11 @@ def footer():
     <div class="foot-grid">
       <div class="foot-brand">
         <a href="index.html" class="brand">{LOGO_SVG}
-          <span class="name"><b>中村歯科医院</b><span>NAKAMURA DENTAL</span></span></a>
+          <span class="name"><b>中村歯科医院</b></span></a>
         <p>中村歯科医院<br>{ADDR1}<br>{ADDR2}<br>TEL {TEL}</p>
       </div>
-      <div class="foot-col"><h5>MENU</h5>{menu}</div>
-      <div class="foot-col"><h5>SERVICE</h5>{svc}</div>
+      <div class="foot-col"><h5>メニュー</h5>{menu}</div>
+      <div class="foot-col"><h5>診療内容</h5>{svc}</div>
     </div>
     <div class="foot-bottom">
       <span>© <span id="yr"></span> Nakamura Dental Office. All rights reserved.</span>
@@ -245,7 +244,6 @@ def page_hero(eyebrow, h1, sub, img, alt=""):
     return f"""<section class="page-hero">
   <img src="assets/img/{img}" alt="{alt}">
   <div class="wrap">
-    <span class="eyebrow">{eyebrow}</span>
     <h1>{h1}</h1>
     <p class="sub">{sub}</p>
   </div>
@@ -277,7 +275,7 @@ def faq(items):
 </div>""" for q, a in items)
     return f"""<section class="section faq">
   <div class="wrap">
-    <div class="sec-head center reveal"><span class="eyebrow">FAQ</span><h2 class="ja">よくあるご質問<span class="en">/ FAQ</span></h2></div>
+    <div class="sec-head center reveal"><h2 class="ja">よくあるご質問</h2></div>
     {rows}
   </div>
 </section>
@@ -365,12 +363,11 @@ def svc_page(fname, h1, sub, hero_img, blocks, faqs, crumb_mid=True, after_block
     s += f"""<section class="page-hero page-hero--plain">
   <span class="ph-deco" aria-hidden="true"></span>
   <div class="wrap">
-    <span class="eyebrow">Service</span>
     <h1>{h1}</h1>
     <p class="sub">中村歯科医院の{label}についてのご案内です。</p>
   </div>
 </section>
-<nav class="crumb"><div class="wrap"><a href="index.html">HOME</a><span>›</span>{mid}<span>{label}</span></div></nav>
+<nav class="crumb"><div class="wrap"><a href="index.html">ホーム</a><span>›</span>{mid}<span>{label}</span></div></nav>
 <section class="section svc-page">
   <div class="wrap">{''.join(blocks)}</div>
 </section>
@@ -386,9 +383,9 @@ def svc_page(fname, h1, sub, hero_img, blocks, faqs, crumb_mid=True, after_block
 # service.html 内から他ページ（矯正・インプラント・義歯・審美）へ飛べるようにする案内カード
 other_svc_cards = "".join("""<a class="svc-card reveal" data-d="%d" href="%s">
   <span class="svc-ic">%s</span>
-  <h4>%s</h4><span class="en">%s</span><p>%s</p>
+  <h4>%s</h4><p>%s</p>
   <span class="more">詳しくはこちら<span class="arw">›</span></span>
-</a>""" % (i % 4, href, icon(ic), ja, en, desc)
+</a>""" % (i % 4, href, icon(ic), ja, desc)
     for i, (href, ja, en, ic, desc, hero) in enumerate(SERVICES) if not href.startswith("service.html#"))
 
 # ---------- 診療のご案内（4項目まとめ） ----------
@@ -416,7 +413,7 @@ PAGES["service.html"] = svc_page(
     crumb_mid=False,
     after_blocks=f"""<section class="section" style="padding-top:0">
   <div class="wrap">
-    <div class="sec-head reveal"><span class="eyebrow">More</span><h2 class="ja">その他の診療<span class="en">/ Service</span></h2></div>
+    <div class="sec-head reveal"><h2 class="ja">その他の診療</h2></div>
     <div class="svc-grid">{other_svc_cards}</div>
   </div>
 </section>"""
@@ -600,17 +597,16 @@ s += header("staff.html")
 s += """<section class="page-hero page-hero--plain">
   <span class="ph-deco" aria-hidden="true"></span>
   <div class="wrap">
-    <span class="eyebrow">Staff</span>
     <h1>スタッフ紹介</h1>
     <p class="sub">医師、歯科衛生士、助手のご紹介です。</p>
   </div>
 </section>
-<nav class="crumb"><div class="wrap"><a href="index.html">HOME</a><span>›</span><span>スタッフ紹介</span></div></nav>
+<nav class="crumb"><div class="wrap"><a href="index.html">ホーム</a><span>›</span><span>スタッフ紹介</span></div></nav>
 """
 cards = "".join(f"""<article class="member reveal" data-d="{i%3}">
   <div class="member-photo"><img src="assets/img/{img}" alt="{name}" loading="lazy"></div>
   <p class="member-name">{name}</p>
-  <p class="member-role">{ja} <span>/ {en}</span></p>
+  <p class="member-role">{ja}</p>
   <p class="member-cm">{cm}</p>
 </article>""" for i, (img, name, ja, en, cm) in enumerate(STAFF))
 s += f"""<section class="section staff">
@@ -679,12 +675,11 @@ s += header("price.html")
 s += """<section class="page-hero page-hero--plain">
   <span class="ph-deco" aria-hidden="true"></span>
   <div class="wrap">
-    <span class="eyebrow">Price</span>
     <h1>自費診療 料金表</h1>
     <p class="sub">PRICE LIST ｜ 表示価格はすべて税込です。</p>
   </div>
 </section>
-<nav class="crumb"><div class="wrap"><a href="index.html">HOME</a><span>›</span><span>自費診療 料金表</span></div></nav>
+<nav class="crumb"><div class="wrap"><a href="index.html">ホーム</a><span>›</span><span>自費診療 料金表</span></div></nav>
 """
 s += f"""<section class="section price-sec">
   <div class="wrap">
@@ -719,10 +714,10 @@ s += f"""<section class="section access">
       </div>
       <div class="reveal" data-d="1">
         <dl>
-          <div class="info-row"><dt>ADDRESS</dt><dd>{ADDR1}<br>{ADDR2}</dd></div>
-          <div class="info-row"><dt>ACCESS</dt><dd>Osaka Metro中央線「コスモスクエア駅」徒歩8分<span class="sub">ニュートラム（南港ポートタウン線）「トレードセンター前駅」徒歩5分</span></dd></div>
-          <div class="info-row"><dt>TEL</dt><dd><span class="big">{TEL}</span></dd></div>
-          <div class="info-row"><dt>HOURS</dt><dd>9:30〜13:00 ／ 15:00〜19:00<span class="sub">土曜午後は15:00〜17:00　休診日：日曜日・祝日</span></dd></div>
+          <div class="info-row"><dt>住所</dt><dd>{ADDR1}<br>{ADDR2}</dd></div>
+          <div class="info-row"><dt>交通</dt><dd>Osaka Metro中央線「コスモスクエア駅」徒歩8分<span class="sub">ニュートラム（南港ポートタウン線）「トレードセンター前駅」徒歩5分</span></dd></div>
+          <div class="info-row"><dt>電話</dt><dd><span class="big">{TEL}</span></dd></div>
+          <div class="info-row"><dt>診療時間</dt><dd>9:30〜13:00 ／ 15:00〜19:00<span class="sub">土曜午後は15:00〜17:00　休診日：日曜日・祝日</span></dd></div>
         </dl>
         <h3 class="blk-ttl" style="margin-top:2.2rem">診療カレンダー</h3>
         <div class="cal" data-cal><noscript>休診日：日曜日・祝日</noscript></div>
@@ -746,7 +741,6 @@ s += header()
 s += f"""<section class="page-hero page-hero--plain">
   <span class="ph-deco" aria-hidden="true"></span>
   <div class="wrap">
-    <span class="eyebrow">Review</span>
     <h1>口コミのお願い</h1>
     <p class="sub">本日はご来院いただき、ありがとうございました。</p>
   </div>
@@ -779,7 +773,6 @@ s += header()
 s += f"""<section class="page-hero page-hero--plain">
   <span class="ph-deco" aria-hidden="true"></span>
   <div class="wrap">
-    <span class="eyebrow">After Care</span>
     <h1>治療後のお口の調子チェック</h1>
     <p class="sub">治療からしばらくたった今の状態を教えてください（10秒ほどで終わります）。</p>
   </div>
@@ -998,9 +991,9 @@ dots = "".join('<button aria-label="スライド%d"%s></button>' % (i + 1, " cla
 
 svc_cards = "".join("""<a class="svc-card reveal" data-d="%d" href="%s">
   <span class="svc-ic">%s</span>
-  <h4>%s</h4><span class="en">%s</span><p>%s</p>
+  <h4>%s</h4><p>%s</p>
   <span class="more">詳しくはこちら<span class="arw">›</span></span>
-</a>""" % (i % 4, href, icon(ic), ja, en, desc)
+</a>""" % (i % 4, href, icon(ic), ja, desc)
     for i, (href, ja, en, ic, desc, hero) in enumerate(SERVICES))
 
 staff_cards = "".join("""<article class="member reveal" data-d="%d">
@@ -1039,12 +1032,11 @@ s += """<section class="hero" id="top">
     <h1 class="hero-vert">あなたの笑顔のために<span class="sr-only">｜中村歯科医院（大阪市住之江区 南港・コスモスクエアの歯医者）</span></h1>
     <p class="hero-vert">信頼と実績を</p>
   </div>
-  <a href="#news" class="scroll-cue">SCROLL</a>
 </section>
 """ % (slides, VER, dots)
 s += """<section class="section news" id="news">
   <div class="wrap">
-    <div class="sec-head reveal"><span class="eyebrow">News</span><h2 class="ja">お知らせ<span class="en">/ News</span></h2></div>
+    <div class="sec-head reveal"><h2 class="ja">お知らせ</h2></div>
     <div class="news-grid reveal" id="newsList" data-src="data/news.json?v=%s" data-d="1">%s</div>
   </div>
 </section>
@@ -1054,10 +1046,9 @@ s += """<section class="section news" id="news">
     <div class="about-figure reveal">
       <div class="wipe"><img src="assets/img/clinic-interior.jpg" alt="中村歯科医院の院内" loading="lazy"></div>
       <span class="frame"></span>
-      <div class="badge"><b>30</b><span>YEARS OF TRUST</span></div>
+      <div class="badge"><b>30</b><span>年</span></div>
     </div>
     <div class="about-body reveal" data-d="1">
-      <span class="eyebrow">About us</span>
       <h3 class="lines"><span class="ln"><span>信頼と実績に基づく幅広い治療で応えます</span></span><span class="ln"><span><em style="font-style:normal" class="soft">綺麗な笑顔　健康なお口</em></span></span></h3>
       <p>当院では２０年以上にわたり、院長　副院長のドクター2名体制で多くの患者様に来院していただいております。私たちはこの経験と技術の向上により、出来る限り歯の保存に努め、患者さまのさまざまなお口の悩みに対応しています。</p>
       <p>保険診療内で満足して頂くよう常日頃より努力しておりますが、カバーしきれない治療、審美歯科(ホワイトニング　ガムピーリング　セラミックetc）.インプラント.特殊義歯.矯正なども多数実績がございます。</p>
@@ -1069,14 +1060,14 @@ s += """<section class="section news" id="news">
 
 <section class="section service" id="service">
   <div class="wrap">
-    <div class="sec-head center reveal"><span class="eyebrow">Service</span><h2 class="ja">診療のご案内<span class="en">/ Service</span></h2></div>
+    <div class="sec-head center reveal"><h2 class="ja">診療のご案内</h2></div>
     <div class="svc-grid">%s</div>
   </div>
 </section>
 
 <section class="section reasons" id="features">
   <div class="wrap">
-    <div class="sec-head center reveal"><span class="eyebrow">Features</span><h2 class="ja"><span class="h2-pre">南港・コスモスクエアの歯医者</span>中村歯科医院の特徴<span class="en">/ Features</span></h2></div>
+    <div class="sec-head center reveal"><h2 class="ja"><span class="h2-pre">南港・コスモスクエアの歯医者</span>中村歯科医院の特徴</h2></div>
     <p class="reasons-lead reveal">大阪市住之江区南港北、大阪府咲洲庁舎（さきしまコスモタワー）3階の歯科医院です。</p>
     %s
   </div>
@@ -1084,7 +1075,7 @@ s += """<section class="section news" id="news">
 
 <section class="section staff" id="staff">
   <div class="wrap">
-    <div class="sec-head reveal"><span class="eyebrow">Staff</span><h2 class="ja">スタッフ紹介<span class="en">/ Staff</span></h2></div>
+    <div class="sec-head reveal"><h2 class="ja">スタッフ紹介</h2></div>
     <div class="staff-feature">
       <div class="staff-feature-fig wipe"><img src="assets/img/staff-two.jpg" alt="中村歯科医院のスタッフ" loading="lazy"></div>
       <div class="staff-feature-body reveal" data-d="1">
@@ -1098,7 +1089,7 @@ s += """<section class="section news" id="news">
 
 <section class="section access" id="access">
   <div class="wrap">
-    <div class="sec-head reveal"><span class="eyebrow">Clinic</span><h2 class="ja">中村歯科医院について<span class="en">/ Clinic</span></h2></div>
+    <div class="sec-head reveal"><h2 class="ja">中村歯科医院について</h2></div>
     <div class="access-grid">
       <div class="access-map reveal">
         <iframe title="中村歯科医院 地図" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
@@ -1187,12 +1178,11 @@ def column_page(c):
     s += f"""<section class="page-hero page-hero--plain">
   <span class="ph-deco" aria-hidden="true"></span>
   <div class="wrap">
-    <span class="eyebrow">Column</span>
     <h1>{_html.escape(c['title'])}</h1>
     <p class="sub">{'監修：' + DIRECTOR + '　／　' if reviewed else ''}更新日：{c.get('date', '')}</p>
   </div>
 </section>
-<nav class="crumb"><div class="wrap"><a href="index.html">HOME</a><span>›</span><a href="column.html">コラム</a><span>›</span><span>{_html.escape(c['title'])}</span></div></nav>
+<nav class="crumb"><div class="wrap"><a href="index.html">ホーム</a><span>›</span><a href="column.html">コラム</a><span>›</span><span>{_html.escape(c['title'])}</span></div></nav>
 <section class="section col-article">
   <div class="wrap col-wrap">
     {_md(c['body'])}
@@ -1220,8 +1210,8 @@ if PUBLISHED_COLUMNS:
              "column.html")
     s += header()
     s += f"""<section class="page-hero page-hero--plain"><span class="ph-deco" aria-hidden="true"></span>
-  <div class="wrap"><span class="eyebrow">Column</span><h1>コラム</h1><p class="sub">お口の気になることを、わかりやすく解説します。</p></div></section>
-<nav class="crumb"><div class="wrap"><a href="index.html">HOME</a><span>›</span><span>コラム</span></div></nav>
+  <div class="wrap"><h1>コラム</h1><p class="sub">お口の気になることを、わかりやすく解説します。</p></div></section>
+<nav class="crumb"><div class="wrap"><a href="index.html">ホーム</a><span>›</span><span>コラム</span></div></nav>
 <section class="section"><div class="wrap col-grid">{cards}</div></section>
 """
     s += cta() + footer()
