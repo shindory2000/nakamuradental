@@ -11,6 +11,13 @@
  *                     → 希望はトークに患者さんの発言として残る（スタッフに通知が行く）→ 「まだ確定ではありません」＋口コミ（任意）
  *   口コミのお願いは、どの答えの人にも同じ文面・同じ扱い（良い答えの人だけに頼むのは Google の規約違反）。
  *
+ *   駆け込み相談（いつでも）  トークで「具合が悪くなった」「相談」「痛い」などと送る、またはリッチメニューのボタン
+ *                     →「いまのご様子に近いもの」［強い痛み・腫れ・出血がある］［早めに診てほしい］［文字で相談したい］
+ *     強い痛み・腫れ・出血 → 診療時間内：すぐ電話（ボタン）／時間外：次の診療日と #7119。一覧に「急ぎのご相談」で残し、メールでも知らせる
+ *     早めに診てほしい     → 希望日の画面（上と同じ）
+ *     文字で相談したい     → 症状の受付（上の「少し気になる」と同じ）
+ *   1週間後の連絡の後でも、登録していない友だちでも使える。
+ *
  * スクリプト プロパティ（Code.gs と共通のものに加えて）
  *   LIFF_CHANNEL_ID   … LIFF を置いた LINE ログインチャネルのチャネル ID（ID トークンの確認に使う）
  *   LIFF_ID           … LIFF ID（例 2000000000-abcdefgh）。トークの中のボタンから LIFF を開くのに使う
@@ -26,7 +33,9 @@ var FU = {
   SHEET_REQ: '相談・受診希望',
   REVIEW_URL: 'https://g.page/r/CdsKDBQD0uDPEAE/review',
   TEL: '06-6615-6180',
-  STATE_HOURS: 72  // 「少し気になる」を押してから、症状の文章を待つ時間
+  STATE_HOURS: 72,  // 「少し気になる」を押してから、症状の文章を待つ時間
+  // 駆け込み相談を始める言葉（リッチメニューのボタンは「具合が悪くなった」を送る設定にする）
+  SOS_WORDS: /^(具合が悪くなった|具合が悪い|ぐあいがわるい|相談|相談したい|急ぎ|痛い|いたい|腫れた|はれた|血が止まらない)$/
 };
 var FU_PT = { uid: 1, lineName: 2, kana: 3, firstAt: 4, visit: 5, consent: 6, sendOn: 7, sentAt: 8, answer: 9, answeredAt: 10, status: 11, memo: 12 };
 var FU_REQ_HEAD = ['受付日時', '種類', 'フリガナ', 'LINEの名前', '来院日', '内容', '第1希望', '第2希望', '第3希望', '対応', '対応メモ', 'LINEユーザーID', '口コミの案内'];
@@ -45,7 +54,14 @@ var FU_MSG = {
   followupText: function (p) {
     return p.kana + ' 様\n中村歯科医院です。' + fuJp(p.visit) + 'のご診療から1週間がたちました。\nその後、お口の具合はいかがですか？';
   },
-  ok: '安心いたしました。ご回答ありがとうございます。\n\n歯の健康を保つには、3か月〜半年ごとの定期検診がおすすめです。ご予約はお電話（' + FU.TEL + '）か、このトークでお気軽にどうぞ。',
+  ok: '安心いたしました。ご回答ありがとうございます。\n\n歯の健康を保つには、3か月〜半年ごとの定期検診がおすすめです。ご予約はお電話（' + FU.TEL + '）か、このトークでお気軽にどうぞ。\n\nこの先、痛みや腫れが出たときは、このトークで「具合が悪くなった」と送ってください。すぐにご案内します。',
+  sosAsk: '中村歯科医院です。いまのご様子に近いものを選んでください。',
+  sosUrgentOpen: 'すぐにお電話ください（' + FU.TEL + '）。\n今の状態をうかがって、受診の時間をご案内します。\n\nお電話がつながらないときは、このトークに症状をお送りください。',
+  sosUrgentClosed: function (next) {
+    return 'ただいま診療時間外です。次の診療は ' + next + ' からです。\n\n'
+      + '痛みが強くて我慢できない・腫れが広がる・血が止まらない・熱がある場合は、#7119（救急安心センター）へご相談ください。\n\n'
+      + 'このトークに症状をお送りいただければ、次の診療の始めに医院から確認してご連絡します。';
+  },
   askSymptom: 'ご回答ありがとうございます。\n気になるご様子を、このトークに文字でお送りください（写真も送れます）。\n\n'
     + 'LINE のご相談は診療時間内に順に確認するため、当日中にお返事できないことがあります。\n'
     + '腫れが広がる・血が止まらない・熱がある場合は、お電話（' + FU.TEL + '）へ。診療時間外は #7119 へご相談ください。',
@@ -220,7 +236,7 @@ function fuAddRequest(hit, kind, content, wishes) {
   // 医院への知らせは LINE 公式アカウントのアプリ（トークに患者さんの発言が残るので通知が行く）。
   // メールは件数だけ（症状は書かない）
   var to = prop('CLINIC_EMAILS');
-  if (to) MailApp.sendEmail(to, '【中村歯科 LINE】' + kind + 'が1件届きました', 'LINE 公式アカウントのアプリ（チャット）で「' + p.lineName + '」さん（' + p.kana + '）をご確認ください。\n一覧：' + SpreadsheetApp.getActive().getUrl());
+  if (to) MailApp.sendEmail(to, (kind === '急ぎのご相談' ? '【至急・中村歯科 LINE】' : '【中村歯科 LINE】') + kind + 'が1件届きました', 'LINE 公式アカウントのアプリ（チャット）で「' + p.lineName + '」さん（' + p.kana + '）をご確認ください。\n一覧：' + SpreadsheetApp.getActive().getUrl());
 }
 
 /* ---------------- 1週間後：毎朝10時に送る ---------------- */
@@ -245,7 +261,7 @@ function fuAfterCare() {
   var sh = fuSheet(FU.SHEET_REQ, FU_REQ_HEAD), v = sh.getDataRange().getValues(), n = 0;
   for (var i = 1; i < v.length; i++) {
     if (v[i][FU_REQ.kind - 1] !== '症状のご相談' || v[i][FU_REQ.done - 1] !== '対応済み' || v[i][FU_REQ.review - 1]) continue;
-    var ok = fuPush(v[i][FU_REQ.uid - 1], [fuText('その後のご様子はいかがでしょうか。お大事になさってください。'), fuReviewCard()]);
+    var ok = fuPush(v[i][FU_REQ.uid - 1], [fuText('その後のご様子はいかがでしょうか。お大事になさってください。\n\nまた具合が悪くなったときは、このトークで「具合が悪くなった」と送ってください。'), fuReviewCard()]);
     sh.getRange(i + 1, FU_REQ.review).setValue(ok ? new Date() : '試験中のため送らず');
     n++;
   }
@@ -269,6 +285,7 @@ function fuEvent(ev) {
     fuReply(ev.replyToken, [fuText('友だち追加ありがとうございます。中村歯科医院です。\nご予約・ご相談はお電話（' + FU.TEL + '）か、このトークでお気軽にどうぞ。')]);
     return true;
   }
+  if (ev.type === 'postback' && /^fu:sos/.test(ev.postback.data)) { fuSos(ev, uid, ev.postback.data.split(':')[2] || ''); return true; }
   if (ev.type === 'postback' && /^fu:/.test(ev.postback.data)) {
     var hit = fuFind(uid), ans = ev.postback.data.split(':')[2];
     if (!hit) { fuReply(ev.replyToken, [fuText(FU_MSG.offHours)]); return true; }
@@ -290,6 +307,7 @@ function fuEvent(ev) {
       fuReply(ev.replyToken, [fuText('経過のご連絡を停止しました。またのご来院の際に、あらためてご登録いただけます。')]);
       return true;
     }
+    if (m.type === 'text' && FU.SOS_WORDS.test(m.text.trim().replace(/[。、！!？?\s]/g, ''))) { fuSos(ev, uid, ''); return true; }
     // LIFF の希望日画面がトークに送る文（患者さんの発言として残る）
     if (m.type === 'text' && /^【受診のご希望】/.test(m.text)) { fuReply(ev.replyToken, [fuText(FU_MSG.gotWish), fuReviewCard()]); return true; }
     var st = fuState(uid);
@@ -308,6 +326,66 @@ function fuEvent(ev) {
   }
   return false;
 }
+/* ---------------- 駆け込み相談（具合が悪くなったとき・いつでも） ---------------- */
+
+/** 台帳に無い友だち（登録していない人）も、相談の記録が残せるよう行を作る */
+function fuEnsure(uid) {
+  var hit = fuFind(uid);
+  if (hit) return hit;
+  var name = '';
+  try {
+    var r = UrlFetchApp.fetch('https://api.line.me/v2/bot/profile/' + uid, { muteHttpExceptions: true, headers: { Authorization: 'Bearer ' + prop('LINE_TOKEN') } });
+    if (r.getResponseCode() === 200) name = JSON.parse(r.getContentText()).displayName || '';
+  } catch (e) { }
+  fuPtSheet().appendRow([uid, name, '', new Date(), '', '受け取らない', '', '', '', '', '駆け込み相談', '']);
+  return fuFind(uid);
+}
+function fuSosCard() {
+  var btn = function (label, data, style) {
+    return { type: 'button', style: style || 'secondary', height: 'sm', margin: 'sm', action: { type: 'postback', label: label, data: data, displayText: label } };
+  };
+  return { type: 'flex', altText: 'いまのご様子に近いものを選んでください（中村歯科医院）',
+    contents: { type: 'bubble',
+      body: { type: 'box', layout: 'vertical', contents: [{ type: 'text', text: FU_MSG.sosAsk, wrap: true, size: 'md', color: '#16212e' }] },
+      footer: { type: 'box', layout: 'vertical', contents: [
+        btn('強い痛み・腫れ・出血がある', 'fu:sos:urgent', 'primary'), btn('早めに診てほしい', 'fu:sos:visit'), btn('文字で相談したい', 'fu:sos:text')] },
+      styles: { footer: { separator: true } } } };
+}
+function fuTelCard() {
+  return { type: 'flex', altText: 'お電話 ' + FU.TEL,
+    contents: { type: 'bubble', size: 'kilo',
+      body: { type: 'box', layout: 'vertical', contents: [{ type: 'text', text: '中村歯科医院　' + FU.TEL, size: 'sm', weight: 'bold', color: '#16212e' }] },
+      footer: { type: 'box', layout: 'vertical', contents: [{ type: 'button', style: 'primary', height: 'sm', action: { type: 'uri', label: '電話をかける', uri: 'tel:' + FU.TEL.replace(/-/g, '') } }] } } };
+}
+/** 次に開く診療の始まり（例：11月17日（火） 9:30） */
+function fuNextOpenLabel() {
+  var cal = fuCalendar(), today = fuTodayIso(), hm = Number(Utilities.formatDate(new Date(), 'Asia/Tokyo', 'HHmm'));
+  var start = { am: '9:30', pm1: '15:00', pm2: '17:00' }, startHm = { am: 930, pm1: 1500, pm2: 1700 };
+  var b = fuOpenBands(today, cal).filter(function (x) { return startHm[x] > hm; })[0];
+  if (b) return '本日 ' + start[b];
+  var d = fuNextOpenDay(fuAddDays(today, 1), cal);
+  return fuJp(d) + ' ' + start[fuOpenBands(d, cal)[0] || 'am'];
+}
+/** step：''（選んでもらう）／urgent／visit／text */
+function fuSos(ev, uid, step) {
+  if (!step) { fuReply(ev.replyToken, [fuSosCard()]); return; }
+  var hit = fuEnsure(uid);
+  if (step === 'urgent') {
+    var open = fuIsOpenNow();
+    fuAddRequest(hit, '急ぎのご相談', open ? '診療時間内（電話をご案内）' : '診療時間外（次の診療と #7119 をご案内）');
+    fuSet(hit, 'status', '急ぎのご相談（医院から連絡）');
+    fuState(uid, { s: 'symptom', until: Date.now() + FU.STATE_HOURS * 3600e3 });
+    fuReply(ev.replyToken, [fuText(open ? FU_MSG.sosUrgentOpen : FU_MSG.sosUrgentClosed(fuNextOpenLabel())), fuTelCard()]);
+    return;
+  }
+  if (step === 'visit') { fuSet(hit, 'status', '希望日の入力待ち'); fuReply(ev.replyToken, [fuWishCard()]); return; }
+  if (step === 'text') {
+    fuSet(hit, 'status', '症状の連絡待ち');
+    fuState(uid, { s: 'symptom', until: Date.now() + FU.STATE_HOURS * 3600e3 });
+    fuReply(ev.replyToken, [fuText(FU_MSG.askSymptom.replace(/^ご回答ありがとうございます。\n/, ''))]);
+  }
+}
+
 function fuWishOffer() {
   return { type: 'flex', altText: '受診をご希望の場合',
     contents: { type: 'bubble', size: 'kilo',
