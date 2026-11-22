@@ -95,9 +95,12 @@
   function lock(ft) { ft.querySelectorAll('button').forEach(function (b) { b.disabled = true; }); }
 
   function jpd(d) { return (d.getMonth() + 1) + '月' + d.getDate() + '日（' + '日月火水木金土'.charAt(d.getDay()) + '）'; }
-  var D0 = new Date(), D7 = new Date(); D7.setDate(D7.getDate() + 7);
+  var QD = (location.search.match(/[?&]d=(\d{4})-(\d{2})-(\d{2})/) || []);
+  var D0 = QD[1] ? new Date(+QD[1], +QD[2] - 1, +QD[3]) : new Date();
+  var D7 = new Date(D0.getTime()); D7.setDate(D7.getDate() + 7);
   if (D7.getDay() === 0) D7.setDate(D7.getDate() + 1);
   var T0 = jpd(D0), T7 = jpd(D7);
+  if (QD[1]) document.querySelectorAll('iframe').forEach(function (f) { f.src = f.getAttribute('src') + '&d=' + QD[1] + '-' + QD[2] + '-' + QD[3]; });
   function start() {
     chat.innerHTML = ''; document.getElementById('typeBox').hidden = true;
     day(T0);

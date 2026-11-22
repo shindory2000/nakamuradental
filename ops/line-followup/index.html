@@ -168,7 +168,7 @@
     return b;
   }
   function nextOpen(iso) { for (var i = 0; i < 14; i++) { var d = addDays(iso, i); if (openBands(d).length) return d; } return iso; }
-  function today() { return isoOf(new Date()); }
+  function today() { var d = DEMO && qs.get('d'); return d && /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : isoOf(new Date()); }
 
   function loadCal() {
     var get = function (u) { return fetch(u, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
