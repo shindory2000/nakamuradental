@@ -99,7 +99,8 @@
   var D0 = QD[1] ? new Date(+QD[1], +QD[2] - 1, +QD[3]) : new Date();
   var D7 = new Date(D0.getTime()); D7.setDate(D7.getDate() + 7);
   if (D7.getDay() === 0) D7.setDate(D7.getDate() + 1);
-  var T0 = jpd(D0), T7 = jpd(D7);
+  function after(d, n) { var x = new Date(d.getTime()); x.setDate(x.getDate() + n); if (x.getDay() === 0) x.setDate(x.getDate() + 1); return x; }
+  var T0 = jpd(D0), T7 = jpd(D7), W1 = jpd(after(D7, 1)), W2 = jpd(after(D7, 3)), NX = jpd(after(D7, 1));
   if (QD[1]) document.querySelectorAll('iframe').forEach(function (f) { f.src = f.getAttribute('src') + '&d=' + QD[1] + '-' + QD[2] + '-' + QD[3]; });
   function start() {
     chat.innerHTML = ''; document.getElementById('typeBox').hidden = true;
@@ -122,7 +123,7 @@
           bot('すぐにお電話ください（' + TEL + '）。\n今の状態をうかがって、受診の時間をご案内します。\n\nお電話がつながらないときは、このトークに症状をお送りください。');
           card('中村歯科医院　' + TEL, [['電話をかける', function () { alert('電話アプリが開きます（確認用なので開きません）'); }, 'p']]);
           day('診療時間外に押した場合');
-          bot('ただいま診療時間外です。次の診療は 11月24日（火） 9:30 からです。\n\n痛みが強くて我慢できない・腫れが広がる・血が止まらない・熱がある場合は、#7119（救急安心センター）へご相談ください。\n\nこのトークに症状をお送りいただければ、次の診療の始めに医院から確認してご連絡します。');
+          bot('ただいま診療時間外です。次の診療は ' + NX + ' 9:30 からです。\n\n痛みが強くて我慢できない・腫れが広がる・血が止まらない・熱がある場合は、#7119（救急安心センター）へご相談ください。\n\nこのトークに症状をお送りいただければ、次の診療の始めに医院から確認してご連絡します。');
         }, 'p'],
         ['早めに診てほしい', function (x, ft) { lock(ft); me('早めに診てほしい'); wish(); }],
         ['文字で相談したい', function (x, ft) { lock(ft); me('文字で相談したい'); bot('気になるご様子を、このトークに文字でお送りください（写真も送れます）。\n\nLINE のご相談は診療時間内に順に確認するため、当日中にお返事できないことがあります。\n腫れが広がる・血が止まらない・熱がある場合は、お電話（' + TEL + '）へ。診療時間外は #7119 へご相談ください。'); askText(); }]
@@ -132,7 +133,7 @@
   function wish() {
     card('ご回答ありがとうございます。\nご都合のよい日を、下のボタンからお選びください（第1希望のみでも大丈夫です）。', [['希望日を選ぶ', function (x, ft) {
       lock(ft);
-      me('【受診のご希望】\n第1希望：11月18日（水） 午前\n第2希望：11月20日（金） 17〜19時');
+      me('【受診のご希望】\n第1希望：' + W1 + ' 午前\n第2希望：' + W2 + ' 17〜19時');
       bot('ご希望を受け付けました。\n\n【まだご予約は確定していません】\n医院で空きを確認して、このトークでご連絡します。ご希望の日が埋まっている場合も、こちらから別の日をご相談します。');
       review();
     }, 'p']]);
