@@ -14,7 +14,9 @@
   header h1{font-size:19px;margin:0 0 4px}
   header p{margin:0;color:var(--soft);font-size:13.5px}
   .row{max-width:1200px;margin:0 auto;padding:12px 16px 32px;display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
-  .col{flex:1 1 340px;max-width:380px}
+  .col{flex:1 1 300px;max-width:380px;min-width:0}
+  @media (max-width:480px){.row{padding:12px 12px 32px}.col{flex-basis:100%;max-width:100%}.phone{height:620px}}
+  html,body{overflow-x:hidden}
   .step{font-size:13px;font-weight:600;color:var(--navy);margin:0 0 8px}
   .step span{margin-right:8px}
   .phone{background:#fff;border:8px solid #1b1f24;border-radius:30px;height:700px;overflow:hidden;display:flex;flex-direction:column}
