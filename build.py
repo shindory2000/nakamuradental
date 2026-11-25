@@ -284,6 +284,81 @@ def faq(items):
 
 PAGES = {}
 
+# ---------------------- 臨時休診 → Google 向け特別営業時間 ----------------------
+# data/closures.json（管理画面の「臨時休診日」）のうち今日以降のものを、
+# specialOpeningHoursSpecification として構造化データに載せる。
+# 通常枠は assets/js/clinic-days.js の REGULAR と同じ。
+REGULAR = {0: (None, None), 1: (("09:30", "13:00"), ("15:00", "19:00")), 2: (("09:30", "13:00"), ("15:00", "19:00")),
+           3: (("09:30", "13:00"), ("15:00", "19:00")), 4: (("09:30", "13:00"), ("15:00", "19:00")),
+           5: (("09:30", "13:00"), ("15:00", "19:00")), 6: (("09:30", "13:00"), ("15:00", "17:00"))}
+
+
+def special_hours_ld():
+    path = os.path.join(ROOT, "data", "closures.json")
+    if not os.path.exists(path):
+        return ""
+    with open(path, encoding="utf-8") as f:
+        closures = json.load(f)
+    today = time.strftime("%Y-%m-%d")
+    specs = []
+    for c in sorted(closures, key=lambda c: c["date"]):
+        if c["date"] < today:
+            continue
+        dow = datetime.date.fromisoformat(c["date"]).isoweekday() % 7  # 0=日
+        am, pm = REGULAR[dow]
+        if c["part"] == "am":
+            am = None
+        elif c["part"] == "pm":
+            pm = None
+        else:
+            am = pm = None
+        base = {"@type": "OpeningHoursSpecification", "validFrom": c["date"], "validThrough": c["date"]}
+        open_slots = [s for s in (am, pm) if s]
+        if not open_slots:  # 終日休診は 00:00〜00:00 で「閉店」を表す（Google の指定どおり）
+            specs.append(dict(base, opens="00:00", closes="00:00"))
+        for o, cl in open_slots:
+            specs.append(dict(base, opens=o, closes=cl))
+    if not specs:
+        return ""
+    return ',\n"specialOpeningHoursSpecification":' + json.dumps(specs, ensure_ascii=False, separators=(",", ":"))
+
+
+# ---------------------- 医院の構造化データ（トップとアクセスに載せる） ----------------------
+# 内容はサイト内に既にある事実だけ（所在地・診療時間・電話・診療メニュー）。下層ページからは @id で参照する。
+DENTIST_ID = SITE + "/#dentist"
+# サイトに既に詳しいページがある診療だけを載せる（新しい診療を足すときは、先にページを作ること）
+AVAILABLE_SERVICES = [
+    ("一般歯科（虫歯・歯周病の治療）", "service.html#general"), ("3Mix-MP法", "service.html#general"),
+    ("小児歯科", "service-pediatric.html"), ("予防歯科・定期検診（PMTC）", "service-prevention.html"),
+    ("矯正歯科", "service-ortho.html"), ("インプラント", "service-implant.html"),
+    ("入れ歯（義歯）", "service-denture.html"), ("審美歯科・ホワイトニング", "service-aesthetic.html"),
+]
+_EXTRA_LD = json.dumps({
+    "@id": DENTIST_ID,
+    "logo": SITE + "/assets/img/logo-full.png",
+    "isAcceptingNewPatients": True,
+    "containedInPlace": {"@type": "Place", "name": "大阪府咲洲庁舎（さきしまコスモタワー）",
+                         "address": {"@type": "PostalAddress", "streetAddress": "南港北1丁目14-16",
+                                     "addressLocality": "大阪市住之江区", "addressRegion": "大阪府",
+                                     "postalCode": "559-0034", "addressCountry": "JP"}},
+    "availableService": [{"@type": "MedicalProcedure", "name": n, "url": f"{SITE}/{u}"} for n, u in AVAILABLE_SERVICES],
+}, ensure_ascii=False, separators=(",", ":"))[1:-1]
+JSONLD = """<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Dentist","name":"中村歯科医院","alternateName":"Nakamura Dental Office",
+"url":"%s/","image":"%s/assets/img/hero-reception.jpg","telephone":"+81-6-6615-6180",
+"priceRange":"¥¥","medicalSpecialty":["Dentistry"],
+"address":{"@type":"PostalAddress","streetAddress":"南港北1丁目14-16 大阪府咲洲庁舎3F 305号室","addressLocality":"大阪市住之江区","addressRegion":"大阪府","postalCode":"559-0034","addressCountry":"JP"},
+"geo":{"@type":"GeoCoordinates","latitude":34.6376945,"longitude":135.4143232},
+"openingHoursSpecification":[
+{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:30","closes":"13:00"},
+{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"15:00","closes":"19:00"},
+{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:30","closes":"13:00"},
+{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"15:00","closes":"17:00"}],
+"areaServed":["南港","南港北","咲洲","コスモスクエア","住之江区","大阪市"],"employee":{"@type":"Person","name":"中村 聡","jobTitle":"院長"},"hasMap":"%s","sameAs":%s%s,%s}
+</script>
+""" % (SITE, SITE, MAPS_CID_URL, json.dumps(SAME_AS), special_hours_ld(), _EXTRA_LD)
+
+
 # =========================================================
 #  診療のご案内（実サイト magenta841500.studio.site 準拠）
 #  構成：診療のご案内（一般歯科/小児歯科/定期検診/予防歯科PMTC）
@@ -351,6 +426,14 @@ SVC_META = {
 }
 
 
+def near_block():
+    return svc_block("near", "ic-general", "南港・コスモスクエアで通いやすい歯医者", "", [
+        "大阪府咲洲庁舎（さきしまコスモタワー）3階。Osaka Metro中央線「コスモスクエア駅」徒歩8分、ニュートラム「トレードセンター前駅」徒歩5分です。",
+        "診療時間は 9:30〜13:00 ／ 15:00〜19:00（土曜午後は15:00〜17:00）、日曜・祝日は休診です。",
+        '<a class="more-link" href="access.html">アクセス・地図を見る ›</a>',
+    ], None, "")
+
+
 def svc_page(fname, h1, sub, hero_img, blocks, faqs, crumb_mid=True, after_blocks=""):
     label = h1.replace("診療のご案内｜", "")
     # 検索で「治療名＋地域」で探す人に向けた題名と説明文（ページ本文にある事実だけで書く）
@@ -364,12 +447,12 @@ def svc_page(fname, h1, sub, hero_img, blocks, faqs, crumb_mid=True, after_block
   <span class="ph-deco" aria-hidden="true"></span>
   <div class="wrap">
     <h1>{h1}</h1>
-    <p class="sub">中村歯科医院の{label}についてのご案内です。</p>
+    <p class="sub">大阪市住之江区南港・咲洲庁舎3Fの中村歯科医院の{label}についてのご案内です。</p>
   </div>
 </section>
 <nav class="crumb"><div class="wrap"><a href="index.html">ホーム</a><span>›</span>{mid}<span>{label}</span></div></nav>
 <section class="section svc-page">
-  <div class="wrap">{''.join(blocks)}</div>
+  <div class="wrap">{''.join(blocks)}{'' if 'id="near"' in ''.join(blocks) else near_block()}</div>
 </section>
 {after_blocks}"""
     if faqs:
@@ -422,14 +505,6 @@ PAGES["service.html"] = svc_page(
 
 # ---------- 小児歯科・予防歯科（「住之江区 小児歯科」「南港 定期検診」で探す人の受け皿） ----------
 # 本文は実サイトの文言と、サイト内に既にある事実（年齢・間隔・アクセス）だけで書く
-def near_block():
-    return svc_block("near", "ic-general", "南港・コスモスクエアで通いやすい歯医者", "", [
-        "大阪府咲洲庁舎（さきしまコスモタワー）3階。Osaka Metro中央線「コスモスクエア駅」徒歩8分、ニュートラム「トレードセンター前駅」徒歩5分です。",
-        "診療時間は 9:30〜13:00 ／ 15:00〜19:00（土曜午後は15:00〜17:00）、日曜・祝日は休診です。",
-        '<a class="more-link" href="access.html">アクセス・地図を見る ›</a>',
-    ], None, "")
-
-
 PAGES["service-pediatric.html"] = svc_page(
     "service-pediatric.html", "診療のご案内｜小児歯科", "", "kids-chair.jpg",
     [
@@ -604,7 +679,7 @@ s += """<section class="page-hero page-hero--plain">
 <nav class="crumb"><div class="wrap"><a href="index.html">ホーム</a><span>›</span><span>スタッフ紹介</span></div></nav>
 """
 cards = "".join(f"""<article class="member reveal" data-d="{i%3}">
-  <div class="member-photo"><img src="assets/img/{img}" alt="{name}" loading="lazy"></div>
+  <div class="member-photo"><img src="assets/img/{img}" alt="中村歯科医院 {ja} {name}" loading="lazy"></div>
   <p class="member-name">{name}</p>
   <p class="member-role">{ja}</p>
   <p class="member-cm">{cm}</p>
@@ -668,8 +743,8 @@ for ic, cat, sub, rows, wide in PRICE:
     <div><h3>{cat}</h3><span class="pc-sub">{sub}</span></div></div>
   <ul class="price-items">{items}</ul>
 </article>"""
-s = head("自費診療の料金表（インプラント・矯正・セラミック）｜南港の歯医者 中村歯科医院",
-         "中村歯科医院の自費診療料金表。セラミック・ジルコニア・インプラント・入れ歯・矯正・ホワイトニングの料金を掲載しています。表示価格はすべて税込です。",
+s = head("自費診療の料金表（インプラント・矯正・セラミック）｜大阪市住之江区 南港の歯医者 中村歯科医院",
+         "大阪市住之江区南港・咲洲庁舎3Fの中村歯科医院の自費診療料金表。セラミック・ジルコニア・インプラント・入れ歯・矯正・ホワイトニングの料金を掲載しています。表示価格はすべて税込です。",
          "price.html", "assets/img/hero-shelf.jpg")
 s += header("price.html")
 s += """<section class="page-hero page-hero--plain">
@@ -699,9 +774,9 @@ s += footer()
 PAGES["price.html"] = s
 
 # ---------------------- ACCESS ----------------------
-s = head("アクセス（コスモスクエア駅・トレードセンター前駅）｜中村歯科医院 咲洲庁舎3F",
-         "中村歯科医院へのアクセス。Osaka Metro中央線コスモスクエア駅 徒歩8分、ニュートラム トレードセンター前駅 徒歩5分。大阪府咲洲庁舎（コスモタワー）3F。",
-         "access.html", "assets/img/cosmo-tower-real.jpg")
+s = head("アクセス（トレードセンター前駅・コスモスクエア駅）｜大阪市住之江区 南港の歯医者 中村歯科医院",
+         "中村歯科医院へのアクセス・地図。ニュートラム トレードセンター前駅 徒歩5分、Osaka Metro中央線コスモスクエア駅 徒歩8分。大阪市住之江区南港北1丁目14-16 大阪府咲洲庁舎（コスモタワー）3F。",
+         "access.html", "assets/img/cosmo-tower-real.jpg", JSONLD)
 s += header("access.html")
 s += page_hero("Access", "アクセス", "咲洲庁舎（コスモタワー）3F ｜ トレードセンター前駅 徒歩5分", "cosmo-tower-real.jpg",
                 "中村歯科医院が入る大阪府咲洲庁舎（コスモタワー）の外観")
@@ -727,6 +802,29 @@ s += f"""<section class="section access">
   </div>
 </section>
 """
+# 「トレードセンター前 歯医者」「コスモスクエア 歯医者」で探す人向けに、駅ごとの見出しを本文に持たせる。
+# 道順（出口・連絡通路など）は医院に確認できたものだけ足すこと。推測で書かない。
+s += """<section class="section svc-page">
+  <div class="wrap">""" + "".join([
+    svc_block("from-tradecenter", "ic-general", "トレードセンター前駅からのアクセス", "ニュートラム（南港ポートタウン線）", [
+        "ニュートラム（南港ポートタウン線）「トレードセンター前駅」から徒歩5分です。",
+        "中村歯科医院は、大阪府咲洲庁舎（さきしまコスモタワー）の3階にあります。",
+    ]),
+    svc_block("from-cosmosquare", "ic-general", "コスモスクエア駅からのアクセス", "Osaka Metro中央線", [
+        "Osaka Metro中央線「コスモスクエア駅」から徒歩8分です。",
+    ]),
+    svc_block("barrier-free", "ic-general", "車椅子でお越しの方へ", "", [
+        "当院は車椅子をご利用の患者様にも安心して歯科治療を受けていただけるよう、バリアフリーに対応をしております。",
+    ]),
+]) + """</div>
+</section>
+"""
+s += faq([
+    ("最寄り駅はどこですか？", "ニュートラム（南港ポートタウン線）「トレードセンター前駅」から徒歩5分、Osaka Metro中央線「コスモスクエア駅」から徒歩8分です。大阪府咲洲庁舎（さきしまコスモタワー）の3階です。"),
+    ("診療時間と休診日を教えてください。", "月〜金曜は 9:30〜13:00／15:00〜19:00、土曜は 9:30〜13:00／15:00〜17:00 です。日曜・祝日は休診です。"),
+    ("予約は必要ですか？", f"予約制です。初めての方・急に痛みが出た方も随時受け付けていますので、まずはお電話（{TEL}）でご連絡ください。"),
+    ("車椅子でも受診できますか？", "はい。当院はバリアフリーに対応しています。"),
+])
 s += tramband("ニュートラムに乗って、海辺の歯科医院へ。", "コスモスクエア駅・トレードセンター前駅から、どちらでもお越しいただけます。")
 s += cta()
 s += footer()
@@ -904,61 +1002,6 @@ def news_html():
     return "".join(out)
 
 
-# ---------------------- 臨時休診 → Google 向け特別営業時間 ----------------------
-# data/closures.json（管理画面の「臨時休診日」）のうち今日以降のものを、
-# specialOpeningHoursSpecification として構造化データに載せる。
-# 通常枠は assets/js/clinic-days.js の REGULAR と同じ。
-REGULAR = {0: (None, None), 1: (("09:30", "13:00"), ("15:00", "19:00")), 2: (("09:30", "13:00"), ("15:00", "19:00")),
-           3: (("09:30", "13:00"), ("15:00", "19:00")), 4: (("09:30", "13:00"), ("15:00", "19:00")),
-           5: (("09:30", "13:00"), ("15:00", "19:00")), 6: (("09:30", "13:00"), ("15:00", "17:00"))}
-
-
-def special_hours_ld():
-    path = os.path.join(ROOT, "data", "closures.json")
-    if not os.path.exists(path):
-        return ""
-    with open(path, encoding="utf-8") as f:
-        closures = json.load(f)
-    today = time.strftime("%Y-%m-%d")
-    specs = []
-    for c in sorted(closures, key=lambda c: c["date"]):
-        if c["date"] < today:
-            continue
-        dow = datetime.date.fromisoformat(c["date"]).isoweekday() % 7  # 0=日
-        am, pm = REGULAR[dow]
-        if c["part"] == "am":
-            am = None
-        elif c["part"] == "pm":
-            pm = None
-        else:
-            am = pm = None
-        base = {"@type": "OpeningHoursSpecification", "validFrom": c["date"], "validThrough": c["date"]}
-        open_slots = [s for s in (am, pm) if s]
-        if not open_slots:  # 終日休診は 00:00〜00:00 で「閉店」を表す（Google の指定どおり）
-            specs.append(dict(base, opens="00:00", closes="00:00"))
-        for o, cl in open_slots:
-            specs.append(dict(base, opens=o, closes=cl))
-    if not specs:
-        return ""
-    return ',\n"specialOpeningHoursSpecification":' + json.dumps(specs, ensure_ascii=False, separators=(",", ":"))
-
-
-# ---------------------- INDEX ----------------------
-JSONLD = """<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Dentist","name":"中村歯科医院","alternateName":"Nakamura Dental Office",
-"url":"%s/","image":"%s/assets/img/hero-reception.jpg","telephone":"+81-6-6615-6180",
-"priceRange":"¥¥","medicalSpecialty":["Dentistry"],
-"address":{"@type":"PostalAddress","streetAddress":"南港北1丁目14-16 大阪府咲洲庁舎3F 305号室","addressLocality":"大阪市住之江区","addressRegion":"大阪府","postalCode":"559-0034","addressCountry":"JP"},
-"geo":{"@type":"GeoCoordinates","latitude":34.6376945,"longitude":135.4143232},
-"openingHoursSpecification":[
-{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:30","closes":"13:00"},
-{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"15:00","closes":"19:00"},
-{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:30","closes":"13:00"},
-{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"15:00","closes":"17:00"}],
-"areaServed":["南港","コスモスクエア","住之江区","大阪市"],"employee":{"@type":"Person","name":"中村 聡","jobTitle":"院長"},"hasMap":"%s","sameAs":%s%s}
-</script>
-""" % (SITE, SITE, MAPS_CID_URL, json.dumps(SAME_AS), special_hours_ld())
-
 # 実サイト同様、院内カットに咲洲庁舎の外観・診療風景を織り交ぜてフェード
 # (ファイル名, alt文, 通常時のobject-position, 縦長画面でのobject-position, モード, PC用の横長版)
 # モード "cover"(既定): フルブリードでクロップ。"contain-blur": 画像全体を必ず見せ、
@@ -1019,8 +1062,8 @@ TOP_FAQ = [
 ]
 
 HERO_PORTRAIT_STYLE = "<style>@media(max-aspect-ratio:1/1){\n%s\n}</style>\n" % slide_portrait_css
-s = head("中村歯科医院｜大阪・南港コスモスクエアの歯医者（咲洲庁舎3F）",
-         "大阪市住之江区南港・コスモスクエア（大阪府咲洲庁舎3F）の中村歯科医院。20年以上の信頼と実績で、一般歯科・小児歯科・インプラント・審美歯科・入れ歯まで対応。コスモスクエア駅・トレードセンター前駅すぐ。",
+s = head("中村歯科医院｜大阪市住之江区 南港・コスモスクエアの歯医者（咲洲庁舎3F）",
+         "大阪市住之江区南港北・大阪府咲洲庁舎（コスモタワー）3Fの歯医者、中村歯科医院。一般歯科・小児歯科・予防歯科・矯正歯科・インプラント・入れ歯・審美歯科。トレードセンター前駅 徒歩5分・コスモスクエア駅 徒歩8分。月〜土曜診療（平日19時まで）。",
          "", "assets/img/hero-reception.jpg", JSONLD + HERO_PORTRAIT_STYLE)
 s += header("index.html")
 s += """<section class="hero" id="top">
@@ -1256,6 +1299,12 @@ def structured_data(name, content):
                        "mainEntity": [{"@type": "Question", "name": _text(q),
                                        "acceptedAnswer": {"@type": "Answer", "text": _text(a)}}
                                       for q, a in qa]})
+    if name.startswith("service-") and items:
+        t = re.search(r"<title>(.*?)</title>", content, re.S)
+        blocks.append({"@context": "https://schema.org", "@type": "MedicalWebPage",
+                       "name": _text(t.group(1)) if t else items[-1]["name"], "url": f"{SITE}/{name}",
+                       "inLanguage": "ja", "about": {"@type": "MedicalProcedure", "name": items[-1]["name"]},
+                       "publisher": {"@type": "Dentist", "@id": DENTIST_ID, "name": "中村歯科医院", "url": SITE + "/"}})
     return "".join('<script type="application/ld+json">%s</script>\n'
                    % json.dumps(b, ensure_ascii=False, separators=(",", ":")) for b in blocks)
 
